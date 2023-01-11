@@ -1,0 +1,29 @@
+---
+title: 'ECO 395 Homework 1: Annie Nguyen'
+author: "Annie Nguyen"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1) Data Visualization: Flights at ABIA
+
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+abia <- read.csv('ABIA.csv')
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

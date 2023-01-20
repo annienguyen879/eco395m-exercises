@@ -11,19 +11,47 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1) Data Visualization: Flights at ABIA
 
-
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
-abia <- read.csv('ABIA.csv')
+library(ggmap)
+abia <- read.csv("ABIA.csv")
+airport_codes <- read.csv("airport-codes.csv")
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+us_map <- map_data(map = "state")
+airport_codes <- airport_codes %>% separate(col = coordinates, into= c("lat", "long"), sep = ",") %>% 
+  transform(lat = as.numeric(lat), long = as.numeric(long)) %>% select(iata_code, lat, long) %>% drop_na %>% distinct%>% filter(iata_code != "")
+avg_delay <- abia %>% group_by(Origin) %>% summarise(avg_delay_time = mean(DepDelay, na.rm = TRUE)) %>% arrange(-avg_delay_time) %>% 
+  left_join(airport_codes, by= c("Origin" = "iata_code"))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+ggplot(avg_delay) + geom_polygon(aes(long, lat, group = group), fill= "white", color="black", data= us_map) + 
+  coord_map() + geom_point(aes(long, lat, size = avg_delay_time, color = avg_delay_time)) 
+
+```
+
+
+
+## 2) Wrangling the Olympics
+
+
+```{r}
+olympics <- read.csv('olympics_top20.csv')
+```
+
+
+## 3) K-Nearest Neighbors: Cars
+
+
+```{r}
+sclass <- read.csv('sclass.csv')
+```
+
+
+
+
+

@@ -19,7 +19,7 @@ In this section, we are looking at a 2008 dataset that contains information on e
 
 To explore the data and create visualizations, we first need to import the `tidyverse` and `ggplot2` packages and read the `ABIA.csv` file which contains the data. Since we are also interested in visualizing the data on a geographical map, we will also import the `ggmap` package and read the `airport-codes` files, which contain the latitude and longitude reading of each airport. 
 
-```{r message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
 library(ggmap)
@@ -32,7 +32,7 @@ First, the `airport_codes` dataframe is cleaned to exclude closed airports and d
 Then, we calculate the average departure delay from each Origin airport. Airports with the highest departure delays include: Knoxville, TN; Birmingham, AL; Washington, D.C.; Raleigh/Durham, NC; San Antonio, TX; Philadelphia, PA.
 
 
-```{r}
+```{r echo=FALSE}
 airport_codes <- airport_codes %>% 
   filter(type != "closed", iata_code != "") %>%
   separate(col = coordinates, into= c("lat", "long"), sep = ",") %>%  
@@ -52,17 +52,17 @@ We will use a barplot to visualize a larger portion of the dataset, looking at t
 
 From the plot, we see that Knoxville has, on average, significantly higher delays than Birmingham (with departure delays close to 70 minutes for Knoxville and near 40 minutes for Birmingham). In comparison, the average delays for the remaining cities stay below 30 minutes.
 
-```{r}
+```{r echo=FALSE}
 avg_delay %>% head(20) %>% 
   ggplot(aes(reorder(Origin, avg_delay_time), avg_delay_time)) + 
-  geom_bar(stat = "identity") +   coord_flip() + 
+  geom_bar(stat = "identity", color="white") +   coord_flip() + 
   ggtitle("Top 20 Cities with Highest Departure Delays") + 
   xlab("Origin") + ylab("Average Departure Delays (min)")
 ```
 
 We will visualize the data for all 53 cities included on the dataset by plotting the points on the US map. This will not only show us average airport delays but also give us a brief look at all of the US cities that flyers can travel to from Austin-Bergstrom Internationial Airport.
 
-```{r}
+```{r echo=FALSE}
 us_map <- map_data(map = "state")
 avg_delay %>% ggplot() + 
   geom_polygon(aes(long, lat, group = group), fill= "white", color="black", data= us_map) + 
@@ -85,7 +85,7 @@ Of course, this brief data exploration and visualization report comes with its o
 ## 2) Wrangling the Olympics
 
 
-```{r}
+```{r echo=FALSE}
 olympics <- read.csv('olympics_top20.csv')
 ```
 
@@ -93,7 +93,7 @@ olympics <- read.csv('olympics_top20.csv')
 ## 3) K-Nearest Neighbors: Cars
 
 
-```{r}
+```{r echo=FALSE}
 sclass <- read.csv('sclass.csv')
 ```
 

@@ -1,12 +1,12 @@
 ---
 title: 'ECO 395 Homework 1:'
-author: "Annie Nguyen"
+author: "Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## 1) Data Visualization: Flights at ABIA
@@ -19,7 +19,7 @@ In this section, we are looking at a 2008 dataset that contains information on e
 
 To explore the data and create visualizations, we first need to import the `tidyverse` and `ggplot2` packages and read the `ABIA.csv` file which contains the data. Since we are also interested in visualizing the data on a geographical map, we will also import the `ggmap` package and read the `airport-codes` files, which contain the latitude and longitude reading of each airport. 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
 library(ggmap)
@@ -32,7 +32,7 @@ First, the `airport_codes` dataframe is cleaned to exclude closed airports and d
 Then, we calculate the average departure delay from each Origin airport. Airports with the highest departure delays include: Knoxville, TN; Birmingham, AL; Washington, D.C.; Raleigh/Durham, NC; San Antonio, TX; Philadelphia, PA.
 
 
-```{r echo=FALSE}
+```{r}
 airport_codes <- airport_codes %>% 
   filter(type != "closed", iata_code != "") %>%
   separate(col = coordinates, into= c("lat", "long"), sep = ",") %>%  
@@ -52,7 +52,7 @@ We will use a barplot to visualize a larger portion of the dataset, looking at t
 
 From the plot, we see that Knoxville has, on average, significantly higher delays than Birmingham (with departure delays close to 70 minutes for Knoxville and near 40 minutes for Birmingham). In comparison, the average delays for the remaining cities stay below 30 minutes.
 
-```{r echo=FALSE}
+```{r}
 avg_delay %>% head(20) %>% 
   ggplot(aes(reorder(Origin, avg_delay_time), avg_delay_time)) + 
   geom_bar(stat = "identity", color="white") +   coord_flip() + 
@@ -62,7 +62,7 @@ avg_delay %>% head(20) %>%
 
 We will visualize the data for all 53 cities included on the dataset by plotting the points on the US map. This will not only show us average airport delays but also give us a brief look at all of the US cities that flyers can travel to from Austin-Bergstrom Internationial Airport.
 
-```{r echo=FALSE}
+```{r}
 us_map <- map_data(map = "state")
 avg_delay %>% ggplot() + 
   geom_polygon(aes(long, lat, group = group), fill= "white", color="black", data= us_map) + 
@@ -85,7 +85,7 @@ Of course, this brief data exploration and visualization report comes with its o
 ## 2) Wrangling the Olympics
 
 
-```{r echo=FALSE}
+```{r}
 olympics <- read.csv('olympics_top20.csv')
 ```
 
@@ -94,7 +94,425 @@ olympics <- read.csv('olympics_top20.csv')
 
 
 ```{r echo=FALSE}
+library(rsample)
+library(caret)
+library(foreach)
+library(modelr)
+
 sclass <- read.csv('sclass.csv')
+
+set.seed(1720104007)
+
+#Filter for 350
+car350 <- sclass %>%
+  filter(trim == 350)
+
+#Split train/test for 350
+car350_split = initial_split(car350, prop=0.8)
+car350_train = training(car350_split)
+car350_test  = testing(car350_split)
+```
+
+## K=2
+```{r 350k2}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 2) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base = ggplot(data = car350) + 
+  geom_point(mapping = aes(x = mileage, y = price), color='darkgrey') + 
+  theme_bw(base_size=10) 
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+
+```
+
+
+## K=5
+```{r 350k5}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 5) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+
+```
+
+
+## K=10
+```{r 350k10}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 10) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+
+```
+
+
+## K=20
+```{r 350k20}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 20) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+
+```
+
+## K=30
+```{r 350k30}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 30) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+
+```
+
+
+## K=50
+```{r 350k50}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 50) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+
+## K=70
+```{r 350k70}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 70) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+
+## K=100
+```{r 350k100}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 100) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+## K=150
+```{r 350k150}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 150) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+## K=300
+```{r 350k300}
+knn_model = knnreg(price ~ mileage, data=car350_train, k = 300) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+## K-nearest neighbors: test  
+
+```{r, fig.width=4, fig.asp = 0.6, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE}
+
+k_grid = unique(round(exp(seq(log(332), log(2), length=300))))
+rmse_grid_out = foreach(k = k_grid, .combine='c') %do% {
+  knn_model = knnreg(price ~ mileage,
+                     data = car350_train, k = k)
+  modelr::rmse(knn_model, car350_test)
+}
+
+rmse_grid_out = data.frame(K = k_grid, RMSE = rmse_grid_out)
+
+revlog_trans <- function(base = exp(1)) {
+  require(scales)
+  ## Define the desired transformation.
+  trans <- function(x){
+    -log(x, base)
+  }
+  ## Define the reverse of the desired transformation
+  inv <- function(x){
+    base^(-x)
+  }
+  ## Creates the transformation
+  scales::trans_new(paste("revlog-", base, sep = ""),
+                    trans,
+                    inv,  ## The reverse of the transformation
+                    log_breaks(base = base), ## default way to define the scale breaks
+                    domain = c(1e-100, Inf) 
+  )
+}
+
+p_out = ggplot(data=rmse_grid_out) + 
+  theme_bw(base_size = 10) + 
+  geom_path(aes(x=K, y=RMSE, color='testset'), size=0.5) + 
+  scale_x_continuous(trans=revlog_trans(base = 10)) 
+
+ind_best = which.min(rmse_grid_out$RMSE)
+k_best = k_grid[ind_best]
+
+rmse_grid_in = foreach(k = k_grid, .combine='c') %do% {
+  knn_model = knnreg(price ~ mileage,
+                     data = car350_train, k = k)
+  modelr::rmse(knn_model, car350_train)
+}
+
+rmse_grid_in = data.frame(K = k_grid, RMSE = rmse_grid_in)
+
+p_out + geom_path(data=rmse_grid_in, aes(x=K, y=RMSE, color='trainset'),size=0.5) +
+  scale_colour_manual(name="RMSE",
+    values=c(testset="black", trainset="grey")) + 
+  geom_vline(xintercept=k_best, color='darkgreen', size=1)
+```
+
+
+## K-nearest neighbors: at the optimal k  
+
+```{r, fig.width=4, fig.asp = 0.6, fig.align='center', echo=FALSE, message=FALSE}
+knn_model = knnreg(price ~ mileage,
+                   data = car350_train, k = k_best)
+
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car350_test)
+```
+
+``` {r knn65}
+
+#Filter for 65 AMG
+car65AMG <- sclass %>%
+  filter(trim == '65 AMG')
+
+#Split train/test for 65 
+car65_split = initial_split(car65AMG, prop=0.8)
+car65_train = training(car65_split)
+car65_test  = testing(car65_split)
+
+```
+
+## K=2
+```{r 65k2}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 2) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base = ggplot(data = car65AMG) + 
+  geom_point(mapping = aes(x = mileage, y = price), color='darkgrey') + 
+  theme_bw(base_size=10) 
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+
+```
+
+## K=5
+```{r 65k5}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 5) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+
+```
+
+
+## K=10
+```{r 65k10}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 10) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+
+```
+
+
+## K=20
+```{r 65k20}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 20) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+
+```
+
+## K=30
+```{r 65k30}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 30) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+
+```
+
+
+## K=50
+```{r 65k50}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 50) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
+
+
+## K=70
+```{r 65k70}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 70) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
+
+
+## K=100
+```{r 65k100}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 100) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
+
+## K=150
+```{r 65k150}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 150) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
+
+## K=200
+```{r 65k300}
+knn_model = knnreg(price ~ mileage, data=car65_train, k = 200) 
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
+
+
+## K-nearest neighbors: test  
+
+```{r, fig.width=4, fig.asp = 0.6, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE}
+
+k_grid = unique(round(exp(seq(log(233), log(2), length=200))))
+rmse_grid_out = foreach(k = k_grid, .combine='c') %do% {
+  knn_model = knnreg(price ~ mileage,
+                     data = car65_train, k = k)
+  modelr::rmse(knn_model, car65_test)
+}
+
+rmse_grid_out = data.frame(K = k_grid, RMSE = rmse_grid_out)
+
+p_out = ggplot(data=rmse_grid_out) + 
+  theme_bw(base_size = 10) + 
+  geom_path(aes(x=K, y=RMSE, color='testset'), size=0.5) + 
+  scale_x_continuous(trans=revlog_trans(base = 10)) 
+
+ind_best = which.min(rmse_grid_out$RMSE)
+k_best = k_grid[ind_best]
+
+rmse_grid_in = foreach(k = k_grid, .combine='c') %do% {
+  knn_model = knnreg(price ~ mileage,
+                     data = car65_train, k = k)
+  modelr::rmse(knn_model, car65_train)
+}
+
+rmse_grid_in = data.frame(K = k_grid, RMSE = rmse_grid_in)
+
+p_out + geom_path(data=rmse_grid_in, aes(x=K, y=RMSE, color='trainset'),size=0.5) +
+  scale_colour_manual(name="RMSE",
+    values=c(testset="black", trainset="grey")) + 
+  geom_vline(xintercept=k_best, color='darkgreen', size=1)
+```
+
+## K-nearest neighbors: at the optimal k  
+
+```{r, fig.width=4, fig.asp = 0.6, fig.align='center', echo=FALSE, message=FALSE}
+knn_model = knnreg(price ~ mileage,
+                   data = car65_train, k = k_best)
+
+knn_pred = function(x) {
+  predict(knn_model, newdata=data.frame(mileage=x))
+}
+
+p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
+
+modelr::rmse(knn_model, car65_test)
+```
 ```
 
 

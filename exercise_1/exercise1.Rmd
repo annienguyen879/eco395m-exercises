@@ -111,7 +111,7 @@ To find which single women's event had the greatest variability in competitor's 
 
 ### C) How has the average age of Olympic swimmers changed over time? Does the trend look different for male swimmers relative to female swimmers?  Create a data frame that can allow you to visualize these trends over time, then plot the data with a line graph with separate lines for male and female competitors.  Give the plot an informative caption answering the two questions just posed. 
 
-```{r Olympic swimmers graph, warning=FALSE, message='false'}
+```{r Olympic swimmers graph, warning=FALSE, message=FALSE}
 
 #Obtain Olympic swimmers' data by gender
 all_swimmers <- subset(olympics_data, sport=="Swimming", select=c(name, sex, sport, age, year))

@@ -86,7 +86,7 @@ Of course, this brief data exploration and visualization report comes with its o
 
 ### A) What is the 95th percentile of heights for female competitors across all Athletics events (i.e., track and field)?  Note that "sport" is the broad sport (e.g. Athletics) whereas "event" is the specific event (e.g. 100 meter sprint). 
 
-```{r 95 percentile atheltics, echo=FALSE, message=FALSE, results=FALSE}
+```{r 95 percentile atheltics, message=FALSE, results=FALSE}
 library(tidyverse)
 olympics_data <- read.csv('olympics_top20.csv')
 fem_athletics <- subset(olympics_data, sex=="F" & sport=="Athletics", 
@@ -98,7 +98,7 @@ The 95th percentile of heights for female competitors across all Athletics event
 
 
 ### B) Which single women's "event" had the greatest variability in competitor's heights across the entire history of the Olympics, as measured by the standard deviation?  
-```{r women sd height, echo=FALSE, message=FALSE}
+```{r women sd height, message=FALSE}
 fem_events <- subset(olympics_data, sex=="F", select=c(name, sex, event, height))
 fem_height_sd <- fem_events %>% group_by(event) %>% summarise(sd_height = sd(height)) %>% 
   arrange(desc(sd_height))
@@ -111,7 +111,7 @@ To find which single women's event had the greatest variability in competitor's 
 
 ### C) How has the average age of Olympic swimmers changed over time? Does the trend look different for male swimmers relative to female swimmers?  Create a data frame that can allow you to visualize these trends over time, then plot the data with a line graph with separate lines for male and female competitors.  Give the plot an informative caption answering the two questions just posed. 
 
-```{r Olympic swimmers graph, warning=FALSE, echo=FALSE, message='false'}
+```{r Olympic swimmers graph, warning=FALSE, message='false'}
 
 #Obtain Olympic swimmers' data by gender
 all_swimmers <- subset(olympics_data, sport=="Swimming", select=c(name, sex, sport, age, year))

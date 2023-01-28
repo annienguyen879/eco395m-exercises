@@ -600,8 +600,6 @@ rmse_cv
 mean(rmse_cv)  # mean CV error
 sd(rmse_cv)/sqrt(K_folds)   # approximate standard error of CV error
 
-rmse_grid_in = data.frame(K = k_grid, RMSE = rmse_grid_in)
-
 ```
 ###For car 65 AMG
 

@@ -567,11 +567,12 @@ p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
 
 modelr::rmse(knn_model, car65_test)
 ```
+
 We can see that the trim level of 65 AMG has an optimal k of 12. On the other hand, the 350 trim has an optimal k value of 51. When we have a higher k-value, we will  tend to have a higher bias but lower variance. Prices for cars with the 350 trim level vary less than that of cars with the 65 AMG level. Cars with the 350 trim are mostly clustered between 0 to 50000 miles for a price range between \$50,000 and \$75,000 or below $25,000 when offering mileage between 50,000 and 1,50,000 miles. Here, a higher k-value would be reasonable since we have lower variance within the dataset to be concerned about. 
 
 With a lower k-value, we risk having a higher variance but lower bias. Cars with a 65 AMG level trim are more scattered, and therefore, we will need a lower k-value to make more accurate price predictions. 
 
-The dataset for cars with 350 trim level is also larger with 416 observations while the dataset of cars with 65 AMG trim has 292 observations. 
+The S65 AMG has features of a sports car and thus, will call a lower price on the second-hand market since its working condition will be more critically evaluated than that of a standard sedan. In this case, that is the S350. S65 AMGs with 0 mileage cost around $25,000 while S350 start off with \$50,0000. It may also explain why we have a smaller set of observations for the S65 since there would be a smaller market for a sports car than that for a sedan. The dataset for cars with 350 trim level has 416 observations while the dataset of cars with 65 AMG trim has 292 observations. 
 
 ## Checking RMSE through K-cross validation 
 

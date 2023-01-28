@@ -567,4 +567,62 @@ p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001)
 
 modelr::rmse(knn_model, car65_test)
 ```
+We can see that the trim level of 65 AMG has an optimal k of 12. On the other hand, the 350 trim has an optimal k value of 51. One of the main reasons why the k-value for the 350 trim is higher than that of 65 AMG is the sheer number of observations. The dataset for cars with 350 trim level has 416 observations while the dataset of cars with 65 AMG trim has 292 observations. 
+
+## Checking RMSE through K-cross validation 
+
+###For car 350
+
+```{r}
+K_folds = 5
+
+# Pipeline 1:
+# create specific fold IDs for each row
+# the default behavior of sample actually gives a permutation
+Kcar350 = car350 %>%
+  mutate(fold_id = rep(1:K_folds, length=nrow(car350)) %>% sample)
+
+head(Kcar350)
+
+# now loop over folds
+rmse_cv = foreach(fold = 1:K_folds, .combine='c') %do% {
+  knn100 = knnreg(price ~ mileage,
+                  data=filter(Kcar350, fold_id != fold), k=100)
+  modelr::rmse(knn100, data=filter(Kcar350, fold_id == fold))
+}
+
+rmse_cv
+mean(rmse_cv)  # mean CV error
+sd(rmse_cv)/sqrt(K_folds)   # approximate standard error of CV error
+
+rmse_grid_in = data.frame(K = k_grid, RMSE = rmse_grid_in)
+
+```
+###For car 65 AMG
+
+```{r}
+K_folds = 5
+
+# Pipeline 1:
+# create specific fold IDs for each row
+# the default behavior of sample actually gives a permutation
+Kcar65 = car65AMG %>%
+  mutate(fold_id = rep(1:K_folds, length=nrow(car65AMG)) %>% sample)
+
+head(Kcar65)
+
+# now loop over folds
+rmse_cv = foreach(fold = 1:K_folds, .combine='c') %do% {
+  knn100 = knnreg(price ~ mileage,
+                  data=filter(Kcar65, fold_id != fold), k=100)
+  modelr::rmse(knn100, data=filter(Kcar65, fold_id == fold))
+}
+
+rmse_cv
+mean(rmse_cv)  # mean CV error
+sd(rmse_cv)/sqrt(K_folds)   # approximate standard error of CV error
+
+rmse_grid_in = data.frame(K = k_grid, RMSE = rmse_grid_in)
+
+```
 ```

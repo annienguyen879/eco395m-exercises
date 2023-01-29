@@ -147,7 +147,7 @@ We see, in the data available for both genders, that male Olympic swimmers, on a
 ## 3) K-Nearest Neighbors: Cars
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE}
 library(rsample)
 library(caret)
 library(foreach)
@@ -168,7 +168,7 @@ car350_test  = testing(car350_split)
 ```
 
 ## K=2
-```{r 350k2}
+```{r 350k2, warning=FALSE}
 knn_model = knnreg(price ~ mileage, data=car350_train, k = 2) 
 knn_pred = function(x) {
   predict(knn_model, newdata=data.frame(mileage=x))

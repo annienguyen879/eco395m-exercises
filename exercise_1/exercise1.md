@@ -356,10 +356,6 @@ that of S350. The mean RMSE for S350 is 11,353 and that for S65 AMG is
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   10488   11076   11292   11315   11856   11865
 
-    ## [1] 11315.34
-
-    ## [1] 258.4822
-
 ### Mean RMSE for S65 AMG
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 

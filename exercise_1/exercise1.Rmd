@@ -498,8 +498,6 @@ rmse_cv = foreach(fold = 1:K_folds, .combine='c') %do% {
 }
 
 summary(rmse_cv)
-mean(rmse_cv)  # mean CV error
-sd(rmse_cv)/sqrt(K_folds)   # approximate standard error of CV error
 
 ```
 ### Mean RMSE for S65 AMG

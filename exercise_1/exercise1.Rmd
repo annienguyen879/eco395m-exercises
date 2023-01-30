@@ -2,7 +2,7 @@
 title: 'ECO 395 Homework 1:'
 author: "Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}

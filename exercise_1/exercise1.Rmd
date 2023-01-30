@@ -155,7 +155,8 @@ We see, in the data available for both genders, that male Olympic swimmers, on a
 
 Here, we filter the Mercedes S Class vehicles for two trim levels: 350 and 65 AMG. The S350 dataset has 416 observations and the S65 AMG has 292 observations. For both datasets, we split the data into a training and test set in an 80-20 ratio. We will use K-nearest neighbors to build a predictive model for price, using mileage, for the two trim levels. 
 
-```{r include=FALSE}
+
+```{r echo=FALSE, message=FALSE}
 library(rsample)
 library(caret)
 library(foreach)
@@ -223,6 +224,7 @@ p_base + stat_function(fun=knn_pred, color='red', size=1.5, n=1001) + ggtitle("K
 modelr::rmse(knn_model, car350_test)
 
 ```
+
 Our RMSE rises slightly to 9906.748. 
 
 ### K=20

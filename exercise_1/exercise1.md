@@ -1,3 +1,9 @@
+# ECO 395M: Data Mining and Statistical Learning Homework 1
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-01-30
+
 ## 1) Data Visualization: Flights at ABIA
 
 ### Introduction

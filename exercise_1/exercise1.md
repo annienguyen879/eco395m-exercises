@@ -1,4 +1,5 @@
-# ECO 395M: Data Mining and Statistical Learning Homework 1
+# Homework 1
+## ECO 395M: Data Mining and Statistical Learning 
 
 ## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
 

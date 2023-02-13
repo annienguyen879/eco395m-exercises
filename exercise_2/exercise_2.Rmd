@@ -1,0 +1,54 @@
+---
+title: "Exercises 2"
+author: "Soo Jee, Annie Nguyen, and Tarini Sudhakar"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(rsample)
+library(caret)
+library(foreach)
+library(modelr)
+```
+
+## Saratoga house prices
+
+
+```{r cars}
+summary(cars)
+```
+
+## Classification and retrospective sampling
+
+```{r pressure, echo=FALSE}
+credit <- read.csv("german_credit.csv")
+
+str(credit)
+
+tbl <- with(credit, table(history, Default))
+
+ggplot(as.data.frame(tbl), aes(factor(Default), Freq, fill = history)) + 
+  geom_col(position = 'dodge') + 
+  xlab = "Credit History"
+  
+##Splitting data into train and test set
+credit_split = initial_split(credit, prop=0.8)
+credit_train = training(credit_split)
+credit_test  = testing(credit_split)
+
+logit_credit = glm(Default ~ ., data=credit_train, family='binomial')
+
+credittest = mutate(credit_test, yhat = predict(logit_credit, credit_test, type='response'))
+ggplot(credittest) + 
+  geom_jitter(aes(x=factor(Default), y=yhat), width=0.1, alpha=0.2) + 
+  labs(title="Test-set predicted probabilities", y = "P(Default | x)", x="History?") + 
+  stat_summary(aes(x=factor(Default), y=yhat), fun='mean', col='red', size=1)
+
+```
+
+## Children and hotel reservations 

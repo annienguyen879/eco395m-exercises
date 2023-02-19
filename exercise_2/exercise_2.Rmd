@@ -14,6 +14,7 @@ library(rsample)
 library(caret)
 library(foreach)
 library(modelr)
+library(wesanderson)
 ```
 
 ## Saratoga house prices
@@ -24,31 +25,56 @@ summary(cars)
 ```
 
 ## Classification and retrospective sampling
+What do you notice about the history variable vis-a-vis predicting defaults? What do you think is going on here? In light of what you see here, do you think this data set is appropriate for building a predictive model of defaults, if the purpose of the model is to screen prospective borrowers to classify them into "high" versus "low" probability of default? Why or why not---and if not, would you recommend any changes to the bank's sampling scheme?
 
+  1. What do you notice about the history variable vis-a-vis predicting defaults? 
+  If someone has a poor credit history, then the chance of them defaulting on a loan goes down by  0.37. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 0.18. These results seem to be the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
+  
+  2. What do you think is going on here?
+  Since the bank decided to conduct a case-control design, it used existing data to predict whether certain people will default on a loan, given other features. Since defaults are rare, the bank matched each default with similar sets of loans that had not defaulted. This means that they oversampled defaults relative to a random sample of loans in the bank's overall portfolio. 
+  
+  In a simpler way, imagine if we initially had a sample of 100 loans, of which 10 loans were defaulted. By oversampling defaults, instead of having a low default probability of 1/10, we now have a much higher probability. This method results in unreliable estimates since we can no longer draw reasonable conclusions about how a particular credit history may affect the default probability of an individual. This is why we are getting a negative coefficient for poor and terrible credit history while predicting loan defaults. 
+  
+  3. In light of what you see here, do you think this data set is appropriate for building a predictive model of defaults, if the purpose of the model is to screen prospective borrowers to classify them into "high" versus "low" probability of default?
+  This dataset is therefore, not appropriate for building a predictive model of defaults. The case-control sample places a defaulted loan in a bag of loans of similar value without considering other features such as credit history, age, and savings. This means that we cannot draw useful conclusions about someone particular to their credit history and classify them into "high" versus "low" probability of default. 
+  
+  4. Why or why not---and if not, would you recommend any changes to the bank's sampling scheme?
+  The bank should accord weights to the default loans in the sample.
+  
 ```{r pressure, echo=FALSE}
 credit <- read.csv("german_credit.csv")
 
 str(credit)
 
 tbl <- with(credit, table(history, Default))
+tbl
 
+##Bar plot for default probability by credit history
 ggplot(as.data.frame(tbl), aes(factor(Default), Freq, fill = history)) + 
-  geom_col(position = 'dodge') + 
-  xlab = "Credit History"
+  geom_col(position = 'dodge') +
+  labs(y = "Frequency", x = "Loan default", title ="Default probability by credit history", 
+       caption = "0 indicates no default, 1 indicates default") + 
+  scale_fill_manual(name = "Credit history", values=wes_palette(n=3, name="GrandBudapest1")) + 
+  theme_bw() 
   
 ##Splitting data into train and test set
 credit_split = initial_split(credit, prop=0.8)
 credit_train = training(credit_split)
 credit_test  = testing(credit_split)
 
-logit_credit = glm(Default ~ ., data=credit_train, family='binomial')
+logit_credit = glm(Default ~ duration + amount + installment + age 
+                   + history + purpose + foreign, data=credit_train,
+                   family='binomial')
 
-credittest = mutate(credit_test, yhat = predict(logit_credit, credit_test, type='response'))
+credittest = mutate(credit_test, yhat = predict(logit_credit, credit_test,
+                                                type='response'))
+
 ggplot(credittest) + 
   geom_jitter(aes(x=factor(Default), y=yhat), width=0.1, alpha=0.2) + 
-  labs(title="Test-set predicted probabilities", y = "P(Default | x)", x="History?") + 
+  labs(title="Test-set predicted probabilities", y = "P(Default | x)", x="Default?") + 
   stat_summary(aes(x=factor(Default), y=yhat), fun='mean', col='red', size=1)
 
+coef(logit_credit) %>% round(2)
 ```
 
 ## Children and hotel reservations 

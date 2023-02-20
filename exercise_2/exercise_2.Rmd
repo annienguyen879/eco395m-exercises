@@ -15,6 +15,7 @@ library(caret)
 library(foreach)
 library(modelr)
 library(wesanderson)
+library(pROC)
 ```
 
 ## Saratoga house prices
@@ -82,12 +83,33 @@ coef(logit_credit) %>% round(2)
 ### Model Building
 
 ```{r}
-dev_hotels <- read.csv("hotels_dev.csv")
+class_diag <- function(score, truth, model, test_set, positive, cutoff=.5){
 
-#dev_hotel_v2 <- dev_hotels %>% mutate(dev_hotels, arrival_date = ymd(arrival_date)) %>% 
-#  mutate(year = year(arrival_date) %>% factor(),
-#         day = wday(arrival_date) %>% factor(),
-#         month = month(arrival_date) %>% factor())
+  pred <- factor(score>cutoff,levels=c("TRUE","FALSE"))
+  truth <- factor(truth==positive, levels=c("TRUE","FALSE"))
+
+  tab<-table(truth, pred)
+  acc=sum(diag(tab))/sum(tab)
+  rmse_ = rmse(model, test_set)
+  
+#CALCULATE EXACT AUC
+  truth<-as.numeric(truth=="TRUE")
+  ord<-order(score, decreasing=TRUE)
+  score <- score[ord]; truth <- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup<-c(score[-1]>=score[-length(score)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  round(data.frame(acc, rmse_, auc),4)
+}
+
+```
+
+
+```{r}
+dev_hotels <- read.csv("hotels_dev.csv")
 
 dev_split = initial_split(dev_hotels, prop=0.8)
 dev_train = training(dev_split)
@@ -95,26 +117,30 @@ dev_test = testing(dev_split)
 
 model1 = glm(children ~ market_segment + adults + customer_type + is_repeated_guest, 
              data = dev_train, family = "binomial")
+prob_model1 = predict(model1, newdata = dev_test, type= "response")
 
 model2 = glm(children ~ . - arrival_date, 
              data = dev_train, family = "binomial")
+prob_model2 = predict(model2, newdata = dev_test, type= "response")
 
 # tested normal linear model w/ all variable, except arrival_date
 # also used forward selection to build model 4, but model 3 still outperforms
 # according to RMSE
 model3 = lm(children ~ . - arrival_date,
             data = dev_train)
+prob_model3 = predict(model3, newdata = dev_test, type= "response")
 
 lm0 = lm(children ~ 1, data=dev_train)
 model4 = step(lm0, direction = "forward",
               scope = ~(market_segment + adults + customer_type + is_repeated_guest)^2)
+prob_model4 = predict(model4, newdata = dev_test, type= "response")
 
 
 # out-of-sample accuracy
-rmse(model1, dev_test)
-rmse(model2, dev_test)
-rmse(model3, dev_test)
-rmse(model4, dev_test)
+class_diag(prob_model1, dev_test$children, model1, dev_test, positive = 1)
+class_diag(prob_model2, dev_test$children, model2, dev_test, positive = 1)
+class_diag(prob_model3, dev_test$children, model3, dev_test, positive = 1)
+class_diag(prob_model4, dev_test$children, model4, dev_test, positive = 1)
 ```
 
 
@@ -123,9 +149,14 @@ rmse(model4, dev_test)
 ```{r}
 val_hotels <- read.csv("hotels_val.csv")
 
+# take out model 1
 phat_test_model1 = predict(model1, val_hotels, type = "response")
 roc_model1 <- roc(val_hotels$children, phat_test_model1)
 ggroc(roc_model1)
+
+phat_test_model2 = predict(model2, val_hotels, type = "response")
+roc_model2 <- roc(val_hotels$children, phat_test_model2)
+ggroc(roc_model2)
 
 phat_test_model3 = predict(model3, val_hotels, type = "response")
 roc_model3 <- roc(val_hotels$children, phat_test_model3)
@@ -136,6 +167,70 @@ ggroc(roc_model3)
 
 
 ### Model Validation: Step 2
+
+```{r}
+k = 20
+
+folds <- rep(1:k, length.out = nrow(val_hotels))
+diags <- NULL
+pred_children <- c()
+actual_children <- c()
+
+i = 1
+for (i in 1:k) {
+  train <- val_hotels[folds != i, ]
+  test <- val_hotels[folds == i, ]
+  truth <- test$children
+  
+  fit = lm(formula = children ~ market_segment + customer_type + adults + 
+    is_repeated_guest + market_segment:adults + customer_type:adults + 
+    market_segment:is_repeated_guest + market_segment:customer_type, 
+    data = train)
+
+  probs <- predict(fit, newdata = test, type = "response")
+  probs <- ifelse(probs > 0.5, 1, 0)
+  diags <- rbind(diags, class_diag(probs, truth, fit, test, positive = 1))
+  pred_children <- append(pred_children, sum(probs))
+  actual_children <- append(actual_children, sum(truth))
+}
+cv_diags <- cbind(diags, pred_children, actual_children)
+cv_diags
+
+summarize_all(cv_diags, mean)
+```
+
+
+```{r}
+k = 20
+
+folds <- rep(1:k, length.out = nrow(val_hotels))
+diags <- NULL
+pred_children <- c()
+actual_children <- c()
+
+i = 1
+for (i in 1:k) {
+  train <- val_hotels[folds != i, ]
+  test <- val_hotels[folds == i, ]
+  truth <- test$children
+  
+  fit = model2 = glm(children == 1 ~ ., 
+             data = train[,!colnames(train) %in% c("arrival_date")], family = "binomial")
+
+  probs <- predict(fit, newdata = test, type = "response")
+  probs <- ifelse(probs > 0.5, 1, 0)
+  diags <- rbind(diags, class_diag(probs, truth, fit, test, positive = 1))
+  pred_children <- append(pred_children, sum(probs))
+  actual_children <- append(actual_children, sum(truth))
+}
+cv_diags <- cbind(diags, pred_children, actual_children)
+cv_diags
+
+# average performance metrics across all folds
+summarize_all(cv_diags, mean)
+```
+
+
 
 ```{r}
 # refer to loadhou.R

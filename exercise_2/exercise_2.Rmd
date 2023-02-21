@@ -17,20 +17,21 @@ library(modelr)
 library(wesanderson)
 library(pROC)
 library(mosaicData)
+library(mosaic)
 data(SaratogaHouses)
 ```
 
 ## Saratoga house prices
 
 # Split into training and testing sets
-```{r}
+```{r echo=FALSE}
 saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
 saratoga_train = training(saratoga_split)
 saratoga_test = testing(saratoga_split)
 ```
 
 # Linear Model
-```{r linear model}
+```{r linear model, echo=FALSE}
 linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
 
 length(coef(linear_model) %>% round(0))
@@ -43,7 +44,7 @@ rmse(linear_model, saratoga_test)
 ```
 In a single linear model train/test split, we get an in sample RMSE of 56,021.78 and an out of sample RMSE of 86,230.83.
 
-```{r linear model simulation}
+```{r linear model simulation, echo=FALSE}
 linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
 
 rmse_simulation = do(25)*{
@@ -60,7 +61,7 @@ colMeans(rmse_simulation)
 The average out of sample RMSE of 25 random linear model train/test splits is 66,760.79.
 
 # KNN Model
-```{r knn model, warning=FALSE}
+```{r knn model, echo=FALSE, warning=FALSE}
 saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
 saratoga_train = training(saratoga_split)
 saratoga_test = testing(saratoga_split)
@@ -96,9 +97,9 @@ rmse(knn_model, training_set)
 rmse(knn_model, testing_set)
 
 ```
-In a single KNN regression model train/test split, we get an in sample RMSE of 58,122.03 and an out of sample RMSE of 117,355.1.
+In a single KNN regression model train/test split, we get an in sample RMSE of about 60,000 and an out of sample RMSE of about 120,000.
 
-```{r knn model simulation, warning=FALSE}
+```{r knn model simulation, echo=FALSE, warning=FALSE}
 knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 25)
 
 rmse_simulation = do(25)*{

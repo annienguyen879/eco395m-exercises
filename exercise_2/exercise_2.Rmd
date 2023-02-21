@@ -16,15 +16,18 @@ library(foreach)
 library(modelr)
 library(wesanderson)
 library(pROC)
+library(mosaicData)
 data(SaratogaHouses)
 ```
 
 ## Saratoga house prices
 
 # Split into training and testing sets
+```{r}
 saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
 saratoga_train = training(saratoga_split)
 saratoga_test = testing(saratoga_split)
+```
 
 # Linear Model
 ```{r linear model}

@@ -2,7 +2,9 @@
 title: "Exercises 2"
 author: "Soo Jee, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -78,11 +80,17 @@ ggplot(credittest) +
 coef(logit_credit) %>% round(2)
 ```
 
+
 ## Children and hotel reservations 
+
+In this section, we will focus on building a predictive model for whether a booking at a hotel will have children on it. Oftentimes, parents fail to include their children when making reservations. Although this piece of information may seem trivial, being able to anticipate guests' needs are very important for hotel staff, so it is essential for management to know how many children are staying to better cater to families' needs and to keep supplies/inventory well-stocked.
+
+Therefore, in this portion, we will focus on predicting the `children` variable.
+
 
 ### Model Building
 
-```{r}
+```{r include=FALSE}
 class_diag <- function(score, truth, model, test_set, positive, cutoff=.5){
 
   pred <- factor(score>cutoff,levels=c("TRUE","FALSE"))
@@ -90,6 +98,7 @@ class_diag <- function(score, truth, model, test_set, positive, cutoff=.5){
 
   tab<-table(truth, pred)
   acc=sum(diag(tab))/sum(tab)
+  ppv=tab[1,1]/colSums(tab)[1]
   rmse_ = rmse(model, test_set)
   
 #CALCULATE EXACT AUC
@@ -102,13 +111,22 @@ class_diag <- function(score, truth, model, test_set, positive, cutoff=.5){
   TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
   n <- length(TPR)
   auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
-  round(data.frame(acc, rmse_, auc),4)
+  round(data.frame(acc, ppv, rmse_, auc, row.names = "Metrics"),4)
 }
-
 ```
 
 
-```{r}
+Using only the data in `hotels_dev.csv`, we will compare the out-of-sample performance of the following:
+
+  1. baseline 1: a small model that uses only the `market_segment`, `adults`, `customer_type`, and `is_repeated_guest` variables as features.
+  2. baseline 2: a big model that uses all the possible predictors except the `arrival_date` variable (main effects only)
+  3. the best linear model you can build, including any engineered features that you can think of that improve the performance (interactions, features derived from time stamps, etc)
+
+
+
+#### Baseline Model 1:
+
+```{r echo=FALSE}
 dev_hotels <- read.csv("hotels_dev.csv")
 
 dev_split = initial_split(dev_hotels, prop=0.8)
@@ -119,88 +137,89 @@ model1 = glm(children ~ market_segment + adults + customer_type + is_repeated_gu
              data = dev_train, family = "binomial")
 prob_model1 = predict(model1, newdata = dev_test, type= "response")
 
+# out-of-sample accuracy
+class_diag(prob_model1, dev_test$children, model1, dev_test, positive = 1)
+```
+After fitting the baseline model 1 to the training set and assessing out-of-sample accuracy, we see this model predicts with about 91% accuracy, but the area under the curve (AUC) is quite low. Although we would not consider "bad" model performance, the low AUC indicates that this is not the best model.
+
+
+#### Baseline Model 2:
+
+```{r echo=FALSE, warning=FALSE}
 model2 = glm(children ~ . - arrival_date, 
              data = dev_train, family = "binomial")
 prob_model2 = predict(model2, newdata = dev_test, type= "response")
 
-# tested normal linear model w/ all variable, except arrival_date
-# also used forward selection to build model 4, but model 3 still outperforms
-# according to RMSE
-model3 = lm(children ~ . - arrival_date,
-            data = dev_train)
+# out-of-sample accuracy
+class_diag(prob_model2, dev_test$children, model2, dev_test, positive = 1)
+```
+From the out-of-sample performance measures, we see that this model has both higher accuracy and a significantly higher AUC. Although the RMSE is higher for baseline model 2, I would still choose baseline model 2 over model 1 because both accuracy and AUC are improved. Furthermore, I have also calculated the value for positive predictive values (PPV), which are the proportion of true positives. In this case, the value for ppv is approximately 0.7, which means that, of the positive values predicted, about 70% are true positives.
+
+#### Testing Best Linear Model:
+
+In finding the "best" linear model, we have two different approaches. First, we manually build a linear model by adding variables and testing out-of-sample performance. Then, we built a model using forward selection. We, again, use out-of-sample performance to assess the models.
+
+```{r echo=FALSE}
+model3 = lm(children ~ . + customer_type:adults + adults:stays_in_weekend_nights + adults:stays_in_week_nights + stays_in_weekend_nights:stays_in_week_nights,
+            data = dev_train[,!colnames(dev_train) %in% c("arrival_date")])
 prob_model3 = predict(model3, newdata = dev_test, type= "response")
 
+# out-of-sample accuracy
+class_diag(prob_model3, dev_test$children, model3, dev_test, positive = 1)
+```
+In this first linear model, we include all variables (except `arrival_date`) as well as a few interaction terms (`adults:stays_in_weekend_nights`, `adults:stays_in_week_nights`, `stays_in_weekend_nights:stays_in_week_nights`). When comparing this linear model to Baseline Model 2, we see that the linear model has similar accuracy and AUC values as Model 2, but the RMSE value is significantly lower. This may have to do with differences between linear and logistic models. When we look at the PPV value, we see that the PPV for this linear model is slightly lower than the PPV in model 2.
+
+Although the out-of-sample performance values may suggest this is also a good model, the logistic model is still preferred when predicting binary outcomes.
+
+
+In the second linear model, we use forward selection to find a strong linear model, which gives us a regression where we regress `children` on:
+`market_segment`, `customer_type`, `is_repeated_guest`, `adults`, `market_segment:adults`, `customer_type:adults`, and `market_segment:is_repeated_guest`
+
+
+```{r include=FALSE}
 lm0 = lm(children ~ 1, data=dev_train)
 model4 = step(lm0, direction = "forward",
               scope = ~(market_segment + adults + customer_type + is_repeated_guest)^2)
 prob_model4 = predict(model4, newdata = dev_test, type= "response")
 
+```
 
+```{r echo=FALSE}
 # out-of-sample accuracy
-class_diag(prob_model1, dev_test$children, model1, dev_test, positive = 1)
-class_diag(prob_model2, dev_test$children, model2, dev_test, positive = 1)
-class_diag(prob_model3, dev_test$children, model3, dev_test, positive = 1)
 class_diag(prob_model4, dev_test$children, model4, dev_test, positive = 1)
 ```
+In the second linear model, accuracy and RMSE is comparable to the first linear model, but AUC drops significantly. Between the two linear models, the first linear model still outperforms the second.
+
+Although the first linear model has similar accuracy, PPV, and AUC values, the logistic model is still preferred. Therefore, Baseline Model 2 is still the best model. 
 
 
 ### Model Validation: Step 1
 
-```{r}
-val_hotels <- read.csv("hotels_val.csv")
+The following is an ROC plot for Baseline Model 2, using the `hotels_val.csv` data.
 
-# take out model 1
-phat_test_model1 = predict(model1, val_hotels, type = "response")
-roc_model1 <- roc(val_hotels$children, phat_test_model1)
-ggroc(roc_model1)
+```{r echo=FALSE, warning=FALSE}
+val_hotels <- read.csv("hotels_val.csv")
 
 phat_test_model2 = predict(model2, val_hotels, type = "response")
 roc_model2 <- roc(val_hotels$children, phat_test_model2)
-ggroc(roc_model2)
+ggroc(roc_model2) + labs(title ="ROC Curve")
 
-phat_test_model3 = predict(model3, val_hotels, type = "response")
-roc_model3 <- roc(val_hotels$children, phat_test_model3)
-ggroc(roc_model3)
 ```
 
+An ROC plots TPR vs. FPR. TPR is another name for sensitivity, while FPR is defined as 1-specificity, which explains why the numbers on the x-axis are flipped with 1 on the left and 0 on the right.
 
 
 
 ### Model Validation: Step 2
 
-```{r}
-k = 20
+In this step, we create 20 folds of `hotels_val`, so each fold will have about 250 bookings. We conduct 20-fold cross-validation on Baseline Model 2.
 
-folds <- rep(1:k, length.out = nrow(val_hotels))
-diags <- NULL
-pred_children <- c()
-actual_children <- c()
+For each fold, we will:
+  1. Predict whether each booking will have children on it
+  2. Sum up predicted probabilities for all bookings in the fold, giving an estimate of the expected number of bookings with children
+  3. Compare the "expected" number of bookings with children vs. the actual number of bookings with children in that fold
 
-i = 1
-for (i in 1:k) {
-  train <- val_hotels[folds != i, ]
-  test <- val_hotels[folds == i, ]
-  truth <- test$children
-  
-  fit = lm(formula = children ~ market_segment + customer_type + adults + 
-    is_repeated_guest + market_segment:adults + customer_type:adults + 
-    market_segment:is_repeated_guest + market_segment:customer_type, 
-    data = train)
-
-  probs <- predict(fit, newdata = test, type = "response")
-  probs <- ifelse(probs > 0.5, 1, 0)
-  diags <- rbind(diags, class_diag(probs, truth, fit, test, positive = 1))
-  pred_children <- append(pred_children, sum(probs))
-  actual_children <- append(actual_children, sum(truth))
-}
-cv_diags <- cbind(diags, pred_children, actual_children)
-cv_diags
-
-summarize_all(cv_diags, mean)
-```
-
-
-```{r}
+```{r warning=FALSE, include=FALSE}
 k = 20
 
 folds <- rep(1:k, length.out = nrow(val_hotels))
@@ -224,18 +243,21 @@ for (i in 1:k) {
   actual_children <- append(actual_children, sum(truth))
 }
 cv_diags <- cbind(diags, pred_children, actual_children)
-cv_diags
+```
 
+**The results for each fold is as follows:**
+
+```{r echo=FALSE}
+cv_diags
+```
+
+
+**Average of performance metrics across 20 folds:**
+
+```{r echo=FALSE}
 # average performance metrics across all folds
 summarize_all(cv_diags, mean)
 ```
 
+From the performance metrics, we see that accuracy stays above 90% on average, but PPV and AUC is relatively low. This means that this model could use further improvement to make better predictions.
 
-
-```{r}
-# refer to loadhou.R
-K_folds = 20
-
-# pipline 1:
-cv_val = val_hotels %>% mutate(fold_id = rep(1:K_folds, length=nrow(val_hotels)) %>% sample)
-```

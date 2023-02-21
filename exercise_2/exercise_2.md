@@ -11,13 +11,13 @@
     ## [1] 64724.24
 
 In a single linear model train/test split, we get an in sample RMSE of
-56,021.78 and an out of sample RMSE of 86,230.83.
+55327.96 and an out of sample RMSE of 64724.24.
 
     ##   result 
     ## 61303.02
 
 The average out of sample RMSE of 25 random linear model train/test
-splits is 66,760.79.
+splits is 61303.02.
 
 # KNN Model
 
@@ -26,25 +26,25 @@ splits is 66,760.79.
     ## [1] 120314.5
 
 In a single KNN regression model train/test split, we get an in sample
-RMSE of about 60,000 and an out of sample RMSE of about 120,000.
+RMSE of about 59,000 and an out of sample RMSE of about 120,000.
 
     ##   result 
     ## 120726.9
 
 The average out of sample RMSE of 25 random KNN regression train/test
-splits is 121,129.7.
+splits is 120,726.9.
 
 Linear Model vs KNN Regression Model Report: Linear Model vs KNN
 Regression Model: We estimate housing prices using a linear regression
 model and a KNN regression model. We find that in a single linear model
-train/test split, we get an in sample RMSE of 56,021.78 and an out of
-sample RMSE of 86,230.83. Using a single KNN regression model train/test
-split, we get an in sample RMSE of 58,122.03 and an out of sample RMSE
-of 117,355.1. We can see that in a single train/test split, the in
-sample RMSE of both models are similar (approximately 56 thousand and 58
+train/test split, we get an in sample RMSE of 55,327.96 and an out of
+sample RMSE of 64,724.24. Using a single KNN regression model train/test
+split, we get an in sample RMSE of 59,190.94 and an out of sample RMSE
+of 120,314.5. We can see that in a single train/test split, the in
+sample RMSE of both models are similar (approximately 55 thousand and 59
 thousand for the Linear and KNN models, respectively.) However, the out
-of sample RMSE of the models were notably different at approximately 86
-thousand and 117 thousand. So while both models performed similarly
+of sample RMSE of the models were notably different at approximately 64
+thousand and 120 thousand. So while both models performed similarly
 using in sample data, the linear model performed much better using the
 out of sample/testing data.
 
@@ -53,8 +53,8 @@ to the particular choice of data points that end up in the train/test
 split sample. To address this issue, we average 25 different/random
 train/test split estimates of out-of-sample RMSE. By doing this, we see
 that the average out of sample RMSE of 25 random linear model train/test
-splits is 66,760.79, and the average out of sample RMSE of 25 random KNN
-regression train/test splits is 121,129.7. These results confirm our
+splits is 61,303.02, and the average out of sample RMSE of 25 random KNN
+regression train/test splits is 120,726.9. These results confirm our
 findings from the single train/test splits. So we conclude that the
 linear regression model is better at achieving lower out-of-sample
 mean-squared error than the KNN model.

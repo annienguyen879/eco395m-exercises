@@ -16,14 +16,131 @@ library(foreach)
 library(modelr)
 library(wesanderson)
 library(pROC)
+data(SaratogaHouses)
 ```
 
 ## Saratoga house prices
 
+# Split into training and testing sets
+saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
+saratoga_train = training(saratoga_split)
+saratoga_test = testing(saratoga_split)
 
-```{r cars}
-summary(cars)
+# Linear Model
+```{r linear model}
+linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
+
+length(coef(linear_model) %>% round(0))
+
+# Predictions in sample
+rmse(linear_model, saratoga_train)
+
+# Predictions out of sample
+rmse(linear_model, saratoga_test)
 ```
+In a single linear model train/test split, we get an in sample RMSE of 56,021.78 and an out of sample RMSE of 86,230.83.
+
+```{r linear model simulation}
+linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
+
+rmse_simulation = do(25)*{
+  saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
+  saratoga_train = training(saratoga_split)
+  saratoga_test = testing(saratoga_split)
+
+  linear_model = update(linear_model, data=saratoga_train)
+  
+  rmse(linear_model, data=saratoga_test)}
+colMeans(rmse_simulation)
+
+```
+The average out of sample RMSE of 25 random linear model train/test splits is 66,760.79.
+
+# KNN Model
+```{r knn model, warning=FALSE}
+saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
+saratoga_train = training(saratoga_split)
+saratoga_test = testing(saratoga_split)
+
+# Standardize Variables
+x_train = model.matrix(~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir -1, data=saratoga_train)
+x_test = model.matrix(~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir -1, data=saratoga_test)
+
+price_train = saratoga_train$price
+price_test = saratoga_test$price
+
+scale_train = apply(x_train, 2, sd)
+x_tilde_train = scale(x_train, scale = scale_train)
+x_tilde_test = scale(x_test, scale = scale_train)
+
+# Convert matrices into dataframes
+x_tilde_train_dataframe = as.data.frame(x_tilde_train)
+x_tilde_test_dataframe = as.data.frame(x_tilde_test)
+y_train_dataframe = as.data.frame(price_train)
+y_test_dataframe = as.data.frame(price_test)
+
+# Combine x and y datasets
+training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
+testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
+
+# KNN model
+knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 25)
+
+# Predictions in sample
+rmse(knn_model, training_set)
+
+# Predictions out of sample
+rmse(knn_model, testing_set)
+
+```
+In a single KNN regression model train/test split, we get an in sample RMSE of 58,122.03 and an out of sample RMSE of 117,355.1.
+
+```{r knn model simulation, warning=FALSE}
+knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 25)
+
+rmse_simulation = do(25)*{
+  saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
+  saratoga_train = training(saratoga_split)
+  saratoga_test = testing(saratoga_split)
+  
+  x_train = model.matrix(~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir -1, data=saratoga_train)
+  x_test = model.matrix(~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir -1, data=saratoga_test)
+
+  price_train = saratoga_train$price
+  price_test = saratoga_test$price
+
+  scale_train = apply(x_train, 2, sd)
+  x_tilde_train = scale(x_train, scale = scale_train)
+  x_tilde_test = scale(x_test, scale = scale_train)
+
+  # Convert matrices into dataframes
+  x_tilde_train_dataframe = as.data.frame(x_tilde_train)
+  x_tilde_test_dataframe = as.data.frame(x_tilde_test)
+  y_train_dataframe = as.data.frame(price_train)
+  y_test_dataframe = as.data.frame(price_test)
+
+  # Combine x and y datasets
+  training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
+  testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
+
+  # KNN model
+  knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 20)
+  
+  rmse(knn_model, data=testing_set)}
+colMeans(rmse_simulation)
+
+```
+The average out of sample RMSE of 25 random KNN regression train/test splits is 121,129.7.
+
+
+Linear Model vs KNN Regression Model Report:
+Linear Model vs KNN Regression Model:
+We estimate housing prices using a linear regression model and a KNN regression model. We find that in a single linear model train/test split, we get an in sample RMSE of 56,021.78 and an out of sample RMSE of 86,230.83. Using a single KNN regression model train/test split, we get an in sample RMSE of 58,122.03 and an out of sample RMSE of 117,355.1. We can see that in a single train/test split, the in sample RMSE of both models are similar (approximately 56 thousand and 58 thousand for the Linear and KNN models, respectively.) However, the out of sample RMSE of the models were notably different at approximately 86 thousand and 117 thousand. So while both models performed similarly using in sample data, the linear model performed much better using the out of sample/testing data.
+
+When measuring out-of-sample performance, there is random variation due to the particular choice of data points that end up in the train/test split sample. To address this issue, we average 25 different/random train/test split estimates of out-of-sample RMSE. By doing this, we see that the average out of sample RMSE of 25 random linear model train/test splits is 66,760.79, and the average out of sample RMSE of 25 random KNN regression train/test splits is 121,129.7. These results confirm our findings from the single train/test splits. So we conclude that the linear regression model is better at achieving lower out-of-sample mean-squared error than the KNN model.
+
+However, we note this analysis relied on the best models I could produce using the data. There may exist a KNN model that outperforms the linear model I produced. However, looking at the out of sample RMSE using single and averages RMSE, this seems unlikely to be the case.
+
 
 ## Classification and retrospective sampling
 What do you notice about the history variable vis-a-vis predicting defaults? What do you think is going on here? In light of what you see here, do you think this data set is appropriate for building a predictive model of defaults, if the purpose of the model is to screen prospective borrowers to classify them into "high" versus "low" probability of default? Why or why not---and if not, would you recommend any changes to the bank's sampling scheme?

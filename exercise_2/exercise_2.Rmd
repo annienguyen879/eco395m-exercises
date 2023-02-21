@@ -2,9 +2,7 @@
 title: "Exercises 2"
 author: "Soo Jee, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
-output:
-  html_document:
-    df_print: paged
+output: md_document
 ---
 
 ```{r setup, include=FALSE}

@@ -157,7 +157,7 @@ To determine the optimal value of k in the KNN model, we perform 25
 separate train/test split RMSE analysis using for each k values. We then
 calculate the mean RMSE of the 25 samples and then compare the results
 across the different k value samples. Specifically, we test the values
-k=2,3,5,10,15,20,25,35,40,50 and find ~130k, ~128k, ~126k, ~123k, ~121k,
+k=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k,
 ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We
 find that k=35 resulted in the lowest RMSE for our model.
 

@@ -23,30 +23,30 @@ will perform on data it has not seen before.
 
 ## Linear Model
 
-    ## [1] 57443.03
+    ## [1] 58135.17
 
-    ## [1] 56681
+    ## [1] 53506.15
 
 When we evaluate a single linear model train/test split, we get an
 in-sample RMSE of ~55k and an out-of-sample RMSE of ~60k.
 
-    ##   result 
-    ## 62816.14
+    ##  result 
+    ## 65426.8
 
 The average out-of-sample RMSE for 25 random linear model train/test
 splits is ~60k
 
 ## KNN Model
 
-    ## [1] 61373.36
+    ## [1] 61243.09
 
-    ## [1] 117127.4
+    ## [1] 116479.9
 
 In a single KNN regression model train/test split, we get an in-sample
 RMSE of ~60k and an out-of-sample RMSE of 120k.
 
     ##   result 
-    ## 118259.5
+    ## 118448.9
 
 The average out-of-sample RMSE for 25 random KNN regression train/test
 splits is ~114k.
@@ -110,38 +110,38 @@ transformations and interactions between some of those variables.
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -241815  -33782   -4236   27922  463096 
+    ## -233212  -35378   -4885   28277  449432 
     ## 
     ## Coefficients:
     ##                          Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             1.293e+05  2.037e+04   6.348 2.96e-10 ***
-    ## lotSize                 8.264e+03  2.946e+03   2.805  0.00510 ** 
-    ## poly(age, 3)1          -4.873e+05  2.406e+05  -2.025  0.04304 *  
-    ## poly(age, 3)2           2.594e+05  6.611e+04   3.924 9.14e-05 ***
-    ## poly(age, 3)3          -3.095e+05  6.149e+04  -5.032 5.49e-07 ***
-    ## poly(landValue, 3)1     1.189e+06  6.991e+04  17.010  < 2e-16 ***
-    ## poly(landValue, 3)2    -1.219e+05  6.248e+04  -1.951  0.05127 .  
-    ## poly(landValue, 3)3     9.798e+04  6.134e+04   1.597  0.11043    
-    ## livingArea              6.603e+01  5.080e+00  12.997  < 2e-16 ***
-    ## bedrooms               -6.861e+03  2.873e+03  -2.388  0.01708 *  
-    ## bathrooms               2.055e+04  3.841e+03   5.349 1.03e-07 ***
-    ## rooms                   3.074e+03  1.071e+03   2.869  0.00419 ** 
-    ## heatinghot water/steam -6.240e+03  4.692e+03  -1.330  0.18381    
-    ## heatingelectric         7.169e+02  1.446e+04   0.050  0.96046    
-    ## fuelelectric           -7.559e+03  1.417e+04  -0.533  0.59385    
-    ## fueloil                -2.340e+03  5.618e+03  -0.417  0.67707    
-    ## sewerpublic/commercial -4.693e+03  4.115e+03  -1.140  0.25429    
-    ## sewernone              -1.329e+04  1.865e+04  -0.713  0.47611    
-    ## waterfrontNo           -1.229e+05  1.591e+04  -7.721 2.22e-14 ***
-    ## newConstructionNo       5.295e+04  8.205e+03   6.454 1.51e-10 ***
-    ## centralAirNo           -1.031e+04  3.807e+03  -2.707  0.00687 ** 
-    ## pctCollege:age          5.477e+00  3.957e+00   1.384  0.16658    
+    ## (Intercept)             1.191e+05  2.253e+04   5.287 1.45e-07 ***
+    ## lotSize                 6.548e+03  2.458e+03   2.664 0.007817 ** 
+    ## poly(age, 3)1          -6.487e+05  2.473e+05  -2.623 0.008804 ** 
+    ## poly(age, 3)2           2.437e+05  6.710e+04   3.632 0.000292 ***
+    ## poly(age, 3)3          -2.949e+05  6.304e+04  -4.678 3.19e-06 ***
+    ## poly(landValue, 3)1     1.135e+06  7.081e+04  16.028  < 2e-16 ***
+    ## poly(landValue, 3)2    -1.432e+05  6.377e+04  -2.245 0.024913 *  
+    ## poly(landValue, 3)3    -1.880e+05  6.328e+04  -2.971 0.003016 ** 
+    ## livingArea              6.866e+01  5.094e+00  13.479  < 2e-16 ***
+    ## bedrooms               -6.908e+03  2.930e+03  -2.358 0.018528 *  
+    ## bathrooms               1.892e+04  3.841e+03   4.925 9.46e-07 ***
+    ## rooms                   3.398e+03  1.098e+03   3.095 0.002006 ** 
+    ## heatinghot water/steam -4.693e+03  4.804e+03  -0.977 0.328769    
+    ## heatingelectric        -2.051e+03  1.430e+04  -0.143 0.886020    
+    ## fuelelectric           -4.004e+03  1.407e+04  -0.285 0.775995    
+    ## fueloil                -5.235e+03  5.794e+03  -0.904 0.366382    
+    ## sewerpublic/commercial -5.363e+03  4.228e+03  -1.268 0.204897    
+    ## sewernone              -4.420e+04  2.259e+04  -1.956 0.050624 .  
+    ## waterfrontNo           -1.222e+05  1.825e+04  -6.699 3.06e-11 ***
+    ## newConstructionNo       5.311e+04  8.416e+03   6.310 3.76e-10 ***
+    ## centralAirNo           -7.157e+03  3.858e+03  -1.855 0.063792 .  
+    ## pctCollege:age          8.488e+00  4.187e+00   2.027 0.042862 *  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 57630 on 1360 degrees of freedom
-    ## Multiple R-squared:  0.665,  Adjusted R-squared:  0.6599 
-    ## F-statistic: 128.6 on 21 and 1360 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 58670 on 1360 degrees of freedom
+    ## Multiple R-squared:  0.6479, Adjusted R-squared:  0.6425 
+    ## F-statistic: 119.2 on 21 and 1360 DF,  p-value: < 2.2e-16
 
 ### Appendix 3: KNN Model
 
@@ -298,7 +298,7 @@ out-of-sample performance of the following:
 #### Baseline Model 1:
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9233 NaN 3.0913 0.6757
+    ## Metrics 0.9213 NaN 3.0933 0.6829
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -308,8 +308,8 @@ this is not the best model.
 
 #### Baseline Model 2:
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9382 0.7055 4.0053 0.8707
+    ##            acc    ppv  rmse_   auc
+    ## Metrics 0.9387 0.7378 4.0131 0.867
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -328,8 +328,8 @@ out-of-sample performance. Then, we built a model using forward
 selection. We, again, use out-of-sample performance to assess the
 models.
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9382 0.6903 0.2292 0.8688
+    ##            acc   ppv  rmse_   auc
+    ## Metrics 0.9381 0.708 0.2313 0.863
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -352,7 +352,7 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:is_repeated_guest`
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9233 NaN 0.2621 0.6848
+    ## Metrics 0.9213 NaN 0.2646 0.6912
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear

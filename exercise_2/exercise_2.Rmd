@@ -535,8 +535,7 @@ credit_summary = credit %>%
 ##Bar plot for default probability by credit history
 dt <- ggplot(credit_summary, aes(history, `mean(Default)`), fill = history) + 
   geom_bar(stat = "identity", position = "dodge") +
-  labs(y = "Probability", x = "Loan default", title ="Default probability by credit
-       history", 
+  labs(y = "Probability", x = "Loan default", title ="Default probability by credit history", 
        caption = "0 indicates no default, 1 indicates default")  +
   theme_bw() + 
   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))

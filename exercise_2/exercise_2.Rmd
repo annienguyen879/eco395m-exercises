@@ -178,7 +178,7 @@ summary(appendix)
 The KNN model predicts a particular house price by using the average of K-nearest prices. For example, if K = 10, then the model will estimate a house price by using the average of its 10 closest data points. In our case, the optimal value of K is 25 since we have the lowest RMSE at that point. 
 
 ### Appendix 4: Optimal K value
-To determine the optimal value of k in the KNN model, we perform 25 separate train/test split RMSE analysis using for each k values. We then calculate the mean RMSE of the 25 samples and then compare the results across the different k value samples. Specifically, we test the values k=2,3,5,10,15,20,25,35,40,50 and find ~130k, ~128k, ~126k, ~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We find that k=35 resulted in the lowest RMSE for our model. 
+To determine the optimal value of k in the KNN model, we perform 25 separate train/test split RMSE analysis using for each k values. We then calculate the mean RMSE of the 25 samples and then compare the results across the different k value samples. Specifically, we test the values k=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We find that k=35 resulted in the lowest RMSE for our model. 
 
 ```{r knn model simulation 2, warning=FALSE, results='hide',echo=FALSE}
 rmse_out=foreach(i=1:25, .combine='c') %do%{

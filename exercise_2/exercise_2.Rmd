@@ -23,12 +23,9 @@ data(SaratogaHouses)
 ```
 
 ## Saratoga house prices
-To know the appropriate taxation levels, we first need to ensure that we get our predicted market values of properties right. We conduct a "horse race" that is, compare the performance of two models on the Saratoga house prices. The dataset contains information such as lot size, age, bedrooms and more about 1728 houses in Saratoga, New York from 2006[^1]. 
+To know the appropriate taxation levels, we first need to ensure that we get our predicted market values of properties right. We conduct a "horse race" that is, compare the performance of two models on the Saratoga house prices. The dataset contains information such as lot size, age, bedrooms and more about 1728 houses in Saratoga, New York from 2006. 
 
-We evaluate two models for predicting house prices: a linear model, and a K-nearest neighbour (KNN) regression model[^2]. For both models, we split our data into training and test sets with an 80-20 ratio. To test models, we compare their Root Mean Squared Error (RMSE). RMSE measures how large are the errors made by the model on the data, on average. Higher RMSE indicates poor predictive performance.
-
-[^1]: Appendix 1 contains the description of the dataset. 
-[^2]: Appendix 2 and 3 explains these models in detail. 
+We evaluate two models for predicting house prices: a linear model, and a K-nearest neighbour (KNN) regression model[^2]. For both models, we split our data into training and test sets with an 80-20 ratio. To test models, we compare their Root Mean Squared Error (RMSE). RMSE measures how large are the errors made by the model on the data, on average. Higher RMSE indicates poor predictive performance. There is further detail in the Appendices on the dataset and the models. 
 
 There are two types of RMSE that we will looking at here: in-sample and out-of-sample. In-sample RMSE is when we test the model on the data it has already been trained on. Out-of-sample RMSE is when we run the model on test data that we split from the original dataset earlier. Out-of-sample RMSE is crucial because it tells us how well the model will perform on data it has not seen before.   
 
@@ -44,7 +41,7 @@ saratoga_test = testing(saratoga_split)
 ```{r linear model, echo=FALSE}
 linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
 
-length(coef(linear_model) %>% round(0))
+len = length(coef(linear_model) %>% round(0))
 
 # Predictions in sample
 rmse(linear_model, saratoga_train)

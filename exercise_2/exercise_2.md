@@ -4,14 +4,15 @@ To know the appropriate taxation levels, we first need to ensure that we
 get our predicted market values of properties right. We conduct a “horse
 race” that is, compare the performance of two models on the Saratoga
 house prices. The dataset contains information such as lot size, age,
-bedrooms and more about 1728 houses in Saratoga, New York from 2006[1].
+bedrooms and more about 1728 houses in Saratoga, New York from 2006.
 
 We evaluate two models for predicting house prices: a linear model, and
-a K-nearest neighbour (KNN) regression model[2]. For both models, we
-split our data into training and test sets with an 80-20 ratio. To test
+a K-nearest neighbour (KNN) regression model. For both models, we split
+our data into training and test sets with an 80-20 ratio. To test
 models, we compare their Root Mean Squared Error (RMSE). RMSE measures
 how large are the errors made by the model on the data, on average.
-Higher RMSE indicates poor predictive performance.
+Higher RMSE indicates poor predictive performance. There is further
+detail in the Appendices on the dataset and the models.
 
 There are two types of RMSE that we will looking at here: in-sample and
 out-of-sample. In-sample RMSE is when we test the model on the data it
@@ -22,32 +23,30 @@ will perform on data it has not seen before.
 
 ## Linear Model
 
-    ## [1] 22
+    ## [1] 56327.45
 
-    ## [1] 57044.23
-
-    ## [1] 58040.93
+    ## [1] 60651.57
 
 When we evaluate a single linear model train/test split, we get an
 in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614.
 
     ##   result 
-    ## 61107.08
+    ## 61279.43
 
 The average out-of-sample RMSE for 25 random linear model train/test
 splits is 64,567.
 
 ## KNN Model
 
-    ## [1] 59033.77
+    ## [1] 60122.73
 
-    ## [1] 119654.9
+    ## [1] 120111.8
 
 In a single KNN regression model train/test split, we get an in-sample
 RMSE of about 60,000 and an out-of-sample RMSE of about 119,000.
 
     ##   result 
-    ## 120187.6
+    ## 121029.1
 
 The average out-of-sample RMSE for 25 random KNN regression train/test
 splits is 121,277.
@@ -112,38 +111,38 @@ transformations and interactions between some of those variables.
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -238515  -34524   -4151   27976  465455 
+    ## -236489  -35176   -3494   28234  453600 
     ## 
     ## Coefficients:
     ##                          Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             1.389e+05  2.200e+04   6.314 3.68e-10 ***
-    ## lotSize                 7.694e+03  2.284e+03   3.369 0.000777 ***
-    ## poly(age, 3)1          -5.656e+05  2.340e+05  -2.417 0.015763 *  
-    ## poly(age, 3)2           1.867e+05  6.593e+04   2.832 0.004689 ** 
-    ## poly(age, 3)3          -2.961e+05  6.087e+04  -4.864 1.28e-06 ***
-    ## poly(landValue, 3)1     1.168e+06  6.928e+04  16.862  < 2e-16 ***
-    ## poly(landValue, 3)2    -1.114e+05  6.194e+04  -1.799 0.072204 .  
-    ## poly(landValue, 3)3     5.229e+04  6.087e+04   0.859 0.390518    
-    ## livingArea              7.035e+01  4.945e+00  14.225  < 2e-16 ***
-    ## bedrooms               -6.610e+03  2.889e+03  -2.288 0.022301 *  
-    ## bathrooms               1.951e+04  3.710e+03   5.259 1.68e-07 ***
-    ## rooms                   3.038e+03  1.055e+03   2.879 0.004046 ** 
-    ## heatinghot water/steam -9.341e+03  4.627e+03  -2.019 0.043698 *  
-    ## heatingelectric        -2.434e+03  1.354e+04  -0.180 0.857324    
-    ## fuelelectric           -2.196e+03  1.336e+04  -0.164 0.869478    
-    ## fueloil                -5.432e+02  5.545e+03  -0.098 0.921988    
-    ## sewerpublic/commercial -5.239e+03  4.040e+03  -1.297 0.194932    
-    ## sewernone               6.711e+03  1.938e+04   0.346 0.729210    
-    ## waterfrontNo           -1.425e+05  1.767e+04  -8.066 1.58e-15 ***
-    ## newConstructionNo       5.539e+04  8.257e+03   6.708 2.88e-11 ***
-    ## centralAirNo           -8.874e+03  3.751e+03  -2.366 0.018120 *  
-    ## pctCollege:age          6.033e+00  3.899e+00   1.547 0.122088    
+    ## (Intercept)             1.240e+05  2.169e+04   5.717 1.33e-08 ***
+    ## lotSize                 6.855e+03  3.049e+03   2.248  0.02471 *  
+    ## poly(age, 3)1          -6.262e+05  2.323e+05  -2.696  0.00711 ** 
+    ## poly(age, 3)2           1.305e+05  6.673e+04   1.956  0.05071 .  
+    ## poly(age, 3)3          -2.710e+05  6.214e+04  -4.362 1.39e-05 ***
+    ## poly(landValue, 3)1     1.268e+06  7.109e+04  17.834  < 2e-16 ***
+    ## poly(landValue, 3)2    -1.514e+05  6.305e+04  -2.401  0.01647 *  
+    ## poly(landValue, 3)3     1.009e+05  6.217e+04   1.623  0.10489    
+    ## livingArea              6.730e+01  5.049e+00  13.329  < 2e-16 ***
+    ## bedrooms               -8.427e+03  2.918e+03  -2.888  0.00394 ** 
+    ## bathrooms               2.036e+04  3.848e+03   5.293 1.40e-07 ***
+    ## rooms                   2.966e+03  1.069e+03   2.775  0.00560 ** 
+    ## heatinghot water/steam -5.966e+03  4.726e+03  -1.262  0.20702    
+    ## heatingelectric        -1.530e+02  1.260e+04  -0.012  0.99032    
+    ## fuelelectric           -7.203e+03  1.237e+04  -0.582  0.56054    
+    ## fueloil                -1.088e+03  5.613e+03  -0.194  0.84628    
+    ## sewerpublic/commercial -6.054e+03  4.165e+03  -1.454  0.14629    
+    ## sewernone              -1.046e+04  1.728e+04  -0.605  0.54505    
+    ## waterfrontNo           -1.170e+05  1.730e+04  -6.762 2.01e-11 ***
+    ## newConstructionNo       5.250e+04  8.453e+03   6.211 7.00e-10 ***
+    ## centralAirNo           -9.754e+03  3.868e+03  -2.522  0.01179 *  
+    ## pctCollege:age          7.837e+00  3.822e+00   2.051  0.04049 *  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 57030 on 1360 degrees of freedom
-    ## Multiple R-squared:  0.6741, Adjusted R-squared:  0.6691 
-    ## F-statistic:   134 on 21 and 1360 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 58190 on 1360 degrees of freedom
+    ## Multiple R-squared:  0.6619, Adjusted R-squared:  0.6567 
+    ## F-statistic: 126.8 on 21 and 1360 DF,  p-value: < 2.2e-16
 
 ### Appendix 3: KNN Model
 
@@ -289,7 +288,7 @@ out-of-sample performance of the following:
 #### Baseline Model 1:
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9216 NaN 3.0656 0.6943
+    ## Metrics 0.9202 NaN 3.1326 0.6703
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -300,7 +299,7 @@ this is not the best model.
 #### Baseline Model 2:
 
     ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9401 0.7585 3.8969 0.8744
+    ## Metrics 0.9343 0.6873 3.9612 0.8581
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -319,8 +318,8 @@ out-of-sample performance. Then, we built a model using forward
 selection. We, again, use out-of-sample performance to assess the
 models.
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9387 0.7305 0.2281 0.8707
+    ##            acc    ppv rmse_    auc
+    ## Metrics 0.9333 0.6578 0.236 0.8542
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -343,7 +342,7 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:is_repeated_guest`
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9216 NaN 0.2641 0.7023
+    ## Metrics 0.9202 NaN 0.2668 0.6785
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear
@@ -408,7 +407,3 @@ vs. the actual number of bookings with children in that fold
 From the performance metrics, we see that accuracy stays above 90% on
 average, but PPV and AUC is relatively low. This means that this model
 could use further improvement to make better predictions.
-
-[1] Appendix 1 contains the description of the dataset.
-
-[2] Appendix 2 and 3 explains these models in detail.

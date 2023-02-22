@@ -23,33 +23,33 @@ will perform on data it has not seen before.
 
 ## Linear Model
 
-    ## [1] 58054.81
+    ## [1] 55107.82
 
-    ## [1] 53567.76
+    ## [1] 64969.21
 
 When we evaluate a single linear model train/test split, we get an
-in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614.
+in-sample RMSE of ~55k and an out-of-sample RMSE of ~60k.
 
     ##   result 
-    ## 62838.42
+    ## 60965.56
 
 The average out-of-sample RMSE for 25 random linear model train/test
-splits is 64,567.
+splits is ~60k
 
 ## KNN Model
 
-    ## [1] 60266.1
+    ## [1] 62262.54
 
-    ## [1] 121489
+    ## [1] 119261
 
 In a single KNN regression model train/test split, we get an in-sample
-RMSE of about 60,000 and an out-of-sample RMSE of about 119,000.
+RMSE of ~60k and an out-of-sample RMSE of 120k.
 
     ##   result 
-    ## 120076.7
+    ## 117400.5
 
 The average out-of-sample RMSE for 25 random KNN regression train/test
-splits is 121,277.
+splits is ~114k.
 
 ## What does it mean for predicting house prices?
 
@@ -57,16 +57,15 @@ Overall, the linear model is the most well-suited for predicting house
 prices.
 
 We find that in a single linear model train/test split, we get an
-in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614. We
-standardize our variables before applying KNN and find using a single
-KNN regression model train/test split, results in an in-sample RMSE of
-60,015 and an out-of-sample RMSE of 119,246. We can see that in a single
-train/test split, the in-sample RMSE of both models are similar
-(approximately 58,000 and 60,000 for the Linear and KNN models,
-respectively).
+in-sample RMSE of ~55k and an out-of-sample RMSE of ~60k. We standardize
+our variables before applying KNN and find using a single KNN regression
+model train/test split, results in an in-sample RMSE of ~60k and an
+out-of-sample RMSE of ~120k. We can see that in a single train/test
+split, the in-sample RMSE of both models are similar at approximately
+50k and 60k for the Linear and KNN models, respectively.
 
 However, the out-of-sample RMSE of the models were notably different at
-approximately 56,000 and 119,000. So while both models performed
+approximately at ~60k and ~114k. So while both models performed
 similarly using in-sample data, the linear model performed much better
 using the out-of-sample/testing data.
 
@@ -75,8 +74,8 @@ to the particular choice of data points that end up in the train/test
 split sample. To address this issue, we average 25 different/random
 train/test split estimates of out-of-sample RMSE. By doing this, we see
 that the average out-of-sample RMSE of 25 random linear model train/test
-splits is 64,567, and the average out-of-sample RMSE of 25 random KNN
-regression train/test splits is 121,277. These results confirm our
+splits is ~60k, and the average out-of-sample RMSE of 25 random KNN
+regression train/test splits is ~114k. These results confirm our
 findings from the single train/test splits. So, we conclude that the
 linear regression model is better at achieving lower out-of-sample
 mean-squared error than the KNN model.
@@ -111,38 +110,38 @@ transformations and interactions between some of those variables.
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -242846  -33850   -3646   26615  458490 
+    ## -244606  -35548   -4512   28709  464281 
     ## 
     ## Coefficients:
     ##                          Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             1.377e+05  2.136e+04   6.447 1.58e-10 ***
-    ## lotSize                 7.563e+03  2.363e+03   3.201  0.00140 ** 
-    ## poly(age, 3)1          -4.303e+05  2.434e+05  -1.768  0.07730 .  
-    ## poly(age, 3)2           1.993e+05  6.485e+04   3.073  0.00216 ** 
-    ## poly(age, 3)3          -3.157e+05  6.030e+04  -5.235 1.90e-07 ***
-    ## poly(landValue, 3)1     1.214e+06  6.915e+04  17.562  < 2e-16 ***
-    ## poly(landValue, 3)2    -1.240e+05  6.132e+04  -2.023  0.04331 *  
-    ## poly(landValue, 3)3     7.678e+04  6.062e+04   1.267  0.20551    
-    ## livingArea              6.424e+01  4.957e+00  12.958  < 2e-16 ***
-    ## bedrooms               -8.468e+03  2.821e+03  -3.002  0.00273 ** 
-    ## bathrooms               2.203e+04  3.713e+03   5.933 3.76e-09 ***
-    ## rooms                   2.688e+03  1.057e+03   2.542  0.01113 *  
-    ## heatinghot water/steam -7.070e+03  4.616e+03  -1.532  0.12587    
-    ## heatingelectric        -3.918e+03  1.347e+04  -0.291  0.77129    
-    ## fuelelectric           -5.855e+03  1.322e+04  -0.443  0.65798    
-    ## fueloil                -2.184e+03  5.394e+03  -0.405  0.68556    
-    ## sewerpublic/commercial -6.196e+03  4.031e+03  -1.537  0.12446    
-    ## sewernone              -1.443e+04  1.752e+04  -0.824  0.41037    
-    ## waterfrontNo           -1.198e+05  1.766e+04  -6.786 1.72e-11 ***
-    ## newConstructionNo       5.318e+04  8.299e+03   6.408 2.02e-10 ***
-    ## centralAirNo           -1.059e+04  3.732e+03  -2.837  0.00462 ** 
-    ## pctCollege:age          3.441e+00  3.951e+00   0.871  0.38398    
+    ## (Intercept)             1.319e+05  2.141e+04   6.160 9.57e-10 ***
+    ## lotSize                 6.702e+03  2.403e+03   2.790  0.00535 ** 
+    ## poly(age, 3)1          -4.889e+05  2.330e+05  -2.098  0.03608 *  
+    ## poly(age, 3)2           1.910e+05  6.643e+04   2.875  0.00410 ** 
+    ## poly(age, 3)3          -3.147e+05  6.134e+04  -5.130 3.32e-07 ***
+    ## poly(landValue, 3)1     1.088e+06  6.927e+04  15.703  < 2e-16 ***
+    ## poly(landValue, 3)2    -1.371e+05  6.199e+04  -2.212  0.02715 *  
+    ## poly(landValue, 3)3     1.278e+05  6.099e+04   2.095  0.03633 *  
+    ## livingArea              6.828e+01  4.942e+00  13.816  < 2e-16 ***
+    ## bedrooms               -6.715e+03  2.905e+03  -2.311  0.02098 *  
+    ## bathrooms               2.172e+04  3.692e+03   5.884 5.05e-09 ***
+    ## rooms                   2.925e+03  1.054e+03   2.775  0.00559 ** 
+    ## heatinghot water/steam -9.126e+03  4.650e+03  -1.962  0.04992 *  
+    ## heatingelectric        -3.810e+03  1.268e+04  -0.301  0.76384    
+    ## fuelelectric           -7.419e+03  1.247e+04  -0.595  0.55192    
+    ## fueloil                -3.936e+03  5.507e+03  -0.715  0.47496    
+    ## sewerpublic/commercial -3.206e+03  4.043e+03  -0.793  0.42788    
+    ## sewernone               1.286e+03  2.060e+04   0.062  0.95023    
+    ## waterfrontNo           -1.313e+05  1.707e+04  -7.692 2.77e-14 ***
+    ## newConstructionNo       5.393e+04  8.398e+03   6.421 1.87e-10 ***
+    ## centralAirNo           -1.097e+04  3.740e+03  -2.932  0.00343 ** 
+    ## pctCollege:age          5.274e+00  3.920e+00   1.345  0.17873    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 56530 on 1360 degrees of freedom
-    ## Multiple R-squared:  0.6693, Adjusted R-squared:  0.6642 
-    ## F-statistic: 131.1 on 21 and 1360 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 57190 on 1360 degrees of freedom
+    ## Multiple R-squared:  0.6642, Adjusted R-squared:  0.659 
+    ## F-statistic: 128.1 on 21 and 1360 DF,  p-value: < 2.2e-16
 
 ### Appendix 3: KNN Model
 
@@ -151,6 +150,16 @@ K-nearest prices. For example, if K = 10, then the model will estimate a
 house price by using the average of its 10 closest data points. In our
 case, the optimal value of K is 25 since we have the lowest RMSE at that
 point.
+
+### Appendix 4: Optimal K value
+
+To determine the optimal value of k in the KNN model, we perform 25
+separate train/test split RMSE analysis using for each k values. We then
+calculate the mean RMSE of the 25 samples and then compare the results
+across the different k value samples. Specifically, we test the values
+k=2,3,5,10,15,20,25,35,40,50 and find ~130k, ~128k, ~126k, ~123k, ~121k,
+~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We
+find that k=35 resulted in the lowest RMSE for our model.
 
 ## Classification and retrospective sampling
 
@@ -171,7 +180,7 @@ This seems counter intuitive since credit history indicates how well a
 borrower has repayed their debts. A good credit history should have a
 lower default probability.
 
-![](exercise_2_files/figure-markdown_strict/pressure-1.png)
+![](HW2_files/figure-markdown_strict/pressure-1.png)
 
 Nevertheless, if we build a logistic regression model around this
 dataset, regressing Default on duration, amount, installment, age,
@@ -218,12 +227,12 @@ credit history, purpose, and foreign, we get the following results.
     ## purposegoods/repair       purposenewcar      purposeusedcar       foreigngerman 
     ##                0.10                0.85               -0.80               -1.26
 
-If someone has a poor credit history, then the odds of them defaulting
-on a loan is multiplied by *e*<sup>−1.11</sup> ≈ 0.33. Similarly, if
-someone has a terrible credit history, then the odds of them defaulting
-on a loan is multiplied by *e*<sup>−1.88</sup> ≈ 0.17. These results
-still are the opposite of what I expected. Odds of someone defaulting on
-a loan should rise if they have a poor or terrible credit history.
+If someone has a poor credit history, then the chance of them defaulting
+on a loan goes down by 1.11. Similarly, if someone has a terrible credit
+history, then the odds of them defaulting on a loan goes down by 1.18.
+These results still are the opposite of what I expected. Odds of someone
+defaulting on a loan should rise if they have a poor or terrible credit
+history.
 
 ### What is the bigger problem at play?
 
@@ -234,28 +243,24 @@ default with similar sets of loans that had not defaulted. This means
 that they oversampled defaults relative to a random sample of loans in
 the bank’s overall portfolio.
 
-Oversampling is used to correct what is known as “class imbalance”. In
-this case, it refers to the low number of defaults in the bank
-portfolio. But this method can result in biased estimates if the same
-data point is used multiple times, leading to overfitting. Here, since
-we matched each default with a similar set of non-defaulted loans, we
-ended up with a data distribution that may not appropriately represent
-reality. We also do not have enough information on what parameters the
-bank used to match the loans. Together, this resulted in unreliable
-estimates since we can no longer draw reasonable conclusions about how a
-particular credit history may affect the default probability of an
-individual. This is why we are getting a negative coefficient for poor
-and terrible credit history while predicting loan defaults.
+In a simpler way, imagine if we initially had a sample of 100 loans, of
+which 10 loans were defaulted. By oversampling defaults, instead of
+having a low default probability of 1/10, we now have a much higher
+probability. This method results in unreliable estimates since we can no
+longer draw reasonable conclusions about how a particular credit history
+may affect the default probability of an individual. This is why we are
+getting a negative coefficient for poor and terrible credit history
+while predicting loan defaults.
 
 ### How do we go ahead from here?
 
 This dataset is not appropriate for building a predictive model of
 defaults. The case-control sample places a defaulted loan in a bag of
 loans of similar value. But we do not know if the bank considered other
-features such as credit history, age, and savings. It is also not
-representative of the true data distribution. This means that we cannot
-draw useful conclusions about someone particular to their credit history
-and classify them into “high” versus “low” probability of default.
+features such as credit history, age, and savings. This means that we
+cannot draw useful conclusions about someone particular to their credit
+history and classify them into “high” versus “low” probability of
+default.
 
 Instead of following this methodology, the bank can accord weights to
 the default loans in the sample. This will allow for their adequate
@@ -292,7 +297,7 @@ out-of-sample performance of the following:
 #### Baseline Model 1:
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9177 NaN 3.1038 0.6854
+    ## Metrics 0.9182 NaN 3.1384 0.6853
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -302,8 +307,8 @@ this is not the best model.
 
 #### Baseline Model 2:
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9349 0.7171 4.0105 0.8709
+    ##           acc    ppv  rmse_    auc
+    ## Metrics 0.936 0.7312 3.9894 0.8666
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -323,7 +328,7 @@ selection. We, again, use out-of-sample performance to assess the
 models.
 
     ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9358 0.7106 0.2342 0.8698
+    ## Metrics 0.9353 0.7163 0.2344 0.8652
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -345,8 +350,8 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:adults`, `customer_type:adults`, and
 `market_segment:is_repeated_guest`
 
-    ##            acc ppv  rmse_ auc
-    ## Metrics 0.9174   0 0.2699 0.7
+    ##            acc ppv  rmse_    auc
+    ## Metrics 0.9181   0 0.2695 0.6907
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear
@@ -361,7 +366,7 @@ values, the logistic model is still preferred. Therefore, Baseline Model
 The following is an ROC plot for Baseline Model 2, using the
 `hotels_val.csv` data.
 
-![](exercise_2_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](HW2_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 An ROC plots TPR vs. FPR. TPR is another name for sensitivity, while FPR
 is defined as 1-specificity, which explains why the numbers on the

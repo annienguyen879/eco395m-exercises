@@ -18,19 +18,29 @@ library(wesanderson)
 library(pROC)
 library(mosaicData)
 library(mosaic)
+library(Hmisc)
 data(SaratogaHouses)
 ```
 
 ## Saratoga house prices
+To know the appropriate taxation levels, we first need to ensure that we get our predicted market values of properties right. We conduct a "horse race" that is, compare the performance of two models on the Saratoga house prices. The dataset contains information such as lot size, age, bedrooms and more about 1728 houses in Saratoga, New York from 2006[^1]. 
 
-# Split into training and testing sets
+We evaluate two models for predicting house prices: a linear model, and a K-nearest neighbour (KNN) regression model[^2]. For both models, we split our data into training and test sets with an 80-20 ratio. To test models, we compare their Root Mean Squared Error (RMSE). RMSE measures how large are the errors made by the model on the data, on average. Higher RMSE indicates poor predictive performance.
+
+[^1]: Appendix 1 contains the description of the dataset. 
+[^2]: Appendix 2 and 3 explains these models in detail. 
+
+There are two types of RMSE that we will looking at here: in-sample and out-of-sample. In-sample RMSE is when we test the model on the data it has already been trained on. Out-of-sample RMSE is when we run the model on test data that we split from the original dataset earlier. Out-of-sample RMSE is crucial because it tells us how well the model will perform on data it has not seen before.   
+
 ```{r echo=FALSE}
+# Split into training and testing sets
+
 saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
 saratoga_train = training(saratoga_split)
 saratoga_test = testing(saratoga_split)
 ```
 
-# Linear Model
+## Linear Model
 ```{r linear model, echo=FALSE}
 linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
 
@@ -42,7 +52,7 @@ rmse(linear_model, saratoga_train)
 # Predictions out of sample
 rmse(linear_model, saratoga_test)
 ```
-In a single linear model train/test split, we get an in sample RMSE of 57602.82 and an out of sample RMSE of 55614.14.
+When we evaluate a single linear model train/test split, we get an in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614.
 
 ```{r linear model simulation, echo=FALSE}
 linear_model = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
@@ -58,9 +68,9 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 
 ```
-The average out of sample RMSE of 25 random linear model train/test splits is 64566.64.
+The average out-of-sample RMSE for 25 random linear model train/test splits is 64,567.
 
-# KNN Model
+## KNN Model
 ```{r knn model, echo=FALSE, warning=FALSE}
 saratoga_split = initial_split(SaratogaHouses, prop = 0.8)
 saratoga_train = training(saratoga_split)
@@ -97,7 +107,7 @@ rmse(knn_model, training_set)
 rmse(knn_model, testing_set)
 
 ```
-In a single KNN regression model train/test split, we get an in sample RMSE of about 60,000 and an out of sample RMSE of about 119,000.
+In a single KNN regression model train/test split, we get an in-sample RMSE of about 60,000 and an out-of-sample RMSE of about 119,000.
 
 ```{r knn model simulation, echo=FALSE, warning=FALSE}
 knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 25)
@@ -134,15 +144,40 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 
 ```
-The average out of sample RMSE of 25 random KNN regression train/test splits is 121276.6.
+The average out-of-sample RMSE for 25 random KNN regression train/test splits is 121,277.
 
-# Linear Model vs KNN Regression Model Report: Linear Model vs KNN Regression Model:
+## What does it mean for predicting house prices? 
 
-We estimate housing prices using a linear regression model and a KNN regression model. We find that in a single linear model train/test split, we get an in sample RMSE of 57602.82 and an out of sample RMSE of 55614.14. We standardize our variables before applying KNN and find using a single KNN regression model train/test split, results in an in sample RMSE of 60014.98 and an out of sample RMSE of 119245.9. We can see that in a single train/test split, the in sample RMSE of both models are similar (approximately 58 thousand and 60 thousand for the Linear and KNN models, respectively.) However, the out of sample RMSE of the models were notably different at approximately 56 thousand and 119 thousand. So while both models performed similarly using in sample data, the linear model performed much better using the out of sample/testing data.
+Overall, the linear model is the most well-suited for predicting house prices.  
 
-When measuring out-of-sample performance, there is random variation due to the particular choice of data points that end up in the train/test split sample. To address this issue, we average 25 different/random train/test split estimates of out-of-sample RMSE. By doing this, we see that the average out of sample RMSE of 25 random linear model train/test splits is 64566.64, and the average out of sample RMSE of 25 random KNN regression train/test splits is 121276.6. These results confirm our findings from the single train/test splits. So we conclude that the linear regression model is better at achieving lower out-of-sample mean-squared error than the KNN model.
+We find that in a single linear model train/test split, we get an in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614. We standardize our variables before applying KNN and find using a single KNN regression model train/test split, results in an in-sample RMSE of 60,015 and an out-of-sample RMSE of 119,246. We can see that in a single train/test split, the in-sample RMSE of both models are similar (approximately 58,000 and 60,000 for the Linear and KNN models, respectively). 
 
-However, we note this analysis relied on the best models I could produce using the data. There may exist a KNN model that outperforms the linear model I produced. However, looking at the out of sample RMSE using single and average RMSE, that seems unlikely to be the case.
+However, the out-of-sample RMSE of the models were notably different at approximately 56,000 and 119,000. So while both models performed similarly using in-sample data, the linear model performed much better using the out-of-sample/testing data.
+
+When measuring out-of-sample performance, there is random variation due to the particular choice of data points that end up in the train/test split sample. To address this issue, we average 25 different/random train/test split estimates of out-of-sample RMSE. By doing this, we see that the average out-of-sample RMSE of 25 random linear model train/test splits is 64,567, and the average out-of-sample RMSE of 25 random KNN regression train/test splits is 121,277. These results confirm our findings from the single train/test splits. So, we conclude that the linear regression model is better at achieving lower out-of-sample mean-squared error than the KNN model.
+
+Note that this analysis relied on the best models we could produce using the data. There may exist a KNN model that outperforms the linear model we produced. But looking at the out-of-sample RMSE using single and average RMSE, that seems unlikely to be the case.
+
+## Appendix 
+
+### Appendix 1: Saratoga house prices dataset 
+
+The dataset contains 1728 observations with 16 variables. 
+
+```{r, echo=FALSE}
+ls(SaratogaHouses)
+```
+
+### Appendix 2: Linear Model 
+The linear model predicts price based on the following variables, and transformations and interactions between some of those variables. 
+
+```{r, echo=FALSE}
+appendix = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + pctCollege:age + bedrooms + bathrooms + rooms + heating + fuel + sewer + waterfront + newConstruction + centralAir, data=saratoga_train)
+
+summary(appendix)
+```
+### Appendix 3: KNN Model 
+The KNN model predicts a particular house price by using the average of K-nearest prices. For example, if K = 10, then the model will estimate a house price by using the average of its 10 closest data points. In our case, the optimal value of K is 25 since we have the lowest RMSE at that point. 
 
 ## Classification and retrospective sampling
 
@@ -155,7 +190,7 @@ credit <- read.csv("german_credit.csv")
 
 credit_summary = credit %>% 
   group_by(history) %>%
-  summarize(mean(Default))
+  summarise(mean(Default))
 
 ##Bar plot for default probability by credit history
 dt <- ggplot(credit_summary, aes(history, `mean(Default)`), fill = history) + 
@@ -181,7 +216,7 @@ summary(logit_credit)
 coef(logit_credit) %>% round(2)
 ```
 
-If someone has a poor credit history, then the chance of them defaulting on a loan goes down by  0.37. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 0.18. These results still are the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
+If someone has a poor credit history, then the chance of them defaulting on a loan goes down by 1.11. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 1.18. These results still are the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
   
 ### What is the bigger problem at play? 
   Since the bank decided to conduct a case-control design, it used existing data to predict whether certain people will default on a loan, given other features. Since defaults are rare, the bank matched each default with similar sets of loans that had not defaulted. This means that they oversampled defaults relative to a random sample of loans in the bank's overall portfolio. 
@@ -199,7 +234,6 @@ Instead of following this methodology, the bank can accord weights to the defaul
 In this section, we will focus on building a predictive model for whether a booking at a hotel will have children on it. Oftentimes, parents fail to include their children when making reservations. Although this piece of information may seem trivial, being able to anticipate guests' needs are very important for hotel staff, so it is essential for management to know how many children are staying to better cater to families' needs and to keep supplies/inventory well-stocked.
 
 Therefore, in this portion, we will focus on predicting the `children` variable.
-
 
 ### Model Building
 

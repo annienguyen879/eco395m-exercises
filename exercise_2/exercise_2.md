@@ -1,80 +1,159 @@
-# Homework 2
-## ECO 395M: Data Mining and Statistical Learning 
+## Saratoga house prices
 
-## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+To know the appropriate taxation levels, we first need to ensure that we
+get our predicted market values of properties right. We conduct a “horse
+race” that is, compare the performance of two models on the Saratoga
+house prices. The dataset contains information such as lot size, age,
+bedrooms and more about 1728 houses in Saratoga, New York from 2006[1].
 
-### 2023-02-22
+We evaluate two models for predicting house prices: a linear model, and
+a K-nearest neighbour (KNN) regression model[2]. For both models, we
+split our data into training and test sets with an 80-20 ratio. To test
+models, we compare their Root Mean Squared Error (RMSE). RMSE measures
+how large are the errors made by the model on the data, on average.
+Higher RMSE indicates poor predictive performance.
 
+There are two types of RMSE that we will looking at here: in-sample and
+out-of-sample. In-sample RMSE is when we test the model on the data it
+has already been trained on. Out-of-sample RMSE is when we run the model
+on test data that we split from the original dataset earlier.
+Out-of-sample RMSE is crucial because it tells us how well the model
+will perform on data it has not seen before.
 
-## 1) Saratoga house prices
+## Linear Model
 
-# Linear Model
-    ## Number of coefficients
     ## [1] 22
 
-    ## Predictions in sample
-    ## [1] 57602.82
+    ## [1] 57044.23
 
-    ## Predictions out of sample
-    ## [1] 55614.14
+    ## [1] 58040.93
 
-In a single linear model train/test split, we get an in sample RMSE of
-57602.82 and an out of sample RMSE of 55614.14.
+When we evaluate a single linear model train/test split, we get an
+in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614.
 
-    ## Mean of 25 out of sample linear model RMSE
-    ## 64566.64
+    ##   result 
+    ## 61107.08
 
-The average out of sample RMSE of 25 random linear model train/test
-splits is 64566.64.
+The average out-of-sample RMSE for 25 random linear model train/test
+splits is 64,567.
 
-# KNN Model
-    ## Predictions in sample
-    ## [1] 60014.98
-    
-    ## Predictions out of sample
-    ## [1] 119245.9
+## KNN Model
 
-In a single KNN regression model train/test split, we get an in sample
-RMSE of about 60,000 and an out of sample RMSE of about 119,000.
+    ## [1] 59033.77
 
-    ## Mean of 25 out of sample KNN model RMSE 
-    ## 121276.6
+    ## [1] 119654.9
 
-The average out of sample RMSE of 25 random KNN regression train/test
-splits is 121276.6.
+In a single KNN regression model train/test split, we get an in-sample
+RMSE of about 60,000 and an out-of-sample RMSE of about 119,000.
 
-# Linear Model vs KNN Regression Model Report: Linear Model vs KNN Regression Model: 
+    ##   result 
+    ## 120187.6
 
-We estimate housing prices using a linear regression
-model and a KNN regression model. We find that in a single linear model
-train/test split, we get an in sample RMSE of 57602.82 and an out of
-sample RMSE of 55614.14. We standardize our variables before applying KNN and find using a single KNN regression model train/test
-split, results in an in sample RMSE of 60014.98 and an out of sample RMSE
-of 119245.9. We can see that in a single train/test split, the in
-sample RMSE of both models are similar (approximately 58 thousand and 60
-thousand for the Linear and KNN models, respectively.) However, the out
-of sample RMSE of the models were notably different at approximately 56
-thousand and 119 thousand. So while both models performed similarly
-using in sample data, the linear model performed much better using the
-out of sample/testing data.
+The average out-of-sample RMSE for 25 random KNN regression train/test
+splits is 121,277.
+
+## What does it mean for predicting house prices?
+
+Overall, the linear model is the most well-suited for predicting house
+prices.
+
+We find that in a single linear model train/test split, we get an
+in-sample RMSE of 57,603 and an out-of-sample RMSE of 55,614. We
+standardize our variables before applying KNN and find using a single
+KNN regression model train/test split, results in an in-sample RMSE of
+60,015 and an out-of-sample RMSE of 119,246. We can see that in a single
+train/test split, the in-sample RMSE of both models are similar
+(approximately 58,000 and 60,000 for the Linear and KNN models,
+respectively).
+
+However, the out-of-sample RMSE of the models were notably different at
+approximately 56,000 and 119,000. So while both models performed
+similarly using in-sample data, the linear model performed much better
+using the out-of-sample/testing data.
 
 When measuring out-of-sample performance, there is random variation due
 to the particular choice of data points that end up in the train/test
 split sample. To address this issue, we average 25 different/random
 train/test split estimates of out-of-sample RMSE. By doing this, we see
-that the average out of sample RMSE of 25 random linear model train/test
-splits is 64566.64, and the average out of sample RMSE of 25 random KNN
-regression train/test splits is 121276.6. These results confirm our
-findings from the single train/test splits. So we conclude that the
+that the average out-of-sample RMSE of 25 random linear model train/test
+splits is 64,567, and the average out-of-sample RMSE of 25 random KNN
+regression train/test splits is 121,277. These results confirm our
+findings from the single train/test splits. So, we conclude that the
 linear regression model is better at achieving lower out-of-sample
 mean-squared error than the KNN model.
 
-However, we note this analysis relied on the best models I could produce
-using the data. There may exist a KNN model that outperforms the linear
-model I produced. However, looking at the out of sample RMSE using
-single and average RMSE, that seems unlikely to be the case.
+Note that this analysis relied on the best models we could produce using
+the data. There may exist a KNN model that outperforms the linear model
+we produced. But looking at the out-of-sample RMSE using single and
+average RMSE, that seems unlikely to be the case.
 
-## 2) Classification and retrospective sampling
+## Appendix
+
+### Appendix 1: Saratoga house prices dataset
+
+The dataset contains 1728 observations with 16 variables.
+
+    ##  [1] "age"             "bathrooms"       "bedrooms"        "centralAir"     
+    ##  [5] "fireplaces"      "fuel"            "heating"         "landValue"      
+    ##  [9] "livingArea"      "lotSize"         "newConstruction" "pctCollege"     
+    ## [13] "price"           "rooms"           "sewer"           "waterfront"
+
+### Appendix 2: Linear Model
+
+The linear model predicts price based on the following variables, and
+transformations and interactions between some of those variables.
+
+    ## 
+    ## Call:
+    ## lm(formula = price ~ lotSize + poly(age, 3) + poly(landValue, 
+    ##     3) + livingArea + pctCollege:age + bedrooms + bathrooms + 
+    ##     rooms + heating + fuel + sewer + waterfront + newConstruction + 
+    ##     centralAir, data = saratoga_train)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -238515  -34524   -4151   27976  465455 
+    ## 
+    ## Coefficients:
+    ##                          Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)             1.389e+05  2.200e+04   6.314 3.68e-10 ***
+    ## lotSize                 7.694e+03  2.284e+03   3.369 0.000777 ***
+    ## poly(age, 3)1          -5.656e+05  2.340e+05  -2.417 0.015763 *  
+    ## poly(age, 3)2           1.867e+05  6.593e+04   2.832 0.004689 ** 
+    ## poly(age, 3)3          -2.961e+05  6.087e+04  -4.864 1.28e-06 ***
+    ## poly(landValue, 3)1     1.168e+06  6.928e+04  16.862  < 2e-16 ***
+    ## poly(landValue, 3)2    -1.114e+05  6.194e+04  -1.799 0.072204 .  
+    ## poly(landValue, 3)3     5.229e+04  6.087e+04   0.859 0.390518    
+    ## livingArea              7.035e+01  4.945e+00  14.225  < 2e-16 ***
+    ## bedrooms               -6.610e+03  2.889e+03  -2.288 0.022301 *  
+    ## bathrooms               1.951e+04  3.710e+03   5.259 1.68e-07 ***
+    ## rooms                   3.038e+03  1.055e+03   2.879 0.004046 ** 
+    ## heatinghot water/steam -9.341e+03  4.627e+03  -2.019 0.043698 *  
+    ## heatingelectric        -2.434e+03  1.354e+04  -0.180 0.857324    
+    ## fuelelectric           -2.196e+03  1.336e+04  -0.164 0.869478    
+    ## fueloil                -5.432e+02  5.545e+03  -0.098 0.921988    
+    ## sewerpublic/commercial -5.239e+03  4.040e+03  -1.297 0.194932    
+    ## sewernone               6.711e+03  1.938e+04   0.346 0.729210    
+    ## waterfrontNo           -1.425e+05  1.767e+04  -8.066 1.58e-15 ***
+    ## newConstructionNo       5.539e+04  8.257e+03   6.708 2.88e-11 ***
+    ## centralAirNo           -8.874e+03  3.751e+03  -2.366 0.018120 *  
+    ## pctCollege:age          6.033e+00  3.899e+00   1.547 0.122088    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 57030 on 1360 degrees of freedom
+    ## Multiple R-squared:  0.6741, Adjusted R-squared:  0.6691 
+    ## F-statistic:   134 on 21 and 1360 DF,  p-value: < 2.2e-16
+
+### Appendix 3: KNN Model
+
+The KNN model predicts a particular house price by using the average of
+K-nearest prices. For example, if K = 10, then the model will estimate a
+house price by using the average of its 10 closest data points. In our
+case, the optimal value of K is 25 since we have the lowest RMSE at that
+point.
+
+## Classification and retrospective sampling
 
 In this part of the assignment, we want to be able to predict whether a
 person will default on their loan, based on factors such as credit
@@ -141,8 +220,8 @@ credit history, purpose, and foreign, we get the following results.
     ##                0.10                0.85               -0.80               -1.26
 
 If someone has a poor credit history, then the chance of them defaulting
-on a loan goes down by 0.37. Similarly, if someone has a terrible credit
-history, then the odds of them defaulting on a loan goes down by 0.18.
+on a loan goes down by 1.11. Similarly, if someone has a terrible credit
+history, then the odds of them defaulting on a loan goes down by 1.18.
 These results still are the opposite of what I expected. Odds of someone
 defaulting on a loan should rise if they have a poor or terrible credit
 history.
@@ -180,7 +259,7 @@ the default loans in the sample. This will allow for their adequate
 representation in the sample that the bank has without diluting the
 validity of the estimates.
 
-## 3) Children and hotel reservations
+## Children and hotel reservations
 
 In this section, we will focus on building a predictive model for
 whether a booking at a hotel will have children on it. Oftentimes,
@@ -210,7 +289,7 @@ out-of-sample performance of the following:
 #### Baseline Model 1:
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9188 NaN 3.1366 0.6809
+    ## Metrics 0.9216 NaN 3.0656 0.6943
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -221,7 +300,7 @@ this is not the best model.
 #### Baseline Model 2:
 
     ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9357 0.7054 4.0075 0.8666
+    ## Metrics 0.9401 0.7585 3.8969 0.8744
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -240,8 +319,8 @@ out-of-sample performance. Then, we built a model using forward
 selection. We, again, use out-of-sample performance to assess the
 models.
 
-    ##           acc    ppv  rmse_    auc
-    ## Metrics 0.933 0.6684 0.2337 0.8617
+    ##            acc    ppv  rmse_    auc
+    ## Metrics 0.9387 0.7305 0.2281 0.8707
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -264,7 +343,7 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:is_repeated_guest`
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9187   0 0.2687 0.6898
+    ## Metrics 0.9216 NaN 0.2641 0.7023
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear
@@ -279,7 +358,7 @@ values, the logistic model is still preferred. Therefore, Baseline Model
 The following is an ROC plot for Baseline Model 2, using the
 `hotels_val.csv` data.
 
-![](exercise_2_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+![](exercise_2_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 An ROC plots TPR vs. FPR. TPR is another name for sensitivity, while FPR
 is defined as 1-specificity, which explains why the numbers on the
@@ -329,3 +408,7 @@ vs. the actual number of bookings with children in that fold
 From the performance metrics, we see that accuracy stays above 90% on
 average, but PPV and AUC is relatively low. This means that this model
 could use further improvement to make better predictions.
+
+[1] Appendix 1 contains the description of the dataset.
+
+[2] Appendix 2 and 3 explains these models in detail.

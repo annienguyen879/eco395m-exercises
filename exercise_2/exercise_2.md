@@ -6,45 +6,45 @@
 
     ## [1] 22
 
-    ## [1] 55327.96
+    ## [1] 57602.82
 
-    ## [1] 64724.24
+    ## [1] 55614.14
 
 In a single linear model train/test split, we get an in sample RMSE of
-55327.96 and an out of sample RMSE of 64724.24.
+56,021.78 and an out of sample RMSE of 86,230.83.
 
     ##   result 
-    ## 61303.02
+    ## 64566.64
 
 The average out of sample RMSE of 25 random linear model train/test
-splits is 61303.02.
+splits is 66,760.79.
 
 # KNN Model
 
-    ## [1] 59190.94
+    ## [1] 60014.98
 
-    ## [1] 120314.5
+    ## [1] 119245.9
 
 In a single KNN regression model train/test split, we get an in sample
-RMSE of about 59,000 and an out of sample RMSE of about 120,000.
+RMSE of about 60,000 and an out of sample RMSE of about 120,000.
 
     ##   result 
-    ## 120726.9
+    ## 121276.6
 
 The average out of sample RMSE of 25 random KNN regression train/test
-splits is 120,726.9.
+splits is 121,129.7.
 
 Linear Model vs KNN Regression Model Report: Linear Model vs KNN
 Regression Model: We estimate housing prices using a linear regression
 model and a KNN regression model. We find that in a single linear model
-train/test split, we get an in sample RMSE of 55,327.96 and an out of
-sample RMSE of 64,724.24. Using a single KNN regression model train/test
-split, we get an in sample RMSE of 59,190.94 and an out of sample RMSE
-of 120,314.5. We can see that in a single train/test split, the in
-sample RMSE of both models are similar (approximately 55 thousand and 59
+train/test split, we get an in sample RMSE of 56,021.78 and an out of
+sample RMSE of 86,230.83. Using a single KNN regression model train/test
+split, we get an in sample RMSE of 58,122.03 and an out of sample RMSE
+of 117,355.1. We can see that in a single train/test split, the in
+sample RMSE of both models are similar (approximately 56 thousand and 58
 thousand for the Linear and KNN models, respectively.) However, the out
-of sample RMSE of the models were notably different at approximately 64
-thousand and 120 thousand. So while both models performed similarly
+of sample RMSE of the models were notably different at approximately 86
+thousand and 117 thousand. So while both models performed similarly
 using in sample data, the linear model performed much better using the
 out of sample/testing data.
 
@@ -53,8 +53,8 @@ to the particular choice of data points that end up in the train/test
 split sample. To address this issue, we average 25 different/random
 train/test split estimates of out-of-sample RMSE. By doing this, we see
 that the average out of sample RMSE of 25 random linear model train/test
-splits is 61,303.02, and the average out of sample RMSE of 25 random KNN
-regression train/test splits is 120,726.9. These results confirm our
+splits is 66,760.79, and the average out of sample RMSE of 25 random KNN
+regression train/test splits is 121,129.7. These results confirm our
 findings from the single train/test splits. So we conclude that the
 linear regression model is better at achieving lower out-of-sample
 mean-squared error than the KNN model.
@@ -66,29 +66,85 @@ single and averages RMSE, this seems unlikely to be the case.
 
 ## Classification and retrospective sampling
 
-What do you notice about the history variable vis-a-vis predicting
-defaults? What do you think is going on here? In light of what you see
-here, do you think this data set is appropriate for building a
-predictive model of defaults, if the purpose of the model is to screen
-prospective borrowers to classify them into “high” versus “low”
-probability of default? Why or why not—and if not, would you recommend
-any changes to the bank’s sampling scheme?
+In this part of the assignment, we want to be able to predict whether a
+person will default on their loan, based on factors such as credit
+history. What is unique about this problem is its dataset. Since the
+data available on loan defaults is small, the German bank decided to
+oversample its defaults by matching each default to a similar set of
+loans in the overall bank portfolio. Is this dataset appropriate for the
+model that we wish to build? Can it predict which of the bank’s clients
+will default on a loan?
 
-1.  What do you notice about the history variable vis-a-vis predicting
-    defaults? If someone has a poor credit history, then the chance of
-    them defaulting on a loan goes down by 0.37. Similarly, if someone
-    has a terrible credit history, then the odds of them defaulting on a
-    loan goes down by 0.18. These results seem to be the opposite of
-    what I expected. Odds of someone defaulting on a loan should rise if
-    they have a poor or terrible credit history.
+What did we do to assess the data at hand? First, we wanted to see the
+default probability by credit history. Our results show that individuals
+with a good credit history have the highest probability of defaulting on
+a loan. Whereas, people with terrible credit history have the lowest.
+This seems counter intuitive since credit history indicates how well a
+borrower has repayed their debts. A good credit history should have a
+lower default probability.
 
-2.  What do you think is going on here? Since the bank decided to
-    conduct a case-control design, it used existing data to predict
-    whether certain people will default on a loan, given other features.
-    Since defaults are rare, the bank matched each default with similar
-    sets of loans that had not defaulted. This means that they
-    oversampled defaults relative to a random sample of loans in the
-    bank’s overall portfolio.
+![](exercise_2_files/figure-markdown_strict/pressure-1.png)
+
+Nevertheless, if we build a logistic regression model around this
+dataset, regressing Default on duration, amount, installment, age,
+credit history, purpose, and foreign, we get the following results.
+
+    ## 
+    ## Call:
+    ## glm(formula = Default ~ duration + amount + installment + age + 
+    ##     history + purpose + foreign, family = "binomial", data = credit)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -2.3464  -0.8050  -0.5751   1.0250   2.4767  
+    ## 
+    ## Coefficients:
+    ##                       Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)         -7.075e-01  4.726e-01  -1.497  0.13435    
+    ## duration             2.526e-02  8.100e-03   3.118  0.00182 ** 
+    ## amount               9.596e-05  3.650e-05   2.629  0.00856 ** 
+    ## installment          2.216e-01  7.626e-02   2.906  0.00366 ** 
+    ## age                 -2.018e-02  7.224e-03  -2.794  0.00521 ** 
+    ## historypoor         -1.108e+00  2.473e-01  -4.479 7.51e-06 ***
+    ## historyterrible     -1.885e+00  2.822e-01  -6.679 2.41e-11 ***
+    ## purposeedu           7.248e-01  3.707e-01   1.955  0.05058 .  
+    ## purposegoods/repair  1.049e-01  2.573e-01   0.408  0.68346    
+    ## purposenewcar        8.545e-01  2.773e-01   3.081  0.00206 ** 
+    ## purposeusedcar      -7.959e-01  3.598e-01  -2.212  0.02694 *  
+    ## foreigngerman       -1.265e+00  5.773e-01  -2.191  0.02849 *  
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 1221.7  on 999  degrees of freedom
+    ## Residual deviance: 1070.0  on 988  degrees of freedom
+    ## AIC: 1094
+    ## 
+    ## Number of Fisher Scoring iterations: 4
+
+    ##         (Intercept)            duration              amount         installment 
+    ##               -0.71                0.03                0.00                0.22 
+    ##                 age         historypoor     historyterrible          purposeedu 
+    ##               -0.02               -1.11               -1.88                0.72 
+    ## purposegoods/repair       purposenewcar      purposeusedcar       foreigngerman 
+    ##                0.10                0.85               -0.80               -1.26
+
+If someone has a poor credit history, then the chance of them defaulting
+on a loan goes down by 0.37. Similarly, if someone has a terrible credit
+history, then the odds of them defaulting on a loan goes down by 0.18.
+These results still are the opposite of what I expected. Odds of someone
+defaulting on a loan should rise if they have a poor or terrible credit
+history.
+
+### What is the bigger problem at play?
+
+Since the bank decided to conduct a case-control design, it used
+existing data to predict whether certain people will default on a loan,
+given other features. Since defaults are rare, the bank matched each
+default with similar sets of loans that had not defaulted. This means
+that they oversampled defaults relative to a random sample of loans in
+the bank’s overall portfolio.
 
 In a simpler way, imagine if we initially had a sample of 100 loans, of
 which 10 loans were defaulted. By oversampling defaults, instead of
@@ -99,62 +155,20 @@ may affect the default probability of an individual. This is why we are
 getting a negative coefficient for poor and terrible credit history
 while predicting loan defaults.
 
-1.  In light of what you see here, do you think this data set is
-    appropriate for building a predictive model of defaults, if the
-    purpose of the model is to screen prospective borrowers to classify
-    them into “high” versus “low” probability of default? This dataset
-    is therefore, not appropriate for building a predictive model of
-    defaults. The case-control sample places a defaulted loan in a bag
-    of loans of similar value without considering other features such as
-    credit history, age, and savings. This means that we cannot draw
-    useful conclusions about someone particular to their credit history
-    and classify them into “high” versus “low” probability of default.
+### How do we go ahead from here?
 
-2.  Why or why not—and if not, would you recommend any changes to the
-    bank’s sampling scheme? The bank should accord weights to the
-    default loans in the sample.
+This dataset is not appropriate for building a predictive model of
+defaults. The case-control sample places a defaulted loan in a bag of
+loans of similar value. But we do not know if the bank considered other
+features such as credit history, age, and savings. This means that we
+cannot draw useful conclusions about someone particular to their credit
+history and classify them into “high” versus “low” probability of
+default.
 
-<!-- -->
-
-    ## 'data.frame':    1000 obs. of  23 variables:
-    ##  $ X              : int  1 2 3 4 5 6 7 8 9 10 ...
-    ##  $ Default        : int  0 1 0 0 1 0 0 0 0 1 ...
-    ##  $ checkingstatus1: chr  "A11" "A12" "A14" "A11" ...
-    ##  $ duration       : int  6 48 12 42 24 36 24 36 12 30 ...
-    ##  $ history        : chr  "terrible" "poor" "terrible" "poor" ...
-    ##  $ purpose        : chr  "goods/repair" "goods/repair" "edu" "goods/repair" ...
-    ##  $ amount         : int  1169 5951 2096 7882 4870 9055 2835 6948 3059 5234 ...
-    ##  $ savings        : chr  "A65" "A61" "A61" "A61" ...
-    ##  $ employ         : chr  "A75" "A73" "A74" "A74" ...
-    ##  $ installment    : int  4 2 2 2 3 2 3 2 2 4 ...
-    ##  $ status         : chr  "A93" "A92" "A93" "A93" ...
-    ##  $ others         : chr  "A101" "A101" "A101" "A103" ...
-    ##  $ residence      : int  4 2 3 4 4 4 4 2 4 2 ...
-    ##  $ property       : chr  "A121" "A121" "A121" "A122" ...
-    ##  $ age            : int  67 22 49 45 53 35 53 35 61 28 ...
-    ##  $ otherplans     : chr  "A143" "A143" "A143" "A143" ...
-    ##  $ housing        : chr  "A152" "A152" "A152" "A153" ...
-    ##  $ cards          : int  2 1 1 1 2 1 1 1 1 2 ...
-    ##  $ job            : chr  "A173" "A173" "A172" "A173" ...
-    ##  $ liable         : int  1 1 2 2 2 2 1 1 1 1 ...
-    ##  $ tele           : chr  "A192" "A191" "A191" "A191" ...
-    ##  $ foreign        : chr  "foreign" "foreign" "foreign" "foreign" ...
-    ##  $ rent           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-
-    ##           Default
-    ## history      0   1
-    ##   good      36  53
-    ##   poor     421 197
-    ##   terrible 243  50
-
-![](exercise_2_files/figure-markdown_strict/pressure-1.png)![](exercise_2_files/figure-markdown_strict/pressure-2.png)
-
-    ##         (Intercept)            duration              amount         installment 
-    ##               -0.73                0.01                0.00                0.28 
-    ##                 age         historypoor     historyterrible          purposeedu 
-    ##               -0.02               -1.09               -1.95                0.68 
-    ## purposegoods/repair       purposenewcar      purposeusedcar       foreigngerman 
-    ##                0.05                0.83               -1.21               -1.18
+Instead of following this methodology, the bank can accord weights to
+the default loans in the sample. This will allow for their adequate
+representation in the sample that the bank has without diluting the
+validity of the estimates.
 
 ## Children and hotel reservations
 
@@ -185,8 +199,8 @@ out-of-sample performance of the following:
 
 #### Baseline Model 1:
 
-    ##            acc ppv rmse_    auc
-    ## Metrics 0.9233 NaN 3.102 0.6775
+    ##            acc ppv  rmse_    auc
+    ## Metrics 0.9188 NaN 3.1366 0.6809
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -196,8 +210,8 @@ this is not the best model.
 
 #### Baseline Model 2:
 
-    ##            acc    ppv rmse_    auc
-    ## Metrics 0.9399 0.7307 4.008 0.8642
+    ##            acc    ppv  rmse_    auc
+    ## Metrics 0.9357 0.7054 4.0075 0.8666
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -216,8 +230,8 @@ out-of-sample performance. Then, we built a model using forward
 selection. We, again, use out-of-sample performance to assess the
 models.
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9407 0.7229 0.2273 0.8618
+    ##           acc    ppv  rmse_    auc
+    ## Metrics 0.933 0.6684 0.2337 0.8617
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -240,7 +254,7 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:is_repeated_guest`
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9233 NaN 0.2619 0.6835
+    ## Metrics 0.9187   0 0.2687 0.6898
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear

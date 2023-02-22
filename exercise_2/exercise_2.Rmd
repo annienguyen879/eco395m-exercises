@@ -1,6 +1,6 @@
 ---
 title: "Exercises 2"
-author: "Soo Jee, Annie Nguyen, and Tarini Sudhakar"
+author: "Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
 output: md_document
 ---
@@ -147,58 +147,54 @@ However, we note this analysis relied on the best models I could produce using t
 
 
 ## Classification and retrospective sampling
-What do you notice about the history variable vis-a-vis predicting defaults? What do you think is going on here? In light of what you see here, do you think this data set is appropriate for building a predictive model of defaults, if the purpose of the model is to screen prospective borrowers to classify them into "high" versus "low" probability of default? Why or why not---and if not, would you recommend any changes to the bank's sampling scheme?
 
-  1. What do you notice about the history variable vis-a-vis predicting defaults? 
-  If someone has a poor credit history, then the chance of them defaulting on a loan goes down by  0.37. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 0.18. These results seem to be the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
-  
-  2. What do you think is going on here?
-  Since the bank decided to conduct a case-control design, it used existing data to predict whether certain people will default on a loan, given other features. Since defaults are rare, the bank matched each default with similar sets of loans that had not defaulted. This means that they oversampled defaults relative to a random sample of loans in the bank's overall portfolio. 
-  
-  In a simpler way, imagine if we initially had a sample of 100 loans, of which 10 loans were defaulted. By oversampling defaults, instead of having a low default probability of 1/10, we now have a much higher probability. This method results in unreliable estimates since we can no longer draw reasonable conclusions about how a particular credit history may affect the default probability of an individual. This is why we are getting a negative coefficient for poor and terrible credit history while predicting loan defaults. 
-  
-  3. In light of what you see here, do you think this data set is appropriate for building a predictive model of defaults, if the purpose of the model is to screen prospective borrowers to classify them into "high" versus "low" probability of default?
-  This dataset is therefore, not appropriate for building a predictive model of defaults. The case-control sample places a defaulted loan in a bag of loans of similar value without considering other features such as credit history, age, and savings. This means that we cannot draw useful conclusions about someone particular to their credit history and classify them into "high" versus "low" probability of default. 
-  
-  4. Why or why not---and if not, would you recommend any changes to the bank's sampling scheme?
-  The bank should accord weights to the default loans in the sample.
-  
+In this part of the assignment, we want to be able to predict whether a person will default on their loan, based on factors such as credit history. What is unique about this problem is its dataset. Since the data available on loan defaults is small, the German bank decided to oversample its defaults by matching each default to a similar set of loans in the overall bank portfolio. Is this dataset appropriate for the model that we wish to build? Can it predict which of the bank's clients will default on a loan?  
+
+What did we do to assess the data at hand? First, we wanted to see the default probability by credit history. Our results show that individuals with a good credit history have the highest probability of defaulting on a loan. Whereas, people with terrible credit history have the lowest. This seems counter intuitive since credit history indicates how well a borrower has repayed their debts. A good credit history should have a lower default probability. 
+
 ```{r pressure, echo=FALSE}
 credit <- read.csv("german_credit.csv")
 
-str(credit)
-
-tbl <- with(credit, table(history, Default))
-tbl
+credit_summary = credit %>% 
+  group_by(history) %>%
+  summarize(mean(Default))
 
 ##Bar plot for default probability by credit history
-ggplot(as.data.frame(tbl), aes(factor(Default), Freq, fill = history)) + 
-  geom_col(position = 'dodge') +
-  labs(y = "Frequency", x = "Loan default", title ="Default probability by credit history", 
-       caption = "0 indicates no default, 1 indicates default") + 
-  scale_fill_manual(name = "Credit history", values=wes_palette(n=3, name="GrandBudapest1")) + 
-  theme_bw() 
-  
-##Splitting data into train and test set
-credit_split = initial_split(credit, prop=0.8)
-credit_train = training(credit_split)
-credit_test  = testing(credit_split)
+dt <- ggplot(credit_summary, aes(history, `mean(Default)`), fill = history) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(y = "Probability", x = "Loan default", title ="Default probability by credit
+       history", 
+       caption = "0 indicates no default, 1 indicates default")  +
+  theme_bw() + 
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))
 
+dt
+```
+
+Nevertheless, if we build a logistic regression model around this dataset, regressing Default on duration, amount, installment, age, credit history, purpose, and foreign, we get the following results. 
+```{r logreg, echo=FALSE}
+
+##Logistic regression
 logit_credit = glm(Default ~ duration + amount + installment + age 
-                   + history + purpose + foreign, data=credit_train,
+                   + history + purpose + foreign, data=credit,
                    family='binomial')
-
-credittest = mutate(credit_test, yhat = predict(logit_credit, credit_test,
-                                                type='response'))
-
-ggplot(credittest) + 
-  geom_jitter(aes(x=factor(Default), y=yhat), width=0.1, alpha=0.2) + 
-  labs(title="Test-set predicted probabilities", y = "P(Default | x)", x="Default?") + 
-  stat_summary(aes(x=factor(Default), y=yhat), fun='mean', col='red', size=1)
+summary(logit_credit)
 
 coef(logit_credit) %>% round(2)
 ```
 
+If someone has a poor credit history, then the chance of them defaulting on a loan goes down by  0.37. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 0.18. These results still are the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
+  
+### What is the bigger problem at play? 
+  Since the bank decided to conduct a case-control design, it used existing data to predict whether certain people will default on a loan, given other features. Since defaults are rare, the bank matched each default with similar sets of loans that had not defaulted. This means that they oversampled defaults relative to a random sample of loans in the bank's overall portfolio. 
+  
+  In a simpler way, imagine if we initially had a sample of 100 loans, of which 10 loans were defaulted. By oversampling defaults, instead of having a low default probability of 1/10, we now have a much higher probability. This method results in unreliable estimates since we can no longer draw reasonable conclusions about how a particular credit history may affect the default probability of an individual. This is why we are getting a negative coefficient for poor and terrible credit history while predicting loan defaults. 
+  
+
+### How do we go ahead from here?  
+  This dataset is not appropriate for building a predictive model of defaults. The case-control sample places a defaulted loan in a bag of loans of similar value. But we do not know if the bank considered other features such as credit history, age, and savings. This means that we cannot draw useful conclusions about someone particular to their credit history and classify them into "high" versus "low" probability of default. 
+  
+Instead of following this methodology, the bank can accord weights to the default loans in the sample. This will allow for their adequate representation in the sample that the bank has without diluting the validity of the estimates. 
 
 ## Children and hotel reservations 
 

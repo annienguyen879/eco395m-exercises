@@ -175,9 +175,8 @@ appendix = lm(price ~ lotSize + poly(age, 3) + poly(landValue,3) + livingArea + 
 summary(appendix)
 ```
 ### Appendix 3: KNN Model 
-The KNN model predicts a particular house price by using the average of K-nearest prices. For example, if K = 10, then the model will estimate a house price by using the average of its 10 closest data points. In our case, the optimal value of K is 25 since we have the lowest RMSE at that point. 
+The KNN model predicts a particular house price by using the average of K-nearest prices. For example, if K = 10, then the model will estimate a house price by using the average of its 10 closest data points. 
 
-### Appendix 4: Optimal K value
 To determine the optimal value of k in the KNN model, we perform 25 separate train/test split RMSE analysis using for each k values. We then calculate the mean RMSE of the 25 samples and then compare the results across the different k value samples. Specifically, we test the values K=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We find that K=35 resulted in the lowest RMSE for our model. 
 
 ```{r knn model simulation 2, warning=FALSE, results='hide',echo=FALSE}
@@ -240,7 +239,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model, K =3
+  # KNN model, K = 3
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 3)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -558,18 +557,17 @@ summary(logit_credit)
 coef(logit_credit) %>% round(2)
 ```
 
-If someone has a poor credit history, then the chance of them defaulting on a loan goes down by 1.11. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan goes down by 1.18. These results still are the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history. 
-  
+If someone has a poor credit history, then the odds of them defaulting on a loan is multiplied by $e^{-1.11} \approx 0.33$. Similarly, if someone has a terrible credit history, then the odds of them defaulting on a loan is multiplied by $e^{-1.88} \approx 0.17$. These results still are the opposite of what I expected. Odds of someone defaulting on a loan should rise if they have a poor or terrible credit history.
+
 ### What is the bigger problem at play? 
   Since the bank decided to conduct a case-control design, it used existing data to predict whether certain people will default on a loan, given other features. Since defaults are rare, the bank matched each default with similar sets of loans that had not defaulted. This means that they oversampled defaults relative to a random sample of loans in the bank's overall portfolio. 
-  
-  In a simpler way, imagine if we initially had a sample of 100 loans, of which 10 loans were defaulted. By oversampling defaults, instead of having a low default probability of 1/10, we now have a much higher probability. This method results in unreliable estimates since we can no longer draw reasonable conclusions about how a particular credit history may affect the default probability of an individual. This is why we are getting a negative coefficient for poor and terrible credit history while predicting loan defaults. 
-  
 
-### How do we go ahead from here?  
-  This dataset is not appropriate for building a predictive model of defaults. The case-control sample places a defaulted loan in a bag of loans of similar value. But we do not know if the bank considered other features such as credit history, age, and savings. This means that we cannot draw useful conclusions about someone particular to their credit history and classify them into "high" versus "low" probability of default. 
+  Oversampling is used to correct what is known as "class imbalance". In this case, it refers to the low number of defaults in the bank portfolio. But this method can result in biased estimates if the same data point is used multiple times, leading to overfitting. Here, since we matched each default with a similar set of non-defaulted loans, we ended up with a data distribution that may not appropriately represent reality. We also do not have enough information on what parameters the bank used to match the loans. Together, this resulted in unreliable estimates since we can no longer draw reasonable conclusions about how a particular credit history may affect the default probability of an individual. This is why we are getting a negative coefficient for poor and terrible credit history while predicting loan defaults. 
   
-Instead of following this methodology, the bank can accord weights to the default loans in the sample. This will allow for their adequate representation in the sample that the bank has without diluting the validity of the estimates. 
+### How do we go ahead from here?  
+  This dataset is not appropriate for building a predictive model of defaults. The case-control sample places a defaulted loan in a bag of loans of similar value. But we do not know if the bank considered other features such as credit history, age, and savings. It is also not representative of the true data distribution. This means that we cannot draw useful conclusions about someone particular to their credit history and classify them into "high" versus "low" probability of default. 
+
+  Instead of following this methodology, the bank can accord weights to the default loans in the sample. This will allow for their adequate representation in the sample that the bank has without diluting the validity of the estimates. 
 
 ## Children and hotel reservations 
 

@@ -1,4 +1,12 @@
-## Saratoga house prices
+# Homework 2
+## ECO 395M: Data Mining and Statistical Learning 
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-02-22
+
+
+## 1) Saratoga house prices
 
 # Split into training and testing sets
 
@@ -64,7 +72,7 @@ using the data. There may exist a KNN model that outperforms the linear
 model I produced. However, looking at the out of sample RMSE using
 single and averages RMSE, this seems unlikely to be the case.
 
-## Classification and retrospective sampling
+## 2) Classification and retrospective sampling
 
 In this part of the assignment, we want to be able to predict whether a
 person will default on their loan, based on factors such as credit
@@ -170,7 +178,7 @@ the default loans in the sample. This will allow for their adequate
 representation in the sample that the bank has without diluting the
 validity of the estimates.
 
-## Children and hotel reservations
+## 3) Children and hotel reservations
 
 In this section, we will focus on building a predictive model for
 whether a booking at a hotel will have children on it. Oftentimes,

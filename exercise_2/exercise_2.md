@@ -23,30 +23,30 @@ will perform on data it has not seen before.
 
 ## Linear Model
 
-    ## [1] 55107.82
+    ## [1] 56688.3
 
-    ## [1] 64969.21
+    ## [1] 59134.64
 
 When we evaluate a single linear model train/test split, we get an
 in-sample RMSE of ~55k and an out-of-sample RMSE of ~60k.
 
     ##   result 
-    ## 60965.56
+    ## 65244.89
 
 The average out-of-sample RMSE for 25 random linear model train/test
 splits is ~60k
 
 ## KNN Model
 
-    ## [1] 62262.54
+    ## [1] 59917.34
 
-    ## [1] 119261
+    ## [1] 117156.4
 
 In a single KNN regression model train/test split, we get an in-sample
 RMSE of ~60k and an out-of-sample RMSE of 120k.
 
     ##   result 
-    ## 117400.5
+    ## 119345.6
 
 The average out-of-sample RMSE for 25 random KNN regression train/test
 splits is ~114k.
@@ -110,38 +110,38 @@ transformations and interactions between some of those variables.
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -244606  -35548   -4512   28709  464281 
+    ## -242987  -35046   -4159   27477  457633 
     ## 
     ## Coefficients:
     ##                          Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             1.319e+05  2.141e+04   6.160 9.57e-10 ***
-    ## lotSize                 6.702e+03  2.403e+03   2.790  0.00535 ** 
-    ## poly(age, 3)1          -4.889e+05  2.330e+05  -2.098  0.03608 *  
-    ## poly(age, 3)2           1.910e+05  6.643e+04   2.875  0.00410 ** 
-    ## poly(age, 3)3          -3.147e+05  6.134e+04  -5.130 3.32e-07 ***
-    ## poly(landValue, 3)1     1.088e+06  6.927e+04  15.703  < 2e-16 ***
-    ## poly(landValue, 3)2    -1.371e+05  6.199e+04  -2.212  0.02715 *  
-    ## poly(landValue, 3)3     1.278e+05  6.099e+04   2.095  0.03633 *  
-    ## livingArea              6.828e+01  4.942e+00  13.816  < 2e-16 ***
-    ## bedrooms               -6.715e+03  2.905e+03  -2.311  0.02098 *  
-    ## bathrooms               2.172e+04  3.692e+03   5.884 5.05e-09 ***
-    ## rooms                   2.925e+03  1.054e+03   2.775  0.00559 ** 
-    ## heatinghot water/steam -9.126e+03  4.650e+03  -1.962  0.04992 *  
-    ## heatingelectric        -3.810e+03  1.268e+04  -0.301  0.76384    
-    ## fuelelectric           -7.419e+03  1.247e+04  -0.595  0.55192    
-    ## fueloil                -3.936e+03  5.507e+03  -0.715  0.47496    
-    ## sewerpublic/commercial -3.206e+03  4.043e+03  -0.793  0.42788    
-    ## sewernone               1.286e+03  2.060e+04   0.062  0.95023    
-    ## waterfrontNo           -1.313e+05  1.707e+04  -7.692 2.77e-14 ***
-    ## newConstructionNo       5.393e+04  8.398e+03   6.421 1.87e-10 ***
-    ## centralAirNo           -1.097e+04  3.740e+03  -2.932  0.00343 ** 
-    ## pctCollege:age          5.274e+00  3.920e+00   1.345  0.17873    
+    ## (Intercept)             1.037e+05  2.249e+04   4.611 4.39e-06 ***
+    ## lotSize                 7.609e+03  2.554e+03   2.979 0.002939 ** 
+    ## poly(age, 3)1          -5.549e+05  2.265e+05  -2.450 0.014417 *  
+    ## poly(age, 3)2           2.309e+05  6.724e+04   3.434 0.000612 ***
+    ## poly(age, 3)3          -3.519e+05  6.277e+04  -5.605 2.51e-08 ***
+    ## poly(landValue, 3)1     1.231e+06  7.129e+04  17.270  < 2e-16 ***
+    ## poly(landValue, 3)2    -9.311e+04  6.366e+04  -1.463 0.143798    
+    ## poly(landValue, 3)3     4.719e+04  6.247e+04   0.755 0.450143    
+    ## livingArea              6.738e+01  5.015e+00  13.436  < 2e-16 ***
+    ## bedrooms               -7.278e+03  2.883e+03  -2.525 0.011691 *  
+    ## bathrooms               2.132e+04  3.820e+03   5.580 2.90e-08 ***
+    ## rooms                   2.809e+03  1.068e+03   2.630 0.008628 ** 
+    ## heatinghot water/steam -4.520e+03  4.790e+03  -0.944 0.345552    
+    ## heatingelectric        -6.677e+03  1.462e+04  -0.457 0.647909    
+    ## fuelelectric            2.190e+03  1.442e+04   0.152 0.879335    
+    ## fueloil                -5.453e+03  5.579e+03  -0.977 0.328539    
+    ## sewerpublic/commercial -4.756e+03  4.193e+03  -1.134 0.256816    
+    ## sewernone              -1.312e+04  1.990e+04  -0.659 0.509743    
+    ## waterfrontNo           -1.087e+05  1.808e+04  -6.013 2.34e-09 ***
+    ## newConstructionNo       6.226e+04  8.766e+03   7.103 1.97e-12 ***
+    ## centralAirNo           -1.027e+04  3.842e+03  -2.672 0.007622 ** 
+    ## pctCollege:age          6.393e+00  3.938e+00   1.624 0.104695    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 57190 on 1360 degrees of freedom
-    ## Multiple R-squared:  0.6642, Adjusted R-squared:  0.659 
-    ## F-statistic: 128.1 on 21 and 1360 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 58360 on 1360 degrees of freedom
+    ## Multiple R-squared:  0.6649, Adjusted R-squared:  0.6598 
+    ## F-statistic: 128.5 on 21 and 1360 DF,  p-value: < 2.2e-16
 
 ### Appendix 3: KNN Model
 
@@ -157,9 +157,10 @@ To determine the optimal value of k in the KNN model, we perform 25
 separate train/test split RMSE analysis using for each k values. We then
 calculate the mean RMSE of the 25 samples and then compare the results
 across the different k value samples. Specifically, we test the values
-k=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k,
-~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We
-find that k=35 resulted in the lowest RMSE for our model.
+K=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k,
+~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values,
+respectively. We find that K=35 resulted in the lowest RMSE for our
+model.
 
 ## Classification and retrospective sampling
 
@@ -180,7 +181,7 @@ This seems counter intuitive since credit history indicates how well a
 borrower has repayed their debts. A good credit history should have a
 lower default probability.
 
-![](HW2_files/figure-markdown_strict/pressure-1.png)
+![](exercise_2_files/figure-markdown_strict/pressure-1.png)
 
 Nevertheless, if we build a logistic regression model around this
 dataset, regressing Default on duration, amount, installment, age,
@@ -297,7 +298,7 @@ out-of-sample performance of the following:
 #### Baseline Model 1:
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9182 NaN 3.1384 0.6853
+    ## Metrics 0.9179 NaN 3.1173 0.6692
 
 After fitting the baseline model 1 to the training set and assessing
 out-of-sample accuracy, we see this model predicts with about 91%
@@ -307,8 +308,8 @@ this is not the best model.
 
 #### Baseline Model 2:
 
-    ##           acc    ppv  rmse_    auc
-    ## Metrics 0.936 0.7312 3.9894 0.8666
+    ##            acc    ppv  rmse_    auc
+    ## Metrics 0.9348 0.7111 5.6656 0.8599
 
 From the out-of-sample performance measures, we see that this model has
 both higher accuracy and a significantly higher AUC. Although the RMSE
@@ -327,8 +328,8 @@ out-of-sample performance. Then, we built a model using forward
 selection. We, again, use out-of-sample performance to assess the
 models.
 
-    ##            acc    ppv  rmse_    auc
-    ## Metrics 0.9353 0.7163 0.2344 0.8652
+    ##           acc    ppv  rmse_    auc
+    ## Metrics 0.934 0.6986 0.2349 0.8608
 
 In this first linear model, we include all variables (except
 `arrival_date`) as well as a few interaction terms
@@ -351,7 +352,7 @@ on: `market_segment`, `customer_type`, `is_repeated_guest`, `adults`,
 `market_segment:is_repeated_guest`
 
     ##            acc ppv  rmse_    auc
-    ## Metrics 0.9181   0 0.2695 0.6907
+    ## Metrics 0.9179 NaN 0.2699 0.6818
 
 In the second linear model, accuracy and RMSE is comparable to the first
 linear model, but AUC drops significantly. Between the two linear
@@ -366,7 +367,7 @@ values, the logistic model is still preferred. Therefore, Baseline Model
 The following is an ROC plot for Baseline Model 2, using the
 `hotels_val.csv` data.
 
-![](HW2_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](exercise_2_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 An ROC plots TPR vs. FPR. TPR is another name for sensitivity, while FPR
 is defined as 1-specificity, which explains why the numbers on the

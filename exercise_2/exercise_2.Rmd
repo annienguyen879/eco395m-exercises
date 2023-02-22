@@ -178,7 +178,7 @@ summary(appendix)
 The KNN model predicts a particular house price by using the average of K-nearest prices. For example, if K = 10, then the model will estimate a house price by using the average of its 10 closest data points. In our case, the optimal value of K is 25 since we have the lowest RMSE at that point. 
 
 ### Appendix 4: Optimal K value
-To determine the optimal value of k in the KNN model, we perform 25 separate train/test split RMSE analysis using for each k values. We then calculate the mean RMSE of the 25 samples and then compare the results across the different k value samples. Specifically, we test the values k=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We find that k=35 resulted in the lowest RMSE for our model. 
+To determine the optimal value of k in the KNN model, we perform 25 separate train/test split RMSE analysis using for each k values. We then calculate the mean RMSE of the 25 samples and then compare the results across the different k value samples. Specifically, we test the values K=2, 3, 5, 10, 15, 20, 25, 35, 40, 50 and find ~130k, ~128k, ~126k, ~123k, ~121k, ~119k, ~118k, ~114k, ~120k, ~123k as the RMSE values, respectively. We find that K=35 resulted in the lowest RMSE for our model. 
 
 ```{r knn model simulation 2, warning=FALSE, results='hide',echo=FALSE}
 rmse_out=foreach(i=1:25, .combine='c') %do%{
@@ -206,7 +206,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 2
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 2)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -240,7 +240,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K =3
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 3)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -274,7 +274,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 5
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 5)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -308,7 +308,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 10
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 10)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -342,7 +342,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 15
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 15)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -376,7 +376,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 20 
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 20)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -410,7 +410,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 25
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 25)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -444,7 +444,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 30
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 30)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -478,7 +478,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 40
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 40)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -512,7 +512,7 @@ rmse_out=foreach(i=1:25, .combine='c') %do%{
   training_set = cbind(y_train_dataframe,x_tilde_train_dataframe)
   testing_set = cbind(y_test_dataframe,x_tilde_test_dataframe)
   
-  # KNN model
+  # KNN model, K = 50
   knn_model = knnreg(price_train ~ lotSize + age + landValue + livingArea + bedrooms + bathrooms + rooms + newConstructionNo, data=training_set, k = 50)
   
   modelr::rmse(knn_model, data=testing_set)}
@@ -546,6 +546,7 @@ dt
 ```
 
 Nevertheless, if we build a logistic regression model around this dataset, regressing Default on duration, amount, installment, age, credit history, purpose, and foreign, we get the following results. 
+
 ```{r logreg, echo=FALSE}
 
 ##Logistic regression

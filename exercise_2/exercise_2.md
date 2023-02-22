@@ -43,8 +43,7 @@ RMSE of about 60,000 and an out of sample RMSE of about 119,000.
 The average out of sample RMSE of 25 random KNN regression train/test
 splits is 121276.6.
 
-# Linear Model vs KNN Regression Model Report: Linear Model vs KNN
-Regression Model: 
+# Linear Model vs KNN Regression Model Report: Linear Model vs KNN Regression Model: 
 
 We estimate housing prices using a linear regression
 model and a KNN regression model. We find that in a single linear model

@@ -7,6 +7,25 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(Hmisc)
+library(readr)
+library(randomForest)
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+library(rsample) 
+library(lubridate)
+library(modelr)
+library(ggmap)
+library(mapdata)
+library(maps)
+library(stringr)
+library(viridis)
+library(sf)
+library(scales) 
+library(Metrics)
+
+
 ```
 
 ## What causes what?
@@ -50,7 +69,120 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Predictive Model Building: California Housing
 
+Your task is to build the best predictive model you can for medianHouseValue, using the other available features. Write a short report detailing your methods. Make sure your report includes an estimate for the overall out-of-sample accuracy of your proposed model. Also include three figures:
+
+  i. a plot of the original data, using a color scale to show medianHouseValue (or log medianHouseValue) versus longitude (x) and latitude (y).
+  ii. a plot of your model's predictions of medianHouseValue (or log medianHouseValue) versus longitude (x) and latitude (y).
+  iii. a plot of your model's errors/residuals (or log residuals) versus longitude (x) and latitude (y).
+  
+ 
+In this part of the assignment, we want to predict the median house value in California. We have 9 variables and 20640 observations. You can find a description of the dataset in the appendix. 
+
+We use random forests to build our model (see appendix for comparison against linear model and K-nearest neighbours). What does that mean? Imagine an upside-down tree. Trees involves sequential mini-decisions that result in a choice or prediction. Random forests involve the creation of a large number of these decision trees, each of which is trained on a different subset of the available data. The algorithm randomly selects a subset of features to use for each tree, which prevents overfitting. 
+
+Once the decision trees are trained, they can be used to make predictions on new data. Random forests combines the predictions from all of the decision trees to arrive at a final prediction. 
+
+We first plot median house values on the map of California. We can see that there are clusters.
 ```{r}
+CAhousing <- read_csv("~/Documents/Coding/eco395m-exercises/exercise_3/CAhousing.csv")
+
+head(CAhousing)
+
+#Plotting median house value as is 
+#plot_map = ggplot(CAhousing, 
+#                  aes(x = longitude, y = latitude, color = medianHouseValue)) +
+#              geom_point(aes(size = population), alpha = 0.4) +
+#              xlab("Longitude") +
+#              ylab("Latitude") +
+#              ggtitle("California: Median House Value") +
+#              theme(plot.title = element_text(hjust = 0.5)) +
+#              scale_color_distiller(palette = "Paired", labels = comma) +
+#              labs(color = "Median House Value (in USD)", size = "Population") +
+#  theme_void()
+#plot_map
+
+#Creating the base map 
+ca_df<-subset(map_data("state"), region == "california")
+ca_base <- ggplot(data = ca_df, mapping = aes(x = long, y = lat)) + 
+  coord_fixed(1.3) + 
+  geom_polygon(colour="black", fill="white")
+
+#Plotting median house value on a map
+house_map_1 = ca_base +
+  geom_point(data = CAhousing, aes(x=longitude, y=latitude, color=`medianHouseValue`), alpha=0.4)+
+  xlab("Longitude") + ylab("Latitude")+
+  ggtitle("California: Median House Value") +
+  scale_color_distiller(palette = "Paired", labels = comma) +
+              labs(color = "Median House Value (in USD)") + 
+  theme_void()
+
+#Splitting into training and testing data
+
+CAhousing_split <- initial_split(CAhousing, prop. = 0.8)
+CAhousing_train <- training(CAhousing_split)
+CAhousing_test <- testing(CAhousing_split)
+
+```
+
+```{r}
+# let's fit a single tree
+CAhousing.tree = rpart(medianHouseValue ~ .,
+                  data=CAhousing_train, control = rpart.control(cp = 0.00001))
+
+plot(CAhousing.tree, uniform = TRUE)
+text(CAhousing.tree, cex=0.6)
+
+# now a random forest
+# notice: no tuning parameters!  just using the default
+# downside: takes longer because we're fitting hundreds of trees (500 by default)
+# the importance=TRUE flag tells randomForest to calculate variable importance metrics
+CAhousing.forest = randomForest(medianHouseValue ~ .,
+                           data=CAhousing_train, importance = TRUE)
+
+CAhousing.forest$mse[length(CAhousing.forest$mse)]
+sqrt(CAhousing.forest$mse[length(CAhousing.forest$mse)])
+
+pred <- predict(CAhousing.forest, CAhousing_test)
+sqrt(mean((CAhousing_test$medianHouseValue - pred)^2))
+
+rmse_forest <- rmse(CAhousing_test$medianHouseValue, pred)
+
+# shows out-of-bag MSE as a function of the number of trees used
+plot(CAhousing.forest)
+
+#Plotting predicted median house value on a map
+pred_df <- data.frame(pred)
+
+CAhousing2 <- cbind(CAhousing, pred_df)
+
+house_map_2 = ca_base +
+  geom_point(data = CAhousing2, aes(x=longitude, y=latitude, color=`pred`), alpha=0.4)+
+  xlab("Longitude") + ylab("Latitude")+
+  ggtitle("California: Predicted Median House Value") +
+  scale_color_distiller(palette = "Paired", labels = comma) +
+              labs(color = "Median House Value (in USD)") + 
+  theme_void()
+
+#Plotting errors for predicted median house value on a map
+errors <- CAhousing_test$medianHouseValue - pred
+
+errors <- data.frame(errors)
+
+CAhousing3 <- cbind(CAhousing2, errors)
+
+house_map_3 = ca_base +
+  geom_point(data = CAhousing3, aes(x=longitude, y=latitude, color=`errors`), alpha=0.4)+
+  xlab("Longitude") + ylab("Latitude")+
+  ggtitle("California: Residuals for Predicted Median House Value") +
+  scale_color_distiller(palette = "Paired", labels = comma) +
+              labs(color = "Median House Value (in USD)") + 
+  theme_void()
+
+
+# let's compare RMSE on the test set
+modelr::rmse(CAhousing.tree, CAhousing_test)
+modelr::rmse(CAhousing.forest, CAhousing_test)  # a lot lower!
+
 
 ```
 

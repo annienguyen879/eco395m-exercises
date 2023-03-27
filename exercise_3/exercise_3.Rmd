@@ -24,8 +24,9 @@ library(viridis)
 library(sf)
 library(scales) 
 library(Metrics)
-
-
+library(dplyr)
+library(mosaic)
+library(gbm)
 ```
 
 ## What causes what?
@@ -53,18 +54,471 @@ library(Metrics)
 
 ## Tree Modeling: Dengue Cases
 
+Our aim is to use CART, random forests, and gradient-boosted trees to predict dengue cases in San Juan, Puerto Rico and Iquitos, Peru using weekly data from 1990 to 2010. Our data set contains the six feature variables explicitly listed (total_cases, city, season, specific_humidity, tdtr_k, precipitation_amt) in addition to the variables measuring average temperature and dew point temperature in kelvin (i.e. avg_temp_k and dew_point_temp_k, respectively). The city and season variables are set as factors as we want the analysis to treat the variable values as a category.
 
-```{r}
+```{r Prepare dataset, echo=FALSE}
+dengue = read.csv("dengue.csv")
 
+# Create factors
+city = factor(dengue$city)
+season = factor(dengue$season)
+
+# Create new data frame with dummy variables incorporated
+dengue_dataset <- data.frame(city = city,
+                     season = season,
+                     total_cases = dengue$total_cases,
+                     specific_humidity = dengue$specific_humidity,
+                     avg_diurnal_temp_range = dengue$tdtr_k,
+                     precipitation_amt = dengue$precipitation_amt,
+                     avg_temp_k = dengue$avg_temp_k,
+                     dew_point_temp_k = dengue$dew_point_temp_k)
+```
+The data set is split into training and testing sets. We build our basic CART model with the control cp = 0.00001 and the the five feature variables explicitly listed to predict the number of dengue cases (city, season, specific_humidity, tdtr_k, precipitation_amt). With the option cp = 0.00001, the CART model "grows big" by splitting a node if the split improves the deviance by a factor of 0.00001 (0.001%). Then the tree is pruned to the smallest tree whose CV error is within 1 standard deviation of the minimum.
+
+We consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best CART model. We consider four models: the basic CART model (the model consisting of the five explicitly listed independent variables), the basic CART model with the avg_temp_k variable, the basic CART model with the dew_point_temp_k variable, and the basic CART model with both the avg_temp_k and dew_point_temp_k variables. We evaluate the quality of the models by examining the average in-sample RMSE for 25 model train/test splits for each model. We find that the basic CART model with both the avg_temp_k and dew_point_temp_k variables is the best CART model with an average RMSE of 37.774. The the basic CART model, the basic CART model with the avg_temp_k variable, and the basic CART model with the dew_point_temp_k variables had average RMSE values of 40.38013, 39.82441, and 40.1219, respectively.
+
+```{r Basic CART, echo=FALSE}
+# CART Model
+load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split = initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  load.tree = update(load.tree, data=load_train)
+  
+  # Function for picking the smallest tree whose CV error is within 1 std err of the minimum
+  cp_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  cp_opt}
+  
+  # Selecting the tree
+  cp_1se(load.tree)
+
+  # Function pruning the tree at that level
+  prune_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  prune(my_tree, cp=cp_opt)}
+
+  # Pruning tree at the 1se complexity level
+  load.tree_prune = prune_1se(load.tree)
+  
+  # Calculate RMSE
+  modelr::rmse(load.tree_prune, load_train)}
+colMeans(rmse_simulation)
 ```
 
+```{r Avg Temp CART, echo=FALSE}
+# CART Model
+load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split = initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  load.tree = update(load.tree, data=load_train)
+  
+  # Function for picking the smallest tree whose CV error is within 1 std err of the minimum
+  cp_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  cp_opt}
+  
+  # Selecting the tree
+  cp_1se(load.tree)
+
+  # Function pruning the tree at that level
+  prune_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  prune(my_tree, cp=cp_opt)}
+
+  # Pruning tree at the 1se complexity level
+  load.tree_prune = prune_1se(load.tree)
+  
+  # Calculate RMSE
+  modelr::rmse(load.tree_prune, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Dew Point CART, echo=FALSE}
+# CART Model
+load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split = initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  load.tree = update(load.tree, data=load_train)
+  
+  # Function for picking the smallest tree whose CV error is within 1 std err of the minimum
+  cp_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  cp_opt}
+  
+  # Selecting the tree
+  cp_1se(load.tree)
+
+  # Function pruning the tree at that level
+  prune_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  prune(my_tree, cp=cp_opt)}
+
+  # Pruning tree at the 1se complexity level
+  load.tree_prune = prune_1se(load.tree)
+  
+  # Calculate RMSE
+  modelr::rmse(load.tree_prune, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Avg Temp and Dew Point CART, echo=FALSE}
+# CART Model
+load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split = initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  load.tree = update(load.tree, data=load_train)
+  
+  # Function for picking the smallest tree whose CV error is within 1 std err of the minimum
+  cp_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  cp_opt}
+  
+  # Selecting the tree
+  cp_1se(load.tree)
+
+  # Function pruning the tree at that level
+  prune_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  prune(my_tree, cp=cp_opt)}
+
+  # Pruning tree at the 1se complexity level
+  load.tree_prune = prune_1se(load.tree)
+  
+  # Calculate RMSE
+  modelr::rmse(load.tree_prune, load_train)}
+colMeans(rmse_simulation)
+```
+For Random Forests, we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Random Forests model. We consider the following four models: the basic model (the model consisting of the five explicitly listed independent variables), the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables. The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
+
+Similar to the best CART model, we find that the basic Random Forest model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 21.48982. The the basic Random Forest model, the basic Random Forest model with the avg_temp_k variable, and the basic Random Forest model with the dew_point_temp_k variables had average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
+
+```{r Basic Random Forest, echo=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Random forest
+  load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt,
+                             data=load_train, na.action=na.exclude)
+  
+  # Calculate RMSE
+  modelr::rmse(load.forest, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Avg Temp Random Forest, echo=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Random forest
+  load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k,
+                             data=load_train, na.action=na.exclude)
+  
+  # Calculate RMSE
+  modelr::rmse(load.forest, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Dew Point Random Forest, echo=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Random forest
+  load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k,
+                             data=load_train, na.action=na.exclude)
+  
+  # Calculate RMSE
+  modelr::rmse(load.forest, load_train)}
+colMeans(rmse_simulation)
+```
+
+
+```{r Avg Temp and Dew Point Random Forest, echo=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Random forest
+  load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
+                             data=load_train, na.action=na.exclude)
+  
+  # Calculate RMSE
+  modelr::rmse(load.forest, load_train)}
+colMeans(rmse_simulation)
+```
+
+Finally, for the Gradient-Boosted Trees model we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Gradient-Boosted Trees model. The model we used utilized the default Gaussian model). We examine the four models we have been considering before (the basic model, the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables). The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
+
+Similar to the best CART model and the best Random Forest model, we find that the basic Gradient-Boosted Trees model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 17.46581. The the basic Gradient-Boosted Trees model, the basic Gradient-Boosted Trees model with the avg_temp_k variable, and the basic Gradient-Boosted Trees model with the dew_point_temp_k variables had average RMSE values of 20.83645, 19.07204, and 20.20074, respectively.
+```{r Basic Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Gradient-Boosted Trees
+  boost = gbm(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt, 
+               data = load_train, distribution='gaussian', interaction.depth=4, n.trees=1500, shrinkage=.05)
+  
+  # Calculate RMSE
+  modelr::rmse(boost, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Avg Temp Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Gradient-Boosted Trees
+  boost = gbm(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k, 
+               data = load_train, distribution='gaussian', interaction.depth=4, n.trees=1500, shrinkage=.05)
+  
+  # Calculate RMSE
+  modelr::rmse(boost, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Dew Point Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Gradient-Boosted Trees
+  boost = gbm(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k, 
+               data = load_train, distribution='gaussian', interaction.depth=4, n.trees=1500, shrinkage=.05)
+  
+  # Calculate RMSE
+  modelr::rmse(boost, load_train)}
+colMeans(rmse_simulation)
+```
+
+```{r Avg Temp and Dew Point Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  # Gradient-Boosted Trees
+  boost = gbm(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k, 
+               data = load_train, distribution='gaussian', interaction.depth=4, n.trees=1500, shrinkage=.05)
+  
+  # Calculate RMSE
+  modelr::rmse(boost, load_train)}
+colMeans(rmse_simulation)
+```
+
+We now use the best CART model, Random Forests model, and Gradient-Boosted Trees model to predict the total number of dengue cases. For all three models, we found that the best models, by measure of in-sample RMSE, were the basic model with both the avg_temp_k and dew_point_temp_k variables. We compare the three models by using the testing data as a final check to see which model performed the best. Like with the previous model analysis, the quality of the models are evaluated by examining the average of 25 model train/test splits for each model. We find that the Random Forest model performed the best with an out-of-sample RMSE of 39.64522. The CART model did second best with an out-of-sample RMSE of 40.1887 and the Gradient-Boosted Trees model did the worst with an out-of-sample RMSE of 41.38736.
+
+```{r Comparing Using the Testing Set, echo=FALSE, message=FALSE}
+# Empty vectors to store results
+cart = c()
+randomForest = c()
+gradientBoost = c()
+
+# Simulate 25 times
+rmse_simulation = do(25)*{
+  # Split data into training and testing sets
+  load_split =  initial_split(dengue_dataset, prop=0.8)
+  load_train = training(load_split)
+  load_test  = testing(load_split)
+  
+  ## CART
+  load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+  
+  # Function for picking the smallest tree whose CV error is within 1 std err of the minimum
+  cp_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  cp_opt}
+  
+  # Selecting the tree
+  cp_1se(load.tree)
+
+  # Function pruning the tree at that level
+  prune_1se = function(my_tree) {
+  out = as.data.frame(my_tree$cptable)
+  thresh = min(out$xerror + out$xstd)
+  cp_opt = max(out$CP[out$xerror <= thresh])
+  prune(my_tree, cp=cp_opt)}
+
+  # Pruning tree at the 1se complexity level
+  load.tree_prune = prune_1se(load.tree)
+  
+  ## Random forest
+  load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
+                             data=load_train, na.action=na.exclude)
+  
+  ## Gradient-Boosted Trees
+  boost = gbm(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k, 
+               data = load_train, distribution='gaussian', interaction.depth=4, n.trees=1500, shrinkage=.05)
+  
+  # Calculate RMSE
+  cart = c(cart, modelr::rmse(load.tree_prune, load_test))
+  randomForest = c(randomForest, modelr::rmse(load.forest, load_test))
+  gradientBoost = c(gradientBoost, modelr::rmse(boost, load_test))}
+simulation_results = data.frame(cart, randomForest, gradientBoost)
+colMeans(simulation_results)
+```
+
+```{r Partial Dependence Plots, echo=FALSE, message=FALSE}
+###################################################
+# Split data into training and testing sets
+load_split =  initial_split(dengue_dataset, prop=0.8)
+load_train = training(load_split)
+load_test  = testing(load_split)
+  
+# Random forest
+load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
+                             data=load_train, na.action=na.exclude)
+partialPlot(load.forest, load_test, specific_humidity, las=1)
+partialPlot(load.forest, load_test, precipitation_amt, las=1)
+partialPlot(load.forest, load_test, avg_diurnal_temp_range, las=1)
+###################################################
+```
 
 ## Predictive Model Building: Green Certification
 
+In this section we build a model to predict revenue per square foot per calendar year. We will use the model to quantify the average change in rental income per square foot associated with green certification.
 
-```{r}
+Revenue is calculated by multiplying `Rent` with `lease_rate`. When revenue is added into the data set, we drop `Rent` and `lease_rate` to avoid collinearity. The variables we will be working with is as follows:
 
+```{r echo=FALSE}
+greenbuildings <- read.csv("greenbuildings.csv")
+greenbuildings <- greenbuildings %>% mutate(revenue = Rent*leasing_rate)
+data <- greenbuildings %>% select(-Energystar, -LEED, -leasing_rate, -Rent, -CS_PropertyID)
+head(data)
+set.seed(100)
+load_split = initial_split(data, prop = 0.8)
+load_train = training(load_split)
+load_test = testing(load_split)
 ```
+
+### Methods
+
+#### Linear Regression
+
+First, we will start with a linear regression model to use as a baseline for comparison. 
+This model includes the following variables: 
+
+```{r echo=FALSE}
+lm_model <- lm(revenue ~ ., data = load_train)
+coef(lm_model)
+cat("RMSE for regression with step-wise selection: ", rmse(lm_model, load_test))
+```
+
+
+#### Regression with Step-wise Selection
+
+Now, we will try step-wise selection to see if we can better refine the model.
+
+```{r include=FALSE}
+lm_step <- step(lm_model, scope=~(.)^2)
+```
+
+```{r echo=FALSE}
+cat("RMSE for regression with step-wise selection: ", rmse(lm_step, load_test))
+```
+
+After applying step-wise selection, we see that the RMSE has been reduced, which means that the model is better refined. However, this new model has a total of 60 variables, which is not an efficient model to make predictions. We will see if there are other methods to more effectively predict revenue.
+
+
+#### Tree Model
+We will try comparing the tree model and the random forest model to the baseline model to see which model is better at predicting revenue per square foot.
+
+```{r echo=FALSE}
+load.tree = rpart(revenue ~ .,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+cat("RMSE for tree: ", modelr::rmse(load.tree, load_test))
+```
+
+
+
+#### Random Forest Model
+
+```{r echo=FALSE}
+# fitting random forest
+load.forest = randomForest(revenue ~ ., data = load_train, importance = TRUE, na.action=na.roughfix)
+plot(load.forest)
+cat("RMSE for random forest: ", modelr::rmse(load.forest, load_test))
+```
+
+Of the three models (baseline linear regression, tree, and random forest models), we see that the random forest model's RMSE is significantly lower and is better at predicting revenue per square foot per year. Therefore, we will use this model for prediction.
+
+
+
+```{r echo=FALSE}
+# variance importance plot
+vi = varImpPlot(load.forest, type=1)
+# partial dependence functions
+partialPlot(load.forest, load_test, 'green_rating', las=1)
+```
+
+The above partial dependence plot shows the change in revenue per square foot associated with green certification, holding all other features constant. The slope for the graph is approximately 80, which shows that the average change in rental income per square foot associated with green certification is approximately $80.
+
+
+### Conclusion
+
+In this section, we went through a model-building process to find the best model to predict revenue per square foot per calendar year. Of the models that we have tested, we find that a random forest model does the best job of making predictions in an efficient manner, giving us the lowest RMSE value. We, then, used the model to find the average change in income per square foot associated with green certification by producing a partial dependence plot.
+
 
 
 ## Predictive Model Building: California Housing

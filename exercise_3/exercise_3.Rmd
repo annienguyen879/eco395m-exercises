@@ -7,6 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+library(rsample) 
+library(randomForest)
+library(modelr)
 ```
 
 ## What causes what?
@@ -42,10 +49,88 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Predictive Model Building: Green Certification
 
+In this section we build a model to predict revenue per square foot per calendar year. We will use the model to quantify the average change in rental income per square foot associated with green certification.
 
-```{r}
+Revenue is calculated by multiplying `Rent` with `lease_rate`. When revenue is added into the data set, we drop `Rent` and `lease_rate` to avoid collinearity. The variables we will be working with is as follows:
 
+```{r echo=FALSE}
+greenbuildings <- read.csv("greenbuildings.csv")
+greenbuildings <- greenbuildings %>% mutate(revenue = Rent*leasing_rate)
+data <- greenbuildings %>% select(-Energystar, -LEED, -leasing_rate, -Rent, -CS_PropertyID)
+head(data)
+set.seed(100)
+load_split = initial_split(data, prop = 0.8)
+load_train = training(load_split)
+load_test = testing(load_split)
 ```
+
+### Methods
+
+#### Linear Regression
+
+First, we will start with a linear regression model to use as a baseline for comparison. 
+This model includes the following variables: 
+
+```{r echo=FALSE}
+lm_model <- lm(revenue ~ ., data = load_train)
+coef(lm_model)
+cat("RMSE for regression with step-wise selection: ", rmse(lm_model, load_test))
+```
+
+
+#### Regression with Step-wise Selection
+
+Now, we will try step-wise selection to see if we can better refine the model.
+
+```{r include=FALSE}
+lm_step <- step(lm_model, scope=~(.)^2)
+```
+
+```{r echo=FALSE}
+cat("RMSE for regression with step-wise selection: ", rmse(lm_step, load_test))
+```
+
+After applying step-wise selection, we see that the RMSE has been reduced, which means that the model is better refined. However, this new model has a total of 60 variables, which is not an efficient model to make predictions. We will see if there are other methods to more effectively predict revenue.
+
+
+#### Tree Model
+We will try comparing the tree model and the random forest model to the baseline model to see which model is better at predicting revenue per square foot.
+
+```{r echo=FALSE}
+load.tree = rpart(revenue ~ .,
+                  data=load_train, control = rpart.control(cp = 0.00001))
+cat("RMSE for tree: ", modelr::rmse(load.tree, load_test))
+```
+
+
+
+#### Random Forest Model
+
+```{r echo=FALSE}
+# fitting random forest
+load.forest = randomForest(revenue ~ ., data = load_train, importance = TRUE, na.action=na.roughfix)
+plot(load.forest)
+cat("RMSE for random forest: ", modelr::rmse(load.forest, load_test))
+```
+
+Of the three models (baseline linear regression, tree, and random forest models), we see that the random forest model's RMSE is significantly lower and is better at predicting revenue per square foot per year. Therefore, we will use this model for prediction.
+
+
+
+```{r echo=FALSE}
+# variance importance plot
+vi = varImpPlot(load.forest, type=1)
+# partial dependence functions
+partialPlot(load.forest, load_test, 'green_rating', las=1)
+```
+
+The above partial dependence plot shows the change in revenue per square foot associated with green certification, holding all other features constant. The slope for the graph is approximately 80, which shows that the average change in rental income per square foot associated with green certification is approximately $80.
+
+
+### Conclusion
+
+In this section, we went through a model-building process to find the best model to predict revenue per square foot per calendar year. Of the models that we have tested, we find that a random forest model does the best job of making predictions in an efficient manner, giving us the lowest RMSE value. We, then, used the model to find the average change in income per square foot associated with green certification by producing a partial dependence plot.
+
 
 
 ## Predictive Model Building: California Housing

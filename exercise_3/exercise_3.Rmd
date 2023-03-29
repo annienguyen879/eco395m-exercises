@@ -420,20 +420,21 @@ simulation_results = data.frame(cart, randomForest, gradientBoost)
 colMeans(simulation_results)
 ```
 
+Partial dependent plots shows the relationship between total cases and an independent variable in our random forest model while taking account of the joint effect of other features. In the specific_humidity partial dependent plot, we see that total cases slowly increases with specific humidity, then increases slightly at 15 before shooting up around a specific humidity of 19. The partial dependence plot of precipitation amount shows a different picture - total cases initial takes a huge drop and then rises up and down from 0-100 before slowing rising into a plateau. The avg_diurnal_temp_range partial dependent plot shows total cases rapidly decreases, with a few small rises in the 0 to 5 avg_diurnal_temp_range variable range. The partial dependent plots for specific_humidity, precipitation_amt, and avg_diurnal_temp_range are presented below.
+
 ```{r Partial Dependence Plots, echo=FALSE, message=FALSE}
-###################################################
-# Split data into training and testing sets
-load_split =  initial_split(dengue_dataset, prop=0.8)
-load_train = training(load_split)
-load_test  = testing(load_split)
-  
 # Random forest
-load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
-                             data=load_train, na.action=na.exclude)
-partialPlot(load.forest, load_test, specific_humidity, las=1)
-partialPlot(load.forest, load_test, precipitation_amt, las=1)
-partialPlot(load.forest, load_test, avg_diurnal_temp_range, las=1)
-###################################################
+load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k, data=load_train, importance = TRUE, na.action=na.exclude)
+
+# Partial dependence plots
+p1=pdp::partial(load.forest, pred.var='specific_humidity', las=1)
+plot(p1,type = "l", xlab = "specific_humidity", ylab = "Dengue Cases", main = "Predicted Dengue Cases Specific_humidity")
+
+p2=pdp::partial(load.forest, pred.var='precipitation_amt', las=1)
+plot(p2,type = "l", xlab = "precipitation_amt", ylab = "Dengue Cases", main = "Predicted Dengue Cases Precipitation_amt")
+
+p3=pdp::partial(load.forest, pred.var='avg_diurnal_temp_range', las=1)
+plot(p3,type = "l", xlab = "avg_diurnal_temp_range", ylab = "Dengue Cases", main = "Predicted Dengue Cases Avg_diurnal_temp_range")
 ```
 
 ## Predictive Model Building: Green Certification

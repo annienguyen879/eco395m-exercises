@@ -2,7 +2,7 @@
 title: "Exercise 3"
 author: "Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar"
 date: "`r Sys.Date()`"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
@@ -16,9 +16,6 @@ library(rpart.plot)
 library(rsample) 
 library(lubridate)
 library(modelr)
-library(ggmap)
-library(mapdata)
-library(maps)
 library(stringr)
 library(viridis)
 library(sf)
@@ -27,6 +24,10 @@ library(Metrics)
 library(dplyr)
 library(mosaic)
 library(gbm)
+library(tidycensus)
+library(foreach)
+library(caret)
+library(parallel)
 ```
 
 ## What causes what?
@@ -516,50 +517,33 @@ The above partial dependence plot shows the change in revenue per square foot as
 
 
 ### Conclusion
-
 In this section, we went through a model-building process to find the best model to predict revenue per square foot per calendar year. Of the models that we have tested, we find that a random forest model does the best job of making predictions in an efficient manner, giving us the lowest RMSE value. We, then, used the model to find the average change in income per square foot associated with green certification by producing a partial dependence plot.
 
 
-
 ## Predictive Model Building: California Housing
+In this part of the assignment, we want to predict the median house value in California. We have 9 variables and 20640 observations. Since we have total rooms and bedrooms for households in the tract, we standardise these by households. You can find a description of the full dataset in the appendix. 
 
-Your task is to build the best predictive model you can for medianHouseValue, using the other available features. Write a short report detailing your methods. Make sure your report includes an estimate for the overall out-of-sample accuracy of your proposed model. Also include three figures:
-
-  i. a plot of the original data, using a color scale to show medianHouseValue (or log medianHouseValue) versus longitude (x) and latitude (y).
-  ii. a plot of your model's predictions of medianHouseValue (or log medianHouseValue) versus longitude (x) and latitude (y).
-  iii. a plot of your model's errors/residuals (or log residuals) versus longitude (x) and latitude (y).
-  
- 
-In this part of the assignment, we want to predict the median house value in California. We have 9 variables and 20640 observations. You can find a description of the dataset in the appendix. 
-
-We use random forests to build our model (see appendix for comparison against linear model and K-nearest neighbours). What does that mean? Imagine an upside-down tree. Trees involves sequential mini-decisions that result in a choice or prediction. Random forests involve the creation of a large number of these decision trees, each of which is trained on a different subset of the available data. The algorithm randomly selects a subset of features to use for each tree, which prevents overfitting. 
+We use random forests to build our model (see appendix for its superior performance against linear model, K-nearest neighbours, and a single decision tree). What does random forests mean? Imagine an upside-down tree. Trees involves sequential mini-decisions that result in a choice or prediction. Random forests involve the creation of a large number of these decision trees, each of which is trained on a different subset of the available data. The algorithm randomly selects a subset of features to use for each tree, which prevents overfitting. 
 
 Once the decision trees are trained, they can be used to make predictions on new data. Random forests combines the predictions from all of the decision trees to arrive at a final prediction. 
 
-We first plot median house values on the map of California. We can see that there are clusters.
+We first plot median house values on the map of California. We can see that the most highest median house value is clustered around the Bay Area and Los Angeles in California. This makes sense given that these are the technology and film industry hubs respectively, and there is high demand and limited supply of housing. 
 ```{r}
 CAhousing <- read_csv("~/Documents/Coding/eco395m-exercises/exercise_3/CAhousing.csv")
 
 head(CAhousing)
 
-#Plotting median house value as is 
-#plot_map = ggplot(CAhousing, 
-#                  aes(x = longitude, y = latitude, color = medianHouseValue)) +
-#              geom_point(aes(size = population), alpha = 0.4) +
-#              xlab("Longitude") +
-#              ylab("Latitude") +
-#              ggtitle("California: Median House Value") +
-#              theme(plot.title = element_text(hjust = 0.5)) +
-#              scale_color_distiller(palette = "Paired", labels = comma) +
-#              labs(color = "Median House Value (in USD)", size = "Population") +
-#  theme_void()
-#plot_map
+#Standardise variables 
+CAhousing <- CAhousing %>%
+  mutate(avgRooms = totalRooms/households,
+         avgBedrooms = totalBedrooms/households)
+
+CAhousing = CAhousing[,-c(4,5)] 
 
 #Creating the base map 
-ca_df<-subset(map_data("state"), region == "california")
-ca_base <- ggplot(data = ca_df, mapping = aes(x = long, y = lat)) + 
-  coord_fixed(1.3) + 
-  geom_polygon(colour="black", fill="white")
+ca_df <- tigris::counties("CA")
+ca_base <- ggplot(ca_df) +
+  geom_sf(colour="black", fill="white")
 
 #Plotting median house value on a map
 house_map_1 = ca_base +
@@ -570,21 +554,22 @@ house_map_1 = ca_base +
               labs(color = "Median House Value (in USD)") + 
   theme_void()
 
-#Splitting into training and testing data
+house_map_1
+```
 
+Now, before we run our models, we split our data into training and testing datasets in an 80-20 ratio. We first run our random forests model and get a Root Mean Squared Error (RMSE) of 51322.64 on the training data. On the testing data, our RMSE is slightly higher at 52016.37, which is expected. 
+```{r}
+#Splitting into training and testing data
 CAhousing_split <- initial_split(CAhousing, prop. = 0.8)
 CAhousing_train <- training(CAhousing_split)
 CAhousing_test <- testing(CAhousing_split)
 
-```
-
-```{r}
 # let's fit a single tree
 CAhousing.tree = rpart(medianHouseValue ~ .,
                   data=CAhousing_train, control = rpart.control(cp = 0.00001))
 
-plot(CAhousing.tree, uniform = TRUE)
-text(CAhousing.tree, cex=0.6)
+#plot(CAhousing.tree, uniform = TRUE)
+#text(CAhousing.tree, cex=0.6)
 
 # now a random forest
 # notice: no tuning parameters!  just using the default
@@ -597,13 +582,19 @@ CAhousing.forest$mse[length(CAhousing.forest$mse)]
 sqrt(CAhousing.forest$mse[length(CAhousing.forest$mse)])
 
 pred <- predict(CAhousing.forest, CAhousing_test)
-sqrt(mean((CAhousing_test$medianHouseValue - pred)^2))
+#sqrt(mean((CAhousing_test$medianHouseValue - pred)^2))
 
-rmse_forest <- rmse(CAhousing_test$medianHouseValue, pred)
+# let's compare RMSE on the test set
+#modelr::rmse(CAhousing.forest, CAhousing_train)
+modelr::rmse(CAhousing.forest, CAhousing_test)  # a lot lower!
 
 # shows out-of-bag MSE as a function of the number of trees used
-plot(CAhousing.forest)
+#plot(CAhousing.forest)
+```
 
+Let us see how our predicted values from test data using random forests look on the map of California. There is now a slight decrease in the clear clustering of houses valued around $400,000 to \$500,000 that we could see with the actual data. 
+
+```{r}
 #Plotting predicted median house value on a map
 pred_df <- data.frame(pred)
 
@@ -614,29 +605,104 @@ house_map_2 = ca_base +
   xlab("Longitude") + ylab("Latitude")+
   ggtitle("California: Predicted Median House Value") +
   scale_color_distiller(palette = "Paired", labels = comma) +
-              labs(color = "Median House Value (in USD)") + 
+              labs(color = "Predicted Median House Value (in USD)") + 
   theme_void()
 
+house_map_2
+```
+
+Let us look at the errors next. There seems to be a tendency to incorrectly estimate house value (generally undervalue) in counties that had higher median house values (around the Bay Area and Los Angeles).
+
+```{r}
 #Plotting errors for predicted median house value on a map
-errors <- CAhousing_test$medianHouseValue - pred
+errors <- (CAhousing_test$medianHouseValue - pred)
+#can also take (pred/actual)
+#don't need to take log of the ratio 
 
 errors <- data.frame(errors)
 
 CAhousing3 <- cbind(CAhousing2, errors)
 
-house_map_3 = ca_base +
+CA_tracts <- tigris::counties("CA")
+
+house_map_3 = 
+  ca_base + 
   geom_point(data = CAhousing3, aes(x=longitude, y=latitude, color=`errors`), alpha=0.4)+
   xlab("Longitude") + ylab("Latitude")+
   ggtitle("California: Residuals for Predicted Median House Value") +
   scale_color_distiller(palette = "Paired", labels = comma) +
-              labs(color = "Median House Value (in USD)") + 
+              labs(color = "Residuals of predicted Median House Value (in USD)") + 
   theme_void()
-
-
-# let's compare RMSE on the test set
-modelr::rmse(CAhousing.tree, CAhousing_test)
-modelr::rmse(CAhousing.forest, CAhousing_test)  # a lot lower!
-
+house_map_3
 
 ```
 
+###Appendix 
+
+Appendix 1: California housing dataset
+```{r}
+describe(CAhousing)
+```
+
+Appendix 2: Linear model 
+
+By running the following linear model, we get an out-of-sample RMSE of 73968.75 and in-sample RMSE of 72045.72. This is much higher than that of random forests and tree models.  
+```{r}
+lm_CAhousing <- lm(medianHouseValue ~ housingMedianAge + population + medianIncome + avgBedrooms + avgRooms + latitude + longitude + medianIncome:avgBedrooms:avgRooms + avgRooms:population, data = CAhousing_train)
+
+summary(lm_CAhousing)
+
+#In-sample
+modelr::rmse(lm_CAhousing, CAhousing_train)
+#Out-of-sample 
+modelr::rmse(lm_CAhousing, CAhousing_test)
+```
+
+Appendix 3: K-nearest neighbours 
+
+We run the K-nearest neighbours for the following values of K: 10, 20, 30, 50, 75, and 100. Our out-of-sample RMSE for all values is above 100,000. 
+
+```{r}
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 10)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 20)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 30)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 50)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 75)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+
+knn_model = knnreg(medianHouseValue ~ .,
+                   data = CAhousing_train, k = 100)
+modelr::rmse(knn_model, CAhousing_train)
+modelr::rmse(knn_model, CAhousing_test)
+```
+
+Appendix 4: Single Tree Model
+When we run a single decision tree on the data, we get an out-of-sample RMSE of 61469.24, much higher than that of random forests. 
+
+```{r}
+# let's fit a single tree
+CAhousing.tree = rpart(medianHouseValue ~ .,
+                  data=CAhousing_train, control = rpart.control(cp = 0.00001))
+
+modelr::rmse(CAhousing.tree, CAhousing_train)
+modelr::rmse(CAhousing.tree, CAhousing_test)
+
+```

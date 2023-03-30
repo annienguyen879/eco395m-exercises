@@ -651,7 +651,7 @@ house_map_3
 
 ```
 
-##Appendix 
+### Appendix 
 
 Appendix 1: California housing dataset
 The dataset, after standardising, has the following variables.

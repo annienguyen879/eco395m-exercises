@@ -393,7 +393,7 @@ had higher median house values (around the Bay Area and Los Angeles).
 
 ![](exercise_3_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
-\##Appendix
+### Appendix
 
 Appendix 1: California housing dataset The dataset, after standardising,
 has the following variables.

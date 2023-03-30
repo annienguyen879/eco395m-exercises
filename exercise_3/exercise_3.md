@@ -1,3 +1,10 @@
+# Homework 3
+## ECO 395M: Data Mining and Statistical Learning 
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-03-30
+
 ## 1. What causes what?
 
 #### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***

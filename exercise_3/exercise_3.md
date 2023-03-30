@@ -180,7 +180,7 @@ average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 Finally, for the Gradient-Boosted Trees model we again consider
 combinations of two additional features (average temperature and dew
 point temperature in kelvin) to find the best Gradient-Boosted Trees
-model. The model we used utilized the default Gaussian model). We
+model. The model we used utilized the default Gaussian model. We
 examine the four models we have been considering before (the basic
 model, the basic model with the avg\_temp\_k variable, the basic model
 with the dew\_point\_temp\_k variable, and the basic model with both the

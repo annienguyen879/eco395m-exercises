@@ -1,22 +1,81 @@
 ## What causes what?
 
-### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***
+#### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***
 
-### High-crime cities have an incentive to hire more cops in an effort to lower crime rate. So it is likely the case that cities with high crime have more cops. That is, high crime rate is likely correlated with higher number of city cops. However, to isolate the causal effect of the number of cops on crime rate, one cannot simply run a regression of “Crime” on “Police” using data from a few cities. First, to find any causal effect, one needs to establish a large, robust data set to run analysis on. This is because we often get bias estimates using a smaller number of data sets. Second, there are other variables, such as region and area income, that have an effect on “Crime” that the regression would not be controlling for. This would cause the results to have omitted variable bias.
+High-crime cities have an incentive to hire more cops in an effort to
+lower crime rate. So it is likely the case that cities with high crime
+have more cops. That is, high crime rate is likely correlated with
+higher number of city cops. However, to isolate the causal effect of the
+number of cops on crime rate, one cannot simply run a regression of
+“Crime” on “Police” using data from a few cities. First, to find any
+causal effect, one needs to establish a large, robust data set to run
+analysis on. This is because we often get bias estimates using a smaller
+number of data sets. Second, there are other variables, such as region
+and area income, that have an effect on “Crime” that the regression
+would not be controlling for. This would cause the results to have
+omitted variable bias.
 
-### ***2. How were the researchers from UPenn able to isolate this effect? Briefly describe their approach and discuss their result in “Table 2” from the researchers’ paper.***
+#### ***2. How were the researchers from UPenn able to isolate this effect? Briefly describe their approach and discuss their result in “Table 2” from the researchers’ paper.***
 
-### The podcast discussed a clever way researchers looked into finding the causal effect of “Crime” on “Police” in Washington D.C. Washington D.C., being the nation’s capital, has a terrorism alert system. When the terror alert level goes to orange, extra police are put on the Mall and other parts of Washington, irrespective of the day’s crime rate. So researchers analyzed orange alert days (when there are extra police on the streets for reasons unrelated to street crime), to examine what happens to street crime. The researchers also looked at ridership levels on the Metro system on those particular days, as it is possible people were less likely to travel and tourists were less likely to visit Washington D.C. on Orange Alert days. However, Metro ridership levels actually were not diminished on high-terror days, so they suggested the number of crime-victims was largely unchanged.
+The podcast discussed a clever way researchers looked into finding the
+causal effect of “Crime” on “Police” in Washington D.C. Washington D.C.,
+being the nation’s capital, has a terrorism alert system. When the
+terror alert level goes to orange, extra police are put on the Mall and
+other parts of Washington, irrespective of the day’s crime rate. So
+researchers analyzed orange alert days (when there are extra police on
+the streets for reasons unrelated to street crime), to examine what
+happens to street crime. The researchers also looked at ridership levels
+on the Metro system on those particular days, as it is possible people
+were less likely to travel and tourists were less likely to visit
+Washington D.C. on Orange Alert days. However, Metro ridership levels
+actually were not diminished on high-terror days, so they suggested the
+number of crime-victims was largely unchanged.
 
-### As seen in Table 2 Column 1, the researchers found that street crime went down on days when there were extra-police (for days when there was an orange alert level- i.e. reasons unrelated to street crime). The estimated coefficient of “High Alert” was negative (-7.316) and statistically significant at 5%. Column 2 additionally controls for metro midday ridership.”High Alert” had a negative estimated coefficient (-6.046) and “Log(midday ridership)” had a positive estimated coefficient (17.341). Both estimates were statistically significant at 5% and 1%, respectively.
+As seen in Table 2 Column 1, the researchers found that street crime
+went down on days when there were extra-police (for days when there was
+an orange alert level- i.e. reasons unrelated to street crime). The
+estimated coefficient of “High Alert” was negative (-7.316) and
+statistically significant at 5%. Column 2 additionally controls for
+metro midday ridership.”High Alert” had a negative estimated coefficient
+(-6.046) and “Log(midday ridership)” had a positive estimated
+coefficient (17.341). Both estimates were statistically significant at
+5% and 1%, respectively.
 
-### ***3. Why did they have to control for Metro ridership? What was that trying to capture?***
+#### ***3. Why did they have to control for Metro ridership? What was that trying to capture?***
 
-### As stated in question 2, Metro ridership was added to the model to capture any potential differences in the number of potential “crime-victims” on alert level orange days. If the number of regular civilians (i.e. potential “crime-victims”) - here being measured by Metro ridership - are notably different/lower on alert level Orange Days, then differences in crime rate may not only be attributed to changes in police presence, but also to changes in the number of civilians as well. However, the results in Table 2 show that that was not the case, and suggest the number of victims was largely unchanged.
+As stated in question 2, Metro ridership was added to the model to
+capture any potential differences in the number of potential
+“crime-victims” on alert level orange days. If the number of regular
+civilians (i.e. potential “crime-victims”) - here being measured by
+Metro ridership - are notably different/lower on alert level Orange
+Days, then differences in crime rate may not only be attributed to
+changes in police presence, but also to changes in the number of
+civilians as well. However, the results in Table 2 show that that was
+not the case, and suggest the number of victims was largely unchanged.
 
-### ***4. Can you describe the model being estimated in the first column of “Table 4”? What is the conclusion?***
+#### ***4. Can you describe the model being estimated in the first column of “Table 4”? What is the conclusion?***
 
-### Table 4 shows a model where the dependent variable is the daily total number of crimes in D.C. and the independent variables are a “High Alert” “District 1” interaction term, “High Alert” “Other Districts” interaction term, and a “Log(midday ridership)” term. “District 1” refers to a dummy variable associated with crime incidents in the first police district area (which is the closest police district to the United States Capitol). Interactions terms are used when the effect of an independent variable on a dependent variable is context-specific. This model has separate “High Alert” interaction terms for “District 1” and “Other Districts”. This allows the researchers to compare the effect of “High Alert”x”District 1” and “High Alert”x”Other Districts”. And we do see evidence there is a difference - the estimated coefficients for “High Alert”x”District 1” and “High Alert”x”Other Districts” were -2.621 and -.571, respectively. We see that daily total number of crimes decreased more in District 1 on High Alert days than in Other Districts on High Alert days. Further, the results were significant at 1% for the “High Alert”x”District 1” term and not significant for the “High Alert”x”Other Districts” term. And as seen in Table 2, we see Log(midday ridership) is positive and statistically significant, indicating the number of Metro riders/potential crime victims were not diminished on high-terror days.
+Table 4 shows a model where the dependent variable is the daily total
+number of crimes in D.C. and the independent variables are a “High
+Alert” “District 1” interaction term, “High Alert” “Other Districts”
+interaction term, and a “Log(midday ridership)” term. “District 1”
+refers to a dummy variable associated with crime incidents in the first
+police district area (which is the closest police district to the United
+States Capitol). Interactions terms are used when the effect of an
+independent variable on a dependent variable is context-specific. This
+model has separate “High Alert” interaction terms for “District 1” and
+“Other Districts”. This allows the researchers to compare the effect of
+“High Alert”x”District 1” and “High Alert”x”Other Districts”. And we do
+see evidence there is a difference - the estimated coefficients for
+“High Alert”x”District 1” and “High Alert”x”Other Districts” were -2.621
+and -.571, respectively. We see that daily total number of crimes
+decreased more in District 1 on High Alert days than in Other Districts
+on High Alert days. Further, the results were significant at 1% for the
+“High Alert”x”District 1” term and not significant for the “High
+Alert”x”Other Districts” term. And as seen in Table 2, we see Log(midday
+ridership) is positive and statistically significant, indicating the
+number of Metro riders/potential crime victims were not diminished on
+high-terror days.
 
 ## Tree Modeling: Dengue Cases
 
@@ -58,29 +117,29 @@ model with the dew\_point\_temp\_k variables had average RMSE values of
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
-    ##  result 
-    ## 40.1716
+    ##   result 
+    ## 40.67453
 
     ## Using parallel package.
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
     ##   result 
-    ## 39.96102
+    ## 40.94929
 
     ## Using parallel package.
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
     ##   result 
-    ## 40.46478
+    ## 40.13535
 
     ## Using parallel package.
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
-    ##  result 
-    ## 40.0437
+    ##   result 
+    ## 39.61708
 
 For Random Forests, we again consider combinations of two additional
 features (average temperature and dew point temperature in kelvin) to
@@ -105,28 +164,28 @@ respectively.
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
     ##   result 
-    ## 34.13206
+    ## 34.22835
 
     ## Using parallel package.
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
     ##   result 
-    ## 22.36185
+    ## 22.47737
+
+    ## Using parallel package.
+    ##   * Set seed with set.rseed().
+    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+
+    ##  result 
+    ## 22.5966
 
     ## Using parallel package.
     ##   * Set seed with set.rseed().
     ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
 
     ##   result 
-    ## 22.85227
-
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
-
-    ##   result 
-    ## 21.00051
+    ## 21.70868
 
 Finally, for the Gradient-Boosted Trees model we again consider
 combinations of two additional features (average temperature and dew
@@ -149,16 +208,16 @@ variables had average RMSE values of 20.83645, 19.07204, and 20.20074,
 respectively.
 
     ##   result 
-    ## 20.61769
+    ## 20.96419
 
     ##   result 
-    ## 19.16376
+    ## 19.00715
 
     ##   result 
-    ## 20.32638
+    ## 20.03264
 
     ##   result 
-    ## 18.86185
+    ## 18.70678
 
 We now use the best CART model, Random Forests model, and
 Gradient-Boosted Trees model to predict the total number of dengue
@@ -174,7 +233,7 @@ an out-of-sample RMSE of 40.1887 and the Gradient-Boosted Trees model
 did the worst with an out-of-sample RMSE of 41.38736.
 
     ##          cart  randomForest gradientBoost 
-    ##      46.32565      47.86591      49.08355
+    ##      41.82784      41.54711      44.83984
 
 Partial dependent plots shows the relationship between total cases and
 an independent variable in our random forest model while taking account

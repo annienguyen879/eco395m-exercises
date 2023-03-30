@@ -113,30 +113,22 @@ CART model with the avg\_temp\_k variable, and the basic CART model with
 the dew\_point\_temp\_k variables had average RMSE values of 40.38013,
 39.82441, and 40.1219, respectively.
 
-1.  Basic CART model
-
-<!-- -->
+***Basic CART model***
 
     ##   result 
     ## 40.07049
 
-1.  Basic CART model with average temperature
-
-<!-- -->
+***Basic CART model with average temperature***
 
     ##   result 
     ## 40.31918
 
-1.  Basic CART model with dew point temmperature
-
-<!-- -->
+***Basic CART model with dew point***
 
     ##   result 
     ## 40.66986
 
-1.  Basic CART Model with average temperature and dew point
-
-<!-- -->
+***Basic CART Model with average temperature and dew point***
 
     ##   result 
     ## 40.47671
@@ -158,30 +150,22 @@ model, the basic Random Forest model with the avg\_temp\_k variable, and
 the basic Random Forest model with the dew\_point\_temp\_k variables had
 average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 
-1.  Basic Random Forests
-
-<!-- -->
+***Basic Random Forests***
 
     ##   result 
     ## 34.24675
 
-1.  Basic Random Forests with average temperature
-
-<!-- -->
+***Basic Random Forests with average temperature***
 
     ##   result 
     ## 22.57003
 
-1.  Basic Random Forests with dew point
-
-<!-- -->
+***Basic Random Forests with dew point***
 
     ##   result 
     ## 22.76713
 
-1.  Basic Random Forests with average temperature and dew point
-
-<!-- -->
+***Basic Random Forests with average temperature and dew point***
 
     ##   result 
     ## 21.58757
@@ -206,30 +190,23 @@ basic Gradient-Boosted Trees model with the dew\_point\_temp\_k
 variables had average RMSE values of 20.83645, 19.07204, and 20.20074,
 respectively.
 
-1.  Basic Gradient-Boosted Trees
-
-<!-- -->
+***Basic Gradient-Boosted Trees***
 
     ##   result 
     ## 21.16817
 
-1.  Basic Gradient-Boosted Trees with average temperature
-
-<!-- -->
+***Basic Gradient-Boosted Trees with average temperature***
 
     ##   result 
     ## 19.11897
 
-1.  Basic Gradient-Boosted Trees with dew point
-
-<!-- -->
+***Basic Gradient-Boosted Trees with dew point***
 
     ##   result 
     ## 20.08842
 
-1.  Basic Gradient-Boosted Trees with average temperature and dew point
-
-<!-- -->
+***Basic Gradient-Boosted Trees with average temperature and dew
+point***
 
     ##   result 
     ## 18.57126

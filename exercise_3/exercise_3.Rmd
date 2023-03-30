@@ -83,7 +83,7 @@ The data set is split into training and testing sets. We build our basic CART mo
 
 We consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best CART model. We consider four models: the basic CART model (the model consisting of the five explicitly listed independent variables), the basic CART model with the avg_temp_k variable, the basic CART model with the dew_point_temp_k variable, and the basic CART model with both the avg_temp_k and dew_point_temp_k variables. We evaluate the quality of the models by examining the average in-sample RMSE for 25 model train/test splits for each model. We find that the basic CART model with both the avg_temp_k and dew_point_temp_k variables is the best CART model with an average RMSE of 37.774. The basic CART model, the basic CART model with the avg_temp_k variable, and the basic CART model with the dew_point_temp_k variables had average RMSE values of 40.38013, 39.82441, and 40.1219, respectively.
 
-  1. Basic CART model
+  ***Basic CART model***
 
 ```{r Basic CART}
 # CART Model
@@ -127,7 +127,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  2. Basic CART model with average temperature
+  ***Basic CART model with average temperature***
 ```{r Avg Temp CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k,
@@ -166,7 +166,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  3. Basic CART model with dew point temmperature 
+  ***Basic CART model with dew point*** 
 ```{r Dew Point CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k,
@@ -205,7 +205,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  4. Basic CART Model with average temperature and dew point
+  ***Basic CART Model with average temperature and dew point***
 ```{r Avg Temp and Dew Point CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
@@ -248,7 +248,7 @@ For Random Forests, we again consider combinations of two additional features (a
 
 Similar to the best CART model, we find that the basic Random Forest model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 21.48982. Thebasic Random Forest model, the basic Random Forest model with the avg_temp_k variable, and the basic Random Forest model with the dew_point_temp_k variables had average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 
-  1. Basic Random Forests 
+  ***Basic Random Forests***
 ```{r Basic Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -265,7 +265,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  2. Basic Random Forests with average temperature
+  ***Basic Random Forests with average temperature***
 ```{r Avg Temp Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -282,7 +282,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  3. Basic Random Forests with dew point 
+  ***Basic Random Forests with dew point***
 ```{r Dew Point Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -299,7 +299,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  4. Basic Random Forests with average temperature and dew point
+  ***Basic Random Forests with average temperature and dew point***
 ```{r Avg Temp and Dew Point Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -320,7 +320,7 @@ Finally, for the Gradient-Boosted Trees model we again consider combinations of 
 
 Similar to the best CART model and the best Random Forest model, we find that the basic Gradient-Boosted Trees model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 17.46581. The the basic Gradient-Boosted Trees model, the basic Gradient-Boosted Trees model with the avg_temp_k variable, and the basic Gradient-Boosted Trees model with the dew_point_temp_k variables had average RMSE values of 20.83645, 19.07204, and 20.20074, respectively.
 
-  1. Basic Gradient-Boosted Trees 
+  ***Basic Gradient-Boosted Trees*** 
 ```{r Basic Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -337,7 +337,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  2. Basic Gradient-Boosted Trees with average temperature
+  ***Basic Gradient-Boosted Trees with average temperature***
 ```{r Avg Temp Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -354,7 +354,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
   
-  3. Basic Gradient-Boosted Trees with dew point
+  ***Basic Gradient-Boosted Trees with dew point***
 ```{r Dew Point Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
@@ -371,7 +371,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-  4. Basic Gradient-Boosted Trees with average temperature and dew point
+  ***Basic Gradient-Boosted Trees with average temperature and dew point***
 ```{r Avg Temp and Dew Point Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets

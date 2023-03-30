@@ -478,6 +478,7 @@ We run the K-nearest neighbours for the following values of K: 10, 20,
     ## Out-of-sample RMSE for K = 100:  109715.6
 
 Appendix 4: Single Tree Model 
+
 When we run a single decision tree on the
 data, we get an out-of-sample RMSE of 61,469.24, much higher than that
 of random forests.

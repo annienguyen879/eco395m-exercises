@@ -1,3 +1,10 @@
+# Homework 3
+## ECO 395M: Data Mining and Statistical Learning 
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-03-30
+
 ## 1. What causes what?
 
 #### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***
@@ -173,10 +180,17 @@ average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 Finally, for the Gradient-Boosted Trees model we again consider
 combinations of two additional features (average temperature and dew
 point temperature in kelvin) to find the best Gradient-Boosted Trees
+<<<<<<< HEAD
 model. The model we used utilized the default Gaussian model. We examine
 the four models we have been considering before (the basic model, the
 basic model with the avg\_temp\_k variable, the basic model with the
 dew\_point\_temp\_k variable, and the basic model with both the
+=======
+model. The model we used utilized the default Gaussian model. We
+examine the four models we have been considering before (the basic
+model, the basic model with the avg\_temp\_k variable, the basic model
+with the dew\_point\_temp\_k variable, and the basic model with both the
+>>>>>>> 5f1873af241ab74db17efe409692cf1c43d8dbc2
 avg\_temp\_k and dew\_point\_temp\_k variables). The quality of the
 models are evaluated by examining the average in-sample RMSE for 25
 model train/test splits for each model.

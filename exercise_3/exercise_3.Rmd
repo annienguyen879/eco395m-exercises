@@ -639,8 +639,6 @@ errors <- data.frame(errors)
 
 CAhousing3 <- cbind(CAhousing2, errors)
 
-CA_tracts <- tigris::counties("CA")
-
 house_map_3 = 
   ca_base + 
   geom_point(data = CAhousing3, aes(x=longitude, y=latitude, color=`errors`), alpha=0.4)+

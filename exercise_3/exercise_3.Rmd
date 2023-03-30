@@ -6,7 +6,12 @@ output: md_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	cache = TRUE
+)
 library(Hmisc)
 library(readr)
 library(randomForest)
@@ -30,7 +35,7 @@ library(caret)
 library(parallel)
 ```
 
-## What causes what?
+## 1. What causes what?
 
 #### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***
 
@@ -53,11 +58,11 @@ As stated in question 2, Metro ridership was added to the model to capture any p
 Table 4 shows a model where the dependent variable is the daily total number of crimes in D.C. and the independent variables are a "High Alert" "District 1" interaction term, "High Alert" "Other Districts" interaction term, and a "Log(midday ridership)" term. "District 1" refers to a dummy variable associated with crime incidents in the first police district area (which is the closest police district to the United States Capitol). Interactions terms are used when the effect of an independent variable on a dependent variable is context-specific. This model has separate "High Alert" interaction terms for "District 1" and "Other Districts". This allows the researchers to compare the effect of "High Alert"x"District 1" and "High Alert"x"Other Districts". And we do see evidence there is a difference - the estimated coefficients for "High Alert"x"District 1" and "High Alert"x"Other Districts" were -2.621 and -.571, respectively. We see that daily total number of crimes decreased more in District 1 on High Alert days than in Other Districts on High Alert days. Further, the results were significant at 1% for the "High Alert"x"District 1" term and not significant for the "High Alert"x"Other Districts" term. And as seen in Table 2, we see Log(midday ridership) is positive and statistically significant, indicating the number of Metro riders/potential crime victims were not diminished on high-terror days.
 
 
-## Tree Modeling: Dengue Cases
+## 2. Tree Modeling: Dengue Cases
 
 Our aim is to use CART, random forests, and gradient-boosted trees to predict dengue cases in San Juan, Puerto Rico and Iquitos, Peru using weekly data from 1990 to 2010. Our data set contains the six feature variables explicitly listed (total_cases, city, season, specific_humidity, tdtr_k, precipitation_amt) in addition to the variables measuring average temperature and dew point temperature in kelvin (i.e. avg_temp_k and dew_point_temp_k, respectively). The city and season variables are set as factors as we want the analysis to treat the variable values as a category.
 
-```{r Prepare dataset, echo=FALSE}
+```{r Prepare dataset}
 dengue = read.csv("dengue.csv")
 
 # Create factors
@@ -76,9 +81,11 @@ dengue_dataset <- data.frame(city = city,
 ```
 The data set is split into training and testing sets. We build our basic CART model with the control cp = 0.00001 and the the five feature variables explicitly listed to predict the number of dengue cases (city, season, specific_humidity, tdtr_k, precipitation_amt). With the option cp = 0.00001, the CART model "grows big" by splitting a node if the split improves the deviance by a factor of 0.00001 (0.001%). Then the tree is pruned to the smallest tree whose CV error is within 1 standard deviation of the minimum.
 
-We consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best CART model. We consider four models: the basic CART model (the model consisting of the five explicitly listed independent variables), the basic CART model with the avg_temp_k variable, the basic CART model with the dew_point_temp_k variable, and the basic CART model with both the avg_temp_k and dew_point_temp_k variables. We evaluate the quality of the models by examining the average in-sample RMSE for 25 model train/test splits for each model. We find that the basic CART model with both the avg_temp_k and dew_point_temp_k variables is the best CART model with an average RMSE of 37.774. The the basic CART model, the basic CART model with the avg_temp_k variable, and the basic CART model with the dew_point_temp_k variables had average RMSE values of 40.38013, 39.82441, and 40.1219, respectively.
+We consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best CART model. We consider four models: the basic CART model (the model consisting of the five explicitly listed independent variables), the basic CART model with the avg_temp_k variable, the basic CART model with the dew_point_temp_k variable, and the basic CART model with both the avg_temp_k and dew_point_temp_k variables. We evaluate the quality of the models by examining the average in-sample RMSE for 25 model train/test splits for each model. We find that the basic CART model with both the avg_temp_k and dew_point_temp_k variables is the best CART model with an average RMSE of 37.774. The basic CART model, the basic CART model with the avg_temp_k variable, and the basic CART model with the dew_point_temp_k variables had average RMSE values of 40.38013, 39.82441, and 40.1219, respectively.
 
-```{r Basic CART, echo=FALSE}
+  1. Basic CART model
+
+```{r Basic CART}
 # CART Model
 load_split = initial_split(dengue_dataset, prop=0.8)
 load_train = training(load_split)
@@ -120,7 +127,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Avg Temp CART, echo=FALSE}
+  2. Basic CART model with average temperature
+```{r Avg Temp CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k,
                   data=load_train, control = rpart.control(cp = 0.00001))
@@ -158,7 +166,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Dew Point CART, echo=FALSE}
+  3. Basic CART model with dew point temmperature 
+```{r Dew Point CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + dew_point_temp_k,
                   data=load_train, control = rpart.control(cp = 0.00001))
@@ -196,7 +205,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Avg Temp and Dew Point CART, echo=FALSE}
+  4. Basic CART Model with average temperature and dew point
+```{r Avg Temp and Dew Point CART}
 # CART Model
 load.tree = rpart(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k,
                   data=load_train, control = rpart.control(cp = 0.00001))
@@ -233,11 +243,13 @@ rmse_simulation = do(25)*{
   modelr::rmse(load.tree_prune, load_train)}
 colMeans(rmse_simulation)
 ```
+
 For Random Forests, we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Random Forests model. We consider the following four models: the basic model (the model consisting of the five explicitly listed independent variables), the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables. The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
 
-Similar to the best CART model, we find that the basic Random Forest model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 21.48982. The the basic Random Forest model, the basic Random Forest model with the avg_temp_k variable, and the basic Random Forest model with the dew_point_temp_k variables had average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
+Similar to the best CART model, we find that the basic Random Forest model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 21.48982. Thebasic Random Forest model, the basic Random Forest model with the avg_temp_k variable, and the basic Random Forest model with the dew_point_temp_k variables had average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 
-```{r Basic Random Forest, echo=FALSE}
+  1. Basic Random Forests 
+```{r Basic Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -253,7 +265,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Avg Temp Random Forest, echo=FALSE}
+  2. Basic Random Forests with average temperature
+```{r Avg Temp Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -269,7 +282,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Dew Point Random Forest, echo=FALSE}
+  3. Basic Random Forests with dew point 
+```{r Dew Point Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -285,8 +299,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-
-```{r Avg Temp and Dew Point Random Forest, echo=FALSE}
+  4. Basic Random Forests with average temperature and dew point
+```{r Avg Temp and Dew Point Random Forest}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -305,7 +319,9 @@ colMeans(rmse_simulation)
 Finally, for the Gradient-Boosted Trees model we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Gradient-Boosted Trees model. The model we used utilized the default Gaussian model). We examine the four models we have been considering before (the basic model, the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables). The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
 
 Similar to the best CART model and the best Random Forest model, we find that the basic Gradient-Boosted Trees model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 17.46581. The the basic Gradient-Boosted Trees model, the basic Gradient-Boosted Trees model with the avg_temp_k variable, and the basic Gradient-Boosted Trees model with the dew_point_temp_k variables had average RMSE values of 20.83645, 19.07204, and 20.20074, respectively.
-```{r Basic Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+
+  1. Basic Gradient-Boosted Trees 
+```{r Basic Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -321,7 +337,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Avg Temp Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+  2. Basic Gradient-Boosted Trees with average temperature
+```{r Avg Temp Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -336,8 +353,9 @@ rmse_simulation = do(25)*{
   modelr::rmse(boost, load_train)}
 colMeans(rmse_simulation)
 ```
-
-```{r Dew Point Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+  
+  3. Basic Gradient-Boosted Trees with dew point
+```{r Dew Point Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -353,7 +371,8 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-```{r Avg Temp and Dew Point Gaussian Gradient-Boosted Trees, echo=FALSE, message=FALSE}
+  4. Basic Gradient-Boosted Trees with average temperature and dew point
+```{r Avg Temp and Dew Point Gaussian Gradient-Boosted Trees, message=FALSE}
 rmse_simulation = do(25)*{
   # Split data into training and testing sets
   load_split =  initial_split(dengue_dataset, prop=0.8)
@@ -371,7 +390,7 @@ colMeans(rmse_simulation)
 
 We now use the best CART model, Random Forests model, and Gradient-Boosted Trees model to predict the total number of dengue cases. For all three models, we found that the best models, by measure of in-sample RMSE, were the basic model with both the avg_temp_k and dew_point_temp_k variables. We compare the three models by using the testing data as a final check to see which model performed the best. Like with the previous model analysis, the quality of the models are evaluated by examining the average of 25 model train/test splits for each model. We find that the Random Forest model performed the best with an out-of-sample RMSE of 39.64522. The CART model did second best with an out-of-sample RMSE of 40.1887 and the Gradient-Boosted Trees model did the worst with an out-of-sample RMSE of 41.38736.
 
-```{r Comparing Using the Testing Set, echo=FALSE, message=FALSE}
+```{r Comparing Using the Testing Set, message=FALSE}
 # Empty vectors to store results
 cart = c()
 randomForest = c()
@@ -426,7 +445,7 @@ colMeans(simulation_results)
 
 Partial dependent plots shows the relationship between total cases and an independent variable in our random forest model while taking account of the joint effect of other features. In the specific_humidity partial dependent plot, we see that total cases slowly increases with specific humidity, then increases slightly at 15 before shooting up around a specific humidity of 19. The partial dependence plot of precipitation amount shows a different picture - total cases initial takes a huge drop and then rises up and down from 0-100 before slowing rising into a plateau. The avg_diurnal_temp_range partial dependent plot shows total cases rapidly decreases, with a few small rises in the 0 to 5 avg_diurnal_temp_range variable range. The partial dependent plots for specific_humidity, precipitation_amt, and avg_diurnal_temp_range are presented below.
 
-```{r Partial Dependence Plots, echo=FALSE, message=FALSE}
+```{r Partial Dependence Plots, message=FALSE}
 # Random forest
 load.forest = randomForest(total_cases ~ city + season + specific_humidity + avg_diurnal_temp_range + precipitation_amt + avg_temp_k + dew_point_temp_k, data=load_train, importance = TRUE, na.action=na.exclude)
 
@@ -441,7 +460,7 @@ p3=pdp::partial(load.forest, pred.var='avg_diurnal_temp_range', las=1)
 plot(p3,type = "l", xlab = "avg_diurnal_temp_range", ylab = "Dengue Cases", main = "Predicted Dengue Cases Avg_diurnal_temp_range")
 ```
 
-## Predictive Model Building: Green Certification
+## 3. Predictive Model Building: Green Certification
 
 In this section we build a model to predict revenue per square foot per calendar year. We will use the model to quantify the average change in rental income per square foot associated with green certification.
 
@@ -480,7 +499,7 @@ Now, we will try step-wise selection to see if we can better refine the model.
 lm_step <- step(lm_model, scope=~(.)^2, na.action=na.exclude)
 ```
 
-```{r echo=FALSE}
+```{r include=FALSE}
 cat("RMSE for regression with step-wise selection: ", modelr::rmse(lm_step, load_test))
 ```
 
@@ -490,7 +509,7 @@ After applying step-wise selection, we see that the RMSE has been reduced, which
 #### Tree Model
 We will try comparing the tree model and the random forest model to the baseline model to see which model is better at predicting revenue per square foot.
 
-```{r echo=FALSE}
+```{r}
 load.tree = rpart(revenue ~ .,
                   data=load_train, control = rpart.control(cp = 0.00001), na.action=na.exclude)
 cat("RMSE for tree: ", modelr::rmse(load.tree, load_test))
@@ -500,7 +519,7 @@ cat("RMSE for tree: ", modelr::rmse(load.tree, load_test))
 
 #### Random Forest Model
 
-```{r echo=FALSE}
+```{r}
 # fitting random forest
 load.forest = randomForest(revenue ~ ., data = load_train, importance = TRUE, na.action=na.exclude)
 plot(load.forest)
@@ -511,7 +530,7 @@ Of the three models (baseline linear regression, tree, and random forest models)
 
 
 
-```{r echo=FALSE}
+```{r}
 # variance importance plot
 vi = varImpPlot(load.forest, type=1)
 # partial dependence functions
@@ -525,18 +544,17 @@ The above partial dependence plot shows the change in revenue per square foot as
 In this section, we went through a model-building process to find the best model to predict revenue per square foot per calendar year. Of the models that we have tested, we find that a random forest model does the best job of making predictions in an efficient manner, giving us the lowest RMSE value. We, then, used the model to find the average change in income per square foot associated with green certification by producing a partial dependence plot.
 
 
-## Predictive Model Building: California Housing
+## 4. Predictive Model Building: California Housing
 In this part of the assignment, we want to predict the median house value in California. We have 9 variables and 20640 observations. Since we have total rooms and bedrooms for households in the tract, we standardise these by households. You can find a description of the full dataset in the appendix. 
 
 We use random forests to build our model (see appendix for its superior performance against linear model, K-nearest neighbours, and a single decision tree). What does random forests mean? Imagine an upside-down tree. Trees involves sequential mini-decisions that result in a choice or prediction. Random forests involve the creation of a large number of these decision trees, each of which is trained on a different subset of the available data. The algorithm randomly selects a subset of features to use for each tree, which prevents overfitting. 
 
 Once the decision trees are trained, they can be used to make predictions on new data. Random forests combines the predictions from all of the decision trees to arrive at a final prediction. 
 
-We first plot median house values on the map of California. We can see that the most highest median house value is clustered around the Bay Area and Los Angeles in California. This makes sense given that these are the technology and film industry hubs respectively, and there is high demand and limited supply of housing. 
+We first plot median house values on the map of California. We can see that the houses with the highest median value are clustered around the Bay Area and Los Angeles in California. This makes sense given that these are the technology and film industry hubs respectively, and there is high demand and limited supply of housing.
+
 ```{r}
 CAhousing <- read_csv("CAhousing.csv")
-
-head(CAhousing)
 
 #Standardise variables 
 CAhousing <- CAhousing %>%
@@ -562,36 +580,27 @@ house_map_1 = ca_base +
 house_map_1
 ```
 
-Now, before we run our models, we split our data into training and testing datasets in an 80-20 ratio. We first run our random forests model and get a Root Mean Squared Error (RMSE) of 51322.64 on the training data. On the testing data, our RMSE is slightly higher at 52016.37, which is expected. 
-```{r}
+Now, before we run our models, we split our data into training and testing datasets in an 80-20 ratio. We first run our random forests model and get a Root Mean Squared Error (RMSE) of 51,322.64 on the training data. On the testing data, our RMSE is slightly higher at 52,016.37, which is expected. 
+
+```{r include=FALSE}
 #Splitting into training and testing data
 CAhousing_split <- initial_split(CAhousing, prop. = 0.8)
 CAhousing_train <- training(CAhousing_split)
 CAhousing_test <- testing(CAhousing_split)
 
-# let's fit a single tree
-CAhousing.tree = rpart(medianHouseValue ~ .,
-                  data=CAhousing_train, control = rpart.control(cp = 0.00001))
-
-#plot(CAhousing.tree, uniform = TRUE)
-#text(CAhousing.tree, cex=0.6)
-
 # now a random forest
-# notice: no tuning parameters!  just using the default
-# downside: takes longer because we're fitting hundreds of trees (500 by default)
-# the importance=TRUE flag tells randomForest to calculate variable importance metrics
 CAhousing.forest = randomForest(medianHouseValue ~ .,
                            data=CAhousing_train, importance = TRUE)
 
 CAhousing.forest$mse[length(CAhousing.forest$mse)]
-sqrt(CAhousing.forest$mse[length(CAhousing.forest$mse)])
+cat("In-sample RMSE: ", sqrt(CAhousing.forest$mse[length(CAhousing.forest$mse)]))
 
 pred <- predict(CAhousing.forest, CAhousing_test)
 #sqrt(mean((CAhousing_test$medianHouseValue - pred)^2))
 
 # let's compare RMSE on the test set
 #modelr::rmse(CAhousing.forest, CAhousing_train)
-modelr::rmse(CAhousing.forest, CAhousing_test)  # a lot lower!
+cat("Out-of-sample RMSE: ", modelr::rmse(CAhousing.forest, CAhousing_test))
 
 # shows out-of-bag MSE as a function of the number of trees used
 #plot(CAhousing.forest)
@@ -642,25 +651,28 @@ house_map_3
 
 ```
 
-###Appendix 
+##Appendix 
 
 Appendix 1: California housing dataset
+The dataset, after standardising, has the following variables.
 ```{r}
-describe(CAhousing)
+ls(CAhousing)
 ```
 
 Appendix 2: Linear model 
 
-By running the following linear model, we get an out-of-sample RMSE of 73968.75 and in-sample RMSE of 72045.72. This is much higher than that of random forests and tree models.  
+By running the following linear model, we get an out-of-sample RMSE of 73,968.75 and in-sample RMSE of 72,045.72. This is much higher than that of random forests and tree models.  
 ```{r}
 lm_CAhousing <- lm(medianHouseValue ~ housingMedianAge + population + medianIncome + avgBedrooms + avgRooms + latitude + longitude + medianIncome:avgBedrooms:avgRooms + avgRooms:population, data = CAhousing_train)
 
 summary(lm_CAhousing)
+```
 
+```{r}
 #In-sample
-modelr::rmse(lm_CAhousing, CAhousing_train)
+cat("In-sample RMSE: ",modelr::rmse(lm_CAhousing, CAhousing_train))
 #Out-of-sample 
-modelr::rmse(lm_CAhousing, CAhousing_test)
+cat("Out-of-sample RMSE: ",modelr::rmse(lm_CAhousing, CAhousing_test))
 ```
 
 Appendix 3: K-nearest neighbours 
@@ -670,44 +682,44 @@ We run the K-nearest neighbours for the following values of K: 10, 20, 30, 50, 7
 ```{r}
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 10)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 10: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 10: ", modelr::rmse(knn_model, CAhousing_test))
 
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 20)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 20: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 20: ",modelr::rmse(knn_model, CAhousing_test))
 
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 30)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 30: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 30: ",modelr::rmse(knn_model, CAhousing_test))
 
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 50)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 50: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 50: ", modelr::rmse(knn_model, CAhousing_test))
 
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 75)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 75: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 75: ",modelr::rmse(knn_model, CAhousing_test))
 
 knn_model = knnreg(medianHouseValue ~ .,
                    data = CAhousing_train, k = 100)
-modelr::rmse(knn_model, CAhousing_train)
-modelr::rmse(knn_model, CAhousing_test)
+cat("In-sample RMSE for K = 100: ", modelr::rmse(knn_model, CAhousing_train))
+cat("Out-of-sample RMSE for K = 100: ",modelr::rmse(knn_model, CAhousing_test))
 ```
 
 Appendix 4: Single Tree Model
-When we run a single decision tree on the data, we get an out-of-sample RMSE of 61469.24, much higher than that of random forests. 
+When we run a single decision tree on the data, we get an out-of-sample RMSE of 61,469.24, much higher than that of random forests. 
 
 ```{r}
 # let's fit a single tree
 CAhousing.tree = rpart(medianHouseValue ~ .,
                   data=CAhousing_train, control = rpart.control(cp = 0.00001))
 
-modelr::rmse(CAhousing.tree, CAhousing_train)
-modelr::rmse(CAhousing.tree, CAhousing_test)
+cat("In-sample RMSE: ", modelr::rmse(CAhousing.tree, CAhousing_train))
+cat("Out-of-sample RMSE: ", modelr::rmse(CAhousing.tree, CAhousing_test))
 
 ```

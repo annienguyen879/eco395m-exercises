@@ -1,4 +1,4 @@
-## What causes what?
+## 1. What causes what?
 
 #### ***1. Why can’t I just get data from a few different cities and run the regression of “Crime” on “Police” to understand how more cops in the streets affect crime? (“Crime” refers to some measure of crime rate and “Police” measures the number of cops in a city.)***
 
@@ -77,7 +77,7 @@ ridership) is positive and statistically significant, indicating the
 number of Metro riders/potential crime victims were not diminished on
 high-terror days.
 
-## Tree Modeling: Dengue Cases
+## 2. Tree Modeling: Dengue Cases
 
 Our aim is to use CART, random forests, and gradient-boosted trees to
 predict dengue cases in San Juan, Puerto Rico and Iquitos, Peru using
@@ -108,38 +108,38 @@ avg\_temp\_k and dew\_point\_temp\_k variables. We evaluate the quality
 of the models by examining the average in-sample RMSE for 25 model
 train/test splits for each model. We find that the basic CART model with
 both the avg\_temp\_k and dew\_point\_temp\_k variables is the best CART
-model with an average RMSE of 37.774. The the basic CART model, the
-basic CART model with the avg\_temp\_k variable, and the basic CART
-model with the dew\_point\_temp\_k variables had average RMSE values of
-40.38013, 39.82441, and 40.1219, respectively.
+model with an average RMSE of 37.774. The basic CART model, the basic
+CART model with the avg\_temp\_k variable, and the basic CART model with
+the dew\_point\_temp\_k variables had average RMSE values of 40.38013,
+39.82441, and 40.1219, respectively.
 
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+1.  Basic CART model
 
-    ##   result 
-    ## 40.67453
-
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+<!-- -->
 
     ##   result 
-    ## 40.94929
+    ## 40.07049
 
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+1.  Basic CART model with average temperature
 
-    ##   result 
-    ## 40.13535
-
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+<!-- -->
 
     ##   result 
-    ## 39.61708
+    ## 40.31918
+
+1.  Basic CART model with dew point temmperature
+
+<!-- -->
+
+    ##   result 
+    ## 40.66986
+
+1.  Basic CART Model with average temperature and dew point
+
+<!-- -->
+
+    ##   result 
+    ## 40.47671
 
 For Random Forests, we again consider combinations of two additional
 features (average temperature and dew point temperature in kelvin) to
@@ -153,39 +153,38 @@ average in-sample RMSE for 25 model train/test splits for each model.
 
 Similar to the best CART model, we find that the basic Random Forest
 model with both the avg\_temp\_k and dew\_point\_temp\_k variables is
-the best model with an average RMSE of 21.48982. The the basic Random
-Forest model, the basic Random Forest model with the avg\_temp\_k
-variable, and the basic Random Forest model with the dew\_point\_temp\_k
-variables had average RMSE values of 34.70102, 22.35256, and 22.8386,
-respectively.
+the best model with an average RMSE of 21.48982. Thebasic Random Forest
+model, the basic Random Forest model with the avg\_temp\_k variable, and
+the basic Random Forest model with the dew\_point\_temp\_k variables had
+average RMSE values of 34.70102, 22.35256, and 22.8386, respectively.
 
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+1.  Basic Random Forests
 
-    ##   result 
-    ## 34.22835
-
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+<!-- -->
 
     ##   result 
-    ## 22.47737
+    ## 34.24675
 
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+1.  Basic Random Forests with average temperature
 
-    ##  result 
-    ## 22.5966
-
-    ## Using parallel package.
-    ##   * Set seed with set.rseed().
-    ##   * Disable this message with options(`mosaic:parallelMessage` = FALSE)
+<!-- -->
 
     ##   result 
-    ## 21.70868
+    ## 22.57003
+
+1.  Basic Random Forests with dew point
+
+<!-- -->
+
+    ##   result 
+    ## 22.76713
+
+1.  Basic Random Forests with average temperature and dew point
+
+<!-- -->
+
+    ##   result 
+    ## 21.58757
 
 Finally, for the Gradient-Boosted Trees model we again consider
 combinations of two additional features (average temperature and dew
@@ -207,17 +206,33 @@ basic Gradient-Boosted Trees model with the dew\_point\_temp\_k
 variables had average RMSE values of 20.83645, 19.07204, and 20.20074,
 respectively.
 
-    ##   result 
-    ## 20.96419
+1.  Basic Gradient-Boosted Trees
+
+<!-- -->
 
     ##   result 
-    ## 19.00715
+    ## 21.16817
+
+1.  Basic Gradient-Boosted Trees with average temperature
+
+<!-- -->
 
     ##   result 
-    ## 20.03264
+    ## 19.11897
+
+1.  Basic Gradient-Boosted Trees with dew point
+
+<!-- -->
 
     ##   result 
-    ## 18.70678
+    ## 20.08842
+
+1.  Basic Gradient-Boosted Trees with average temperature and dew point
+
+<!-- -->
+
+    ##   result 
+    ## 18.57126
 
 We now use the best CART model, Random Forests model, and
 Gradient-Boosted Trees model to predict the total number of dengue
@@ -233,7 +248,7 @@ an out-of-sample RMSE of 40.1887 and the Gradient-Boosted Trees model
 did the worst with an out-of-sample RMSE of 41.38736.
 
     ##          cart  randomForest gradientBoost 
-    ##      41.82784      41.54711      44.83984
+    ##      52.94027      51.15533      52.67990
 
 Partial dependent plots shows the relationship between total cases and
 an independent variable in our random forest model while taking account
@@ -251,7 +266,7 @@ avg\_diurnal\_temp\_range are presented below.
 
 ![](exercise_3_files/figure-markdown_strict/Partial%20Dependence%20Plots-1.png)![](exercise_3_files/figure-markdown_strict/Partial%20Dependence%20Plots-2.png)![](exercise_3_files/figure-markdown_strict/Partial%20Dependence%20Plots-3.png)
 
-## Predictive Model Building: Green Certification
+## 3. Predictive Model Building: Green Certification
 
 In this section we build a model to predict revenue per square foot per
 calendar year. We will use the model to quantify the average change in
@@ -301,17 +316,12 @@ for comparison. This model includes the following variables:
     ##         Gas_Costs Electricity_Costs  City_Market_Rent 
     ##     -1.892094e+04      1.955287e+04      9.738375e+01
 
-    ## Warning in predict.lm(model, data): prediction from a rank-deficient fit may be
-    ## misleading
-
     ## RMSE for linear regression:  904.6494
 
 #### Regression with Step-wise Selection
 
 Now, we will try step-wise selection to see if we can better refine the
 model.
-
-    ## RMSE for regression with step-wise selection:  884.7578
 
 After applying step-wise selection, we see that the RMSE has been
 reduced, which means that the model is better refined. However, this new
@@ -356,7 +366,7 @@ lowest RMSE value. We, then, used the model to find the average change
 in income per square foot associated with green certification by
 producing a partial dependence plot.
 
-## Predictive Model Building: California Housing
+## 4. Predictive Model Building: California Housing
 
 In this part of the assignment, we want to predict the median house
 value in California. We have 9 variables and 20640 observations. Since
@@ -378,132 +388,25 @@ predictions on new data. Random forests combines the predictions from
 all of the decision trees to arrive at a final prediction.
 
 We first plot median house values on the map of California. We can see
-that the most highest median house value is clustered around the Bay
-Area and Los Angeles in California. This makes sense given that these
-are the technology and film industry hubs respectively, and there is
-high demand and limited supply of housing.
-
-    CAhousing <- read_csv("CAhousing.csv")
-
-    ## Rows: 20640 Columns: 9
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## dbl (9): longitude, latitude, housingMedianAge, totalRooms, totalBedrooms, p...
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-    head(CAhousing)
-
-    ## # A tibble: 6 × 9
-    ##   longitude latitude housingMe…¹ total…² total…³ popul…⁴ house…⁵ media…⁶ media…⁷
-    ##       <dbl>    <dbl>       <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
-    ## 1     -122.     37.9          41     880     129     322     126    8.33  452600
-    ## 2     -122.     37.9          21    7099    1106    2401    1138    8.30  358500
-    ## 3     -122.     37.8          52    1467     190     496     177    7.26  352100
-    ## 4     -122.     37.8          52    1274     235     558     219    5.64  341300
-    ## 5     -122.     37.8          52    1627     280     565     259    3.85  342200
-    ## 6     -122.     37.8          52     919     213     413     193    4.04  269700
-    ## # … with abbreviated variable names ¹​housingMedianAge, ²​totalRooms,
-    ## #   ³​totalBedrooms, ⁴​population, ⁵​households, ⁶​medianIncome, ⁷​medianHouseValue
-
-    #Standardise variables 
-    CAhousing <- CAhousing %>%
-      mutate(avgRooms = totalRooms/households,
-             avgBedrooms = totalBedrooms/households)
-
-    CAhousing = CAhousing[,-c(4,5)] 
-
-    #Creating the base map 
-    ca_df <- tigris::counties("CA")
-
-    ## Retrieving data for the year 2021
+that the houses with the highest median value are clustered around the
+Bay Area and Los Angeles in California. This makes sense given that
+these are the technology and film industry hubs respectively, and there
+is high demand and limited supply of housing.
 
     ##   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
-
-    ca_base <- ggplot(ca_df) +
-      geom_sf(colour="black", fill="white")
-
-    #Plotting median house value on a map
-    house_map_1 = ca_base +
-      geom_point(data = CAhousing, aes(x=longitude, y=latitude, color=`medianHouseValue`), alpha=0.4)+
-      xlab("Longitude") + ylab("Latitude")+
-      ggtitle("California: Median House Value") +
-      scale_color_distiller(palette = "Paired", labels = comma) +
-                  labs(color = "Median House Value (in USD)") + 
-      theme_void()
-
-    house_map_1
 
 ![](exercise_3_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
 Now, before we run our models, we split our data into training and
 testing datasets in an 80-20 ratio. We first run our random forests
-model and get a Root Mean Squared Error (RMSE) of 51322.64 on the
+model and get a Root Mean Squared Error (RMSE) of 51,322.64 on the
 training data. On the testing data, our RMSE is slightly higher at
-52016.37, which is expected.
-
-    #Splitting into training and testing data
-    CAhousing_split <- initial_split(CAhousing, prop. = 0.8)
-    CAhousing_train <- training(CAhousing_split)
-    CAhousing_test <- testing(CAhousing_split)
-
-    # let's fit a single tree
-    CAhousing.tree = rpart(medianHouseValue ~ .,
-                      data=CAhousing_train, control = rpart.control(cp = 0.00001))
-
-    #plot(CAhousing.tree, uniform = TRUE)
-    #text(CAhousing.tree, cex=0.6)
-
-    # now a random forest
-    # notice: no tuning parameters!  just using the default
-    # downside: takes longer because we're fitting hundreds of trees (500 by default)
-    # the importance=TRUE flag tells randomForest to calculate variable importance metrics
-    CAhousing.forest = randomForest(medianHouseValue ~ .,
-                               data=CAhousing_train, importance = TRUE)
-
-    CAhousing.forest$mse[length(CAhousing.forest$mse)]
-
-    ## [1] 2614370673
-
-    sqrt(CAhousing.forest$mse[length(CAhousing.forest$mse)])
-
-    ## [1] 51130.92
-
-    pred <- predict(CAhousing.forest, CAhousing_test)
-    #sqrt(mean((CAhousing_test$medianHouseValue - pred)^2))
-
-    # let's compare RMSE on the test set
-    #modelr::rmse(CAhousing.forest, CAhousing_train)
-    modelr::rmse(CAhousing.forest, CAhousing_test)  # a lot lower!
-
-    ## [1] 53108.45
-
-    # shows out-of-bag MSE as a function of the number of trees used
-    #plot(CAhousing.forest)
+52,016.37, which is expected.
 
 Let us see how our predicted values from test data using random forests
 look on the map of California. There is now a slight decrease in the
 clear clustering of houses valued around $400,000 to $500,000 that we
 could see with the actual data.
-
-    #Plotting predicted median house value on a map
-    pred_df <- data.frame(pred)
-
-    CAhousing2 <- cbind(CAhousing, pred_df)
-
-    ## Warning in data.frame(..., check.names = FALSE): row names were found from a
-    ## short variable and have been discarded
-
-    house_map_2 = ca_base +
-      geom_point(data = CAhousing2, aes(x=longitude, y=latitude, color=`pred`), alpha=0.4)+
-      xlab("Longitude") + ylab("Latitude")+
-      ggtitle("California: Predicted Median House Value") +
-      scale_color_distiller(palette = "Paired", labels = comma) +
-                  labs(color = "Predicted Median House Value (in USD)") + 
-      theme_void()
-
-    house_map_2
 
 ![](exercise_3_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
@@ -511,130 +414,22 @@ Let us look at the errors next. There seems to be a tendency to
 incorrectly estimate house value (generally undervalue) in counties that
 had higher median house values (around the Bay Area and Los Angeles).
 
-    #Plotting errors for predicted median house value on a map
-    errors <- (CAhousing_test$medianHouseValue - pred)
-    #can also take (pred/actual)
-    #don't need to take log of the ratio 
-
-    errors <- data.frame(errors)
-
-    CAhousing3 <- cbind(CAhousing2, errors)
-
-    ## Warning in data.frame(..., check.names = FALSE): row names were found from a
-    ## short variable and have been discarded
-
-    CA_tracts <- tigris::counties("CA")
-
-    ## Retrieving data for the year 2021
-
-    house_map_3 = 
-      ca_base + 
-      geom_point(data = CAhousing3, aes(x=longitude, y=latitude, color=`errors`), alpha=0.4)+
-      xlab("Longitude") + ylab("Latitude")+
-      ggtitle("California: Residuals for Predicted Median House Value") +
-      scale_color_distiller(palette = "Paired", labels = comma) +
-                  labs(color = "Residuals of predicted Median House Value (in USD)") + 
-      theme_void()
-    house_map_3
-
 ![](exercise_3_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
-\###Appendix
+\##Appendix
 
-Appendix 1: California housing dataset
+Appendix 1: California housing dataset The dataset, after standardising,
+has the following variables.
 
-    describe(CAhousing)
-
-    ## CAhousing 
-    ## 
-    ##  9  Variables      20640  Observations
-    ## --------------------------------------------------------------------------------
-    ## longitude 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0      844        1   -119.6    2.243   -122.5   -122.3 
-    ##      .25      .50      .75      .90      .95 
-    ##   -121.8   -118.5   -118.0   -117.2   -117.1 
-    ## 
-    ## lowest : -124.35 -124.30 -124.27 -124.26 -124.25
-    ## highest: -114.56 -114.55 -114.49 -114.47 -114.31
-    ## --------------------------------------------------------------------------------
-    ## latitude 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0      862        1    35.63     2.35    32.82    33.63 
-    ##      .25      .50      .75      .90      .95 
-    ##    33.93    34.26    37.71    38.48    38.96 
-    ## 
-    ## lowest : 32.54 32.55 32.56 32.57 32.58, highest: 41.84 41.86 41.88 41.92 41.95
-    ## --------------------------------------------------------------------------------
-    ## housingMedianAge 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0       52    0.999    28.64    14.43        8       13 
-    ##      .25      .50      .75      .90      .95 
-    ##       18       29       37       46       52 
-    ## 
-    ## lowest :  1  2  3  4  5, highest: 48 49 50 51 52
-    ## --------------------------------------------------------------------------------
-    ## population 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0     3888        1     1425     1014      348      510 
-    ##      .25      .50      .75      .90      .95 
-    ##      787     1166     1725     2566     3288 
-    ## 
-    ## lowest :     3     5     6     8     9, highest: 15507 16122 16305 28566 35682
-    ## --------------------------------------------------------------------------------
-    ## households 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0     1815        1    499.5    351.1      125      184 
-    ##      .25      .50      .75      .90      .95 
-    ##      280      409      605      890     1162 
-    ## 
-    ## lowest :    1    2    3    4    5, highest: 4930 5050 5189 5358 6082
-    ## --------------------------------------------------------------------------------
-    ## medianIncome 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0    12928        1    3.871    1.981    1.601    1.904 
-    ##      .25      .50      .75      .90      .95 
-    ##    2.563    3.535    4.743    6.159    7.300 
-    ## 
-    ## lowest :  0.4999  0.5360  0.5495  0.6433  0.6775
-    ## highest: 14.4219 14.5833 14.9009 15.0000 15.0001
-    ## --------------------------------------------------------------------------------
-    ## medianHouseValue 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0     3842        1   206856   125934    66200    82300 
-    ##      .25      .50      .75      .90      .95 
-    ##   119600   179700   264725   376600   489810 
-    ## 
-    ## lowest :  14999  17500  22500  25000  26600, highest: 498800 499000 499100 500000 500001
-    ## --------------------------------------------------------------------------------
-    ## avgRooms 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0    19392        1    5.429    1.646    3.432    3.791 
-    ##      .25      .50      .75      .90      .95 
-    ##    4.441    5.229    6.052    6.961    7.640 
-    ## 
-    ## lowest :   0.8461538   0.8888889   1.0000000   1.1304348   1.2608696
-    ## highest:  59.8750000  61.8125000  62.4222222 132.5333333 141.9090909
-    ## --------------------------------------------------------------------------------
-    ## avgBedrooms 
-    ##        n  missing distinct     Info     Mean      Gmd      .05      .10 
-    ##    20640        0    14233        1    1.097   0.1683   0.9391   0.9664 
-    ##      .25      .50      .75      .90      .95 
-    ##   1.0061   1.0488   1.0995   1.1727   1.2730 
-    ## 
-    ## lowest :  0.3333333  0.3750000  0.4444444  0.5000000  0.5263158
-    ## highest: 11.4107143 14.1111111 15.3125000 25.6363636 34.0666667
-    ## --------------------------------------------------------------------------------
+    ## [1] "avgBedrooms"      "avgRooms"         "households"       "housingMedianAge"
+    ## [5] "latitude"         "longitude"        "medianHouseValue" "medianIncome"    
+    ## [9] "population"
 
 Appendix 2: Linear model
 
 By running the following linear model, we get an out-of-sample RMSE of
-73968.75 and in-sample RMSE of 72045.72. This is much higher than that
+73,968.75 and in-sample RMSE of 72,045.72. This is much higher than that
 of random forests and tree models.
-
-    lm_CAhousing <- lm(medianHouseValue ~ housingMedianAge + population + medianIncome + avgBedrooms + avgRooms + latitude + longitude + medianIncome:avgBedrooms:avgRooms + avgRooms:population, data = CAhousing_train)
-
-    summary(lm_CAhousing)
 
     ## 
     ## Call:
@@ -666,15 +461,9 @@ of random forests and tree models.
     ## Multiple R-squared:  0.6113, Adjusted R-squared:  0.6111 
     ## F-statistic:  2703 on 9 and 15470 DF,  p-value: < 2.2e-16
 
-    #In-sample
-    modelr::rmse(lm_CAhousing, CAhousing_train)
+    ## In-sample RMSE:  71908.88
 
-    ## [1] 71908.88
-
-    #Out-of-sample 
-    modelr::rmse(lm_CAhousing, CAhousing_test)
-
-    ## [1] 73386.1
+    ## Out-of-sample RMSE:  73386.1
 
 Appendix 3: K-nearest neighbours
 
@@ -682,78 +471,34 @@ We run the K-nearest neighbours for the following values of K: 10, 20,
 30, 50, 75, and 100. Our out-of-sample RMSE for all values is above
 100,000.
 
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 10)
-    modelr::rmse(knn_model, CAhousing_train)
+    ## In-sample RMSE for K = 10:  99183.67
 
-    ## [1] 99183.67
+    ## Out-of-sample RMSE for K = 10:  109828.3
 
-    modelr::rmse(knn_model, CAhousing_test)
+    ## In-sample RMSE for K = 20:  103588.6
 
-    ## [1] 109828.3
+    ## Out-of-sample RMSE for K = 20:  109041.2
 
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 20)
-    modelr::rmse(knn_model, CAhousing_train)
+    ## In-sample RMSE for K = 30:  105267.9
 
-    ## [1] 103588.6
+    ## Out-of-sample RMSE for K = 30:  109085.7
 
-    modelr::rmse(knn_model, CAhousing_test)
+    ## In-sample RMSE for K = 50:  106730.3
 
-    ## [1] 109041.2
+    ## Out-of-sample RMSE for K = 50:  109521.2
 
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 30)
-    modelr::rmse(knn_model, CAhousing_train)
+    ## In-sample RMSE for K = 75:  107645.9
 
-    ## [1] 105267.9
+    ## Out-of-sample RMSE for K = 75:  109542.3
 
-    modelr::rmse(knn_model, CAhousing_test)
+    ## In-sample RMSE for K = 100:  108234.4
 
-    ## [1] 109085.7
-
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 50)
-    modelr::rmse(knn_model, CAhousing_train)
-
-    ## [1] 106730.3
-
-    modelr::rmse(knn_model, CAhousing_test)
-
-    ## [1] 109521.2
-
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 75)
-    modelr::rmse(knn_model, CAhousing_train)
-
-    ## [1] 107645.9
-
-    modelr::rmse(knn_model, CAhousing_test)
-
-    ## [1] 109542.3
-
-    knn_model = knnreg(medianHouseValue ~ .,
-                       data = CAhousing_train, k = 100)
-    modelr::rmse(knn_model, CAhousing_train)
-
-    ## [1] 108234.4
-
-    modelr::rmse(knn_model, CAhousing_test)
-
-    ## [1] 109715.6
+    ## Out-of-sample RMSE for K = 100:  109715.6
 
 Appendix 4: Single Tree Model When we run a single decision tree on the
-data, we get an out-of-sample RMSE of 61469.24, much higher than that of
-random forests.
+data, we get an out-of-sample RMSE of 61,469.24, much higher than that
+of random forests.
 
-    # let's fit a single tree
-    CAhousing.tree = rpart(medianHouseValue ~ .,
-                      data=CAhousing_train, control = rpart.control(cp = 0.00001))
+    ## In-sample RMSE:  42714.62
 
-    modelr::rmse(CAhousing.tree, CAhousing_train)
-
-    ## [1] 42714.62
-
-    modelr::rmse(CAhousing.tree, CAhousing_test)
-
-    ## [1] 62896.3
+    ## Out-of-sample RMSE:  62896.3

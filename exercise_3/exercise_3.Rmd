@@ -316,7 +316,7 @@ rmse_simulation = do(25)*{
 colMeans(rmse_simulation)
 ```
 
-Finally, for the Gradient-Boosted Trees model we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Gradient-Boosted Trees model. The model we used utilized the default Gaussian model). We examine the four models we have been considering before (the basic model, the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables). The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
+Finally, for the Gradient-Boosted Trees model we again consider combinations of two additional features (average temperature and dew point temperature in kelvin) to find the best Gradient-Boosted Trees model. The model we used utilized the default Gaussian model. We examine the four models we have been considering before (the basic model, the basic model with the avg_temp_k variable, the basic model with the dew_point_temp_k variable, and the basic model with both the avg_temp_k and dew_point_temp_k variables). The quality of the models are evaluated by examining the average in-sample RMSE for 25 model train/test splits for each model. 
 
 Similar to the best CART model and the best Random Forest model, we find that the basic Gradient-Boosted Trees model with both the avg_temp_k and dew_point_temp_k variables is the best model with an average RMSE of 17.46581. The the basic Gradient-Boosted Trees model, the basic Gradient-Boosted Trees model with the avg_temp_k variable, and the basic Gradient-Boosted Trees model with the dew_point_temp_k variables had average RMSE values of 20.83645, 19.07204, and 20.20074, respectively.
 
@@ -553,7 +553,7 @@ Once the decision trees are trained, they can be used to make predictions on new
 
 We first plot median house values on the map of California. We can see that the houses with the highest median value are clustered around the Bay Area and Los Angeles in California. This makes sense given that these are the technology and film industry hubs respectively, and there is high demand and limited supply of housing.
 
-```{r}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 CAhousing <- read_csv("CAhousing.csv")
 
 #Standardise variables 
@@ -567,7 +567,9 @@ CAhousing = CAhousing[,-c(4,5)]
 ca_df <- tigris::counties("CA")
 ca_base <- ggplot(ca_df) +
   geom_sf(colour="black", fill="white")
+```
 
+```{r}
 #Plotting median house value on a map
 house_map_1 = ca_base +
   geom_point(data = CAhousing, aes(x=longitude, y=latitude, color=`medianHouseValue`), alpha=0.4)+

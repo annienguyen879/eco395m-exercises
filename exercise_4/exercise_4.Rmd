@@ -11,6 +11,17 @@ knitr::opts_chunk$set(
 	warning = FALSE,
 	cache = TRUE
 )
+
+library(tidyverse)
+library(ClusterR) # new for kmeans++
+library(foreach)
+library(mosaic)
+library(rsample) 
+library(modelr)
+library(randomForest)
+library(splines)
+library(pdp)
+library(ggcorrplot)
 ```
 
 ##  1. Clustering and PCA
@@ -18,10 +29,235 @@ knitr::opts_chunk$set(
 ##  2. Market segmentation
 Your task to is analyze this data as you see fit, and to prepare a (short!) report for NutrientH20 that identifies any interesting market segments that appear to stand out in their social-media audience. You have complete freedom in deciding how to pre-process the data and how to define "market segment." (Is it a group of correlated interests? A cluster? A principal component? Etc. You decide the answer to this question---don't ask me!) Just use the data to come up with some interesting, well-supported insights about the audience and give your client some insight as to how they might position their brand to maximally appeal to each market segment.
 
+## ***Introduction***
+We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
+
 ```{r}
 social_marketing <- read.csv("~/Documents/Coding/eco395m-exercises/exercise_4/social_marketing.csv")
 
+ls(social_marketing)
 
 ```
+
+The original dataset has 7882 observations with 37 variables (you can find a more detailed breakdown in the Appendix).
+
+Our big task? Identifying market segments. Are NutrientH20's followers more sports-oriented, family-focused, or even fashion-obsessed? Getting these segments correct will help us tailor the firm's advertising strategies. 
+
+## ***Methodology***
+
+Before we run our magic, we need to make sure our data is centered and scaled so that we can get meaningful insights. Since there are still spam, adult, uncategorised and chatter categories that may not be useful for our overall analysis, I will drop these from dataset. 
+
+I then center the data by subtracting the mean value of each variable from all of its values. This will ensure that the mean of each variable is zero. Centering the data makes sure that the clustering algorithm focuses on the patterns and differences in the data, rather than the absolute values of each variable. To scale the data, I divide each variable by its standard deviation. This will ensure that each variable has a similar scale and range. Scaling the data makes sure that the PCA and clustering algorithms treats each variable equally, regardless of its magnitude or unit of measurement.
+
+I will then check for correlation within my data. I will first use principal component analysis (PCA) to identify which variables are most relevant in the dataset. Since this is a large dataset, PCA tries to simplify it by reducing the number of variables or dimensions involved. It is somewhat like taking a 1000-piece puzzle and contracting it into a 500-piece puzzle of the same picture. Based on this, I will check for appropriate clusters in the data. Clustering is what it sounds like. It groups similar objects together. So for example, if multiple tweets are revolving around sports, the algorithm would classify them into one cluster. 
+
+### Correlation matrix 
+```{r}
+#Clean data
+X = social_marketing[,-c(1, 2, 6, 36, 37)]
+
+# Center and scale the data
+X = scale(X, center=TRUE, scale=TRUE)
+
+# Extract the centers and scales from the rescaled data (which are named attributes)
+mu = attr(X,"scaled:center")
+sigma = attr(X,"scaled:scale")
+
+#Correlation matrix
+
+corr_matrix <- cor(X)
+ggcorrplot(corr_matrix)
+
+```
+We can see that there are some variables that are highly correlated with each other. Therefore, we can use PCA to explain the data. 
+
+### Principal Component Analysis (PCA) 
+I generate 10 principal components of the data, since PC10 ends up explaining 65% of our data. Beyond this, we had little marginal increase in variation explained by summaries.   
+
+```{r}
+# Now run PCA on the social marketing data
+pc_sm = prcomp(X, rank=10, center = TRUE, scale=TRUE)
+
+# these are the linear combinations of station-level data that define the PCs
+# each column is a different PC, i.e. a different linear summary of the stations
+head(pc_sm$rotation)
+
+# overall variation in 256 original features
+summary(pc_sm)
+plot(pc_sm)
+
+# plotting variation 
+pr_var <-  pc_sm$sdev ^ 2
+pve <- pr_var / sum(pr_var)
+plot(pve, xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0,1), type = 'b')
+
+plot(cumsum(pve), xlab = "Principal Component", ylab = "Cummulative Proportion of Variance Explained", ylim = c(0,1), type = 'b')
+
+```
+```{r}
+# Checking loadings on PCA
+round(pc_sm$rotation[,1:10],2) 
+
+# create a tidy summary of the loadings
+loadings_summary = pc_sm$rotation %>%
+  as.data.frame() %>%
+  rownames_to_column('Category')
+
+#PC1
+loadings_summary %>%
+  select(Category, PC1) %>%
+  arrange(desc(PC1))
+
+#PC2
+loadings_summary %>%
+  select(Category, PC2) %>%
+  arrange(desc(PC2))
+
+#PC3
+loadings_summary %>%
+  select(Category, PC3) %>%
+  arrange(desc(PC3))
+
+#PC4
+loadings_summary %>%
+  select(Category, PC4) %>%
+  arrange(desc(PC4))
+
+#PC5
+loadings_summary %>%
+  select(Category, PC5) %>%
+  arrange(desc(PC5))
+
+#PC6
+loadings_summary %>%
+  select(Category, PC6) %>%
+  arrange(desc(PC6))
+
+#PC7
+loadings_summary %>%
+  select(Category, PC7) %>%
+  arrange(desc(PC7))
+
+#PC8
+loadings_summary %>%
+  select(Category, PC8) %>%
+  arrange(desc(PC8))
+
+#PC9
+loadings_summary %>%
+  select(Category, PC9) %>%
+  arrange(desc(PC9))
+
+#PC10
+loadings_summary %>%
+  select(Category, PC10) %>%
+  arrange(desc(PC10))
+
+```
+
+Based on these loadings, we can see that a few clear segments emerge. PC1 and PC2 signal families with kids. Variables such as beauty, crafts, cooking and fashion suggest that mothers are most likely an active audience of the brand, and sports and school indicate that they are focused on making sure their kids get enough nutrition for athletic and school activities. 
+
+PC3 identifies a different group, that is most likely working adults in their 20s and college students. Variables such as politics, travel, and computers contribute the most to this summary. 
+
+PC4 shows a new segment that is focused on fitness and the outdoors. This also reflects probably an audience in their 20s and 30s, since politics and news are also positive contributors.     
+
+PC5 tells us about people who are focused on living an "influencer" lifestyle, where they emphasise beauty, fashion, cooking, and photo-sharing on their social media. 
+
+PC6 brings us back to college students but those who are specifically into gaming and sports. 
+
+It is difficult to glean a segment from PC7 and PC8, but seem to be well-paid homeowners probably in their 30s and 40s.
+
+PC9 and PC10 also seem similar, indicating those with a more "bohemian" art-oriented lifestyle, where they like to support small businesses, maintain their home and gardens, and are interested in food, film, and especially music.    
+
+
+```{r}
+# Run k-means with 6 clusters and 25 starts
+clust1 = kmeans(X, 6, nstart=25)
+
+scores = pc_sm$x
+
+Y <- as.data.frame(cbind(X, scores))
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC2, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC3, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC4, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC5, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC6, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC7, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC8, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC9, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+ggplot(Y) + geom_point(aes(x=PC1, y=PC10, fill=factor(clust1$cluster)),
+size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+
+# What are the clusters?
+clust1$center  # not super helpful
+clust1$center[1,]*sigma + mu
+clust1$center[2,]*sigma + mu
+clust1$center[3,]*sigma + mu
+clust1$center[4,]*sigma + mu
+clust1$center[5,]*sigma + mu
+clust1$center[6,]*sigma + mu
+
+# Which observations are in which clusters?
+which(clust1$cluster == 1)
+which(clust1$cluster == 2)
+which(clust1$cluster == 3)
+which(clust1$cluster == 4)
+which(clust1$cluster == 5)
+which(clust1$cluster == 6)
+
+# qplot is in the ggplot2 library
+qplot(food, family, data=social_marketing, color=factor(clust1$cluster))
+qplot(cooking, personal_fitness, data=social_marketing, color=factor(clust1$cluster))
+qplot(photo_sharing, travel, data=social_marketing, color=factor(clust1$cluster))
+
+# ggplot 2 equivalent
+ggplot(social_marketing) + 
+  geom_point(aes(food, family, color=factor(clust1$cluster)))
+
+# Using kmeans++ initialization
+clust2 = KMeans_rcpp(X, clusters=6, num_init=25)
+
+clust2$centroids[1,]*sigma + mu
+clust2$centroids[2,]*sigma + mu
+clust2$centroids[4,]*sigma + mu
+
+# Which cars are in which clusters?
+names(clust2$cluster) = rownames(X)
+which(clust2$cluster == 1)
+which(clust2$cluster == 2)
+which(clust2$cluster == 3)
+which(clust2$cluster == 4)
+which(clust2$cluster == 5)
+which(clust2$cluster == 6)
+
+# Compare versus within-cluster average distances from the first run
+clust1$withinss
+clust2$withinss
+sum(clust1$withinss)
+sum(clust2$withinss)
+clust1$tot.withinss
+clust2$tot.withinss
+clust1$betweenss
+clust2$betweenss
+
+```
+
 
 ##  3. Association rules for grocery purchases

@@ -27,7 +27,6 @@ library(ggcorrplot)
 ##  1. Clustering and PCA
 
 ##  2. Market segmentation
-Your task to is analyze this data as you see fit, and to prepare a (short!) report for NutrientH20 that identifies any interesting market segments that appear to stand out in their social-media audience. You have complete freedom in deciding how to pre-process the data and how to define "market segment." (Is it a group of correlated interests? A cluster? A principal component? Etc. You decide the answer to this question---don't ask me!) Just use the data to come up with some interesting, well-supported insights about the audience and give your client some insight as to how they might position their brand to maximally appeal to each market segment.
 
 ## ***Introduction***
 We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
@@ -168,6 +167,9 @@ PC6 brings us back to college students but those who are specifically into gamin
 It is difficult to glean a segment from PC7 and PC8, but seem to be well-paid homeowners probably in their 30s and 40s.
 
 PC9 and PC10 also seem similar, indicating those with a more "bohemian" art-oriented lifestyle, where they like to support small businesses, maintain their home and gardens, and are interested in food, film, and especially music.    
+
+Therefore, NutrientH20 should cater to the following segments: families with kids, college students, working adults, fitness enthusiasts, art-lovers and small-business supporters, and lifestyle influencers.
+
 
 
 ```{r}

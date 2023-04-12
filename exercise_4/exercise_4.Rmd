@@ -22,9 +22,128 @@ library(randomForest)
 library(splines)
 library(pdp)
 library(ggcorrplot)
+library(data.table)
+library(gridExtra)
 ```
 
 ##  1. Clustering and PCA
+We use the K-means algorithm as our selected clustering algorithm. K-means tries to minimize within-cluster SSE. The K value used for the K-means clustering is chosen using the Gap Statistic. The default selection method looks for the first local peak up to the standard error in estimating En*[log(WK)]. The result for the best K value is also presented in the clusGap function output. In both cases, we get that K=5. The plot of the Gap Statistic selection method is presented below.
+
+```{r K value, include=FALSE, warning=FALSE}
+##  1. Clustering and PCA
+wine = read.csv('https://raw.githubusercontent.com/annienguyen879/eco395m-exercises/main/exercise_4/wine.csv')
+
+# Center and scale the data
+X = wine[,(1:11)]
+X = scale(X, center=TRUE, scale=TRUE)
+
+gap_data=clusGap(x = X, FUNcluster = kmeans, K.max = 10, B = 50, nstart = 50)
+gap_table <- data.table(gap_data$Tab)
+gap_table[, k := .I]
+gap_plot <- ggplot(gap_table, aes(k, gap)) + geom_line() + geom_point(size = 3) +
+  geom_errorbar(aes(ymax = gap + SE.sim, ymin = gap - SE.sim), width = 0.25) +
+  ggtitle("Clustering Results") +
+  labs(x = "Number of Clusters", y = "Gap Statistic") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
+        axis.title = element_text(size = 12, face = "bold"))
+```
+
+Before running clustering algorithms, we note a few facts about red and white wine:
+* White wine is more acidic and denser than red wine
+* Red wine generally has less sugar and sulfur dioxide than white wine
+* Red wine tends to have higher pH and alcohol content than white wine
+
+We run the K means clustering algorithm and PCA on 11 chemical properties of 6500 different bottles of vinho verde wine. Clustering assumes that each data point is a member of one, and only one, cluster. That is, clusters are mutually exclusive. The results of the K mean clustering algorithm are presented below:
+
+```{r K Means Clusters, include=FALSE, warning=FALSE}
+# Run k-means with 5 clusters and 25 starts
+kmeans5 = kmeans(X, center=5, nstart=25)
+
+# Plot listed features
+ggplot(wine) + 
+  geom_point(aes(citric.acid, density, color=factor(kmeans5$cluster)))
+
+ggplot(wine) + 
+  geom_point(aes(total.sulfur.dioxide, residual.sugar, color=factor(kmeans5$cluster)))
+
+ggplot(wine) + 
+  geom_point(aes(alcohol, pH, color=factor(kmeans5$cluster)))
+```
+Recall the three facts listed above.
+
+* White wine is more acidic and denser than red wine, so clusters with higher density and citric acid values (i.e. clusters in the upper-right side of the plot) should represent white wine. The plot suggests cluster 1 and 4 appear to be white wine. 
+* Red wine generally has less sugar and sulfur dioxide than white wine, so clusters with lower less sugar and sulfur dioxide (i.e. clusters in the lower-left side of the plot) should represent red wine. The plot suggests cluster 4 and 5 appear to be red wine. 
+* Red wine tends to have higher pH and alcohol content than white wine, so clusters with higher pH and alcohol content (i.e. clusters in the upper-right side of the plot) should represent red wine. The plot suggests cluster 5 appears to be red wine. 
+
+
+To check the accuracy of the K means clustering algorithm, we examine citric acid and total sulfur dioxide content between red and white wine. We observe that the clustering algorithm was fairly accurate grouping red and white wine. We see that clusters 4 and 5 were grouped red wine. While cluster 1 had a few red wines, generally white wine was clustered in groups 1, 2, and 3. Additionally, while there was overlap in citric acid and total sulfur dioxide measurement content, we see white wine had outlier values that exceeded outlier values for red wine. Note this may be attributed to the fact that generally white wine is more acidic and red wine has lower sulfur dioxide (i.e. white wine has higher sulfur dioxide). Overall, these results are consistent with the data and graphs previously presented. The plots of citric acid and total sulfur dioxide content between red and white wine are presented below.
+
+```{r K Means feature plots, include=FALSE, warning=FALSE}
+# Compare features between red and white wine
+wine$red_wine = ifelse(wine$color=='red', 1, 0)
+
+ggplot(wine) + 
+  geom_point(aes(red_wine, citric.acid, color=factor(kmeans5$cluster)))
+
+ggplot(wine) + 
+  geom_point(aes(red_wine, total.sulfur.dioxide, color=factor(kmeans5$cluster)))
+```
+We examine each of the 11 chemical properties by quality. As we see in the plots below, the clusters are not concentrated by quality ratings. That is, it does not appear that the K means algorithm is capable of distinguishing higher quality wine from lower quality wine. The 11 chemical properties by quality plots are presented below.
+
+```{r K means distinguishing high quality wine plots, include=FALSE, warning=FALSE}
+# Distinguishing high quality wine
+fixed_acidity_plot=ggplot(wine) + 
+  geom_point(aes(fixed.acidity, quality, color=factor(kmeans5$cluster)))
+
+volatile_acidity_wine=ggplot(wine) + 
+  geom_point(aes(volatile.acidity, quality, color=factor(kmeans5$cluster)))
+
+citric_acid_plot=ggplot(wine) + 
+  geom_point(aes(citric.acid, quality, color=factor(kmeans5$cluster)))
+
+residual_sugar_plot=ggplot(wine) + 
+  geom_point(aes(residual.sugar, quality, color=factor(kmeans5$cluster)))
+
+chlorides_plot=ggplot(wine) + 
+  geom_point(aes(chlorides, quality, color=factor(kmeans5$cluster)))
+
+free_sulfur_dioxide_plot=ggplot(wine) + 
+  geom_point(aes(free.sulfur.dioxide, quality, color=factor(kmeans5$cluster)))
+
+total_sulfur_dioxide_plot=ggplot(wine) + 
+  geom_point(aes(total.sulfur.dioxide, quality, color=factor(kmeans5$cluster)))
+
+density_plot=ggplot(wine) + 
+  geom_point(aes(density, quality, color=factor(kmeans5$cluster)))
+
+pH_plot=ggplot(wine) + 
+  geom_point(aes(pH, quality, color=factor(kmeans5$cluster)))
+
+sulphates_plot=ggplot(wine) + 
+  geom_point(aes(sulphates, quality, color=factor(kmeans5$cluster)))
+
+alcohol_plot=ggplot(wine) + 
+  geom_point(aes(alcohol, quality, color=factor(kmeans5$cluster)))
+
+#Print plots in 2x2 grids
+grid.arrange(fixed_acidity_plot, volatile_acidity_wine, citric_acid_plot, residual_sugar_plot, nrow = 2)
+
+grid.arrange(chlorides_plot, free_sulfur_dioxide_plot, total_sulfur_dioxide_plot, density_plot, nrow = 2)
+
+grid.arrange(pH_plot, sulphates_plot, alcohol_plot, nrow = 2)
+```
+
+The goal of PCA is to find low-dimensional summaries of high-dimensional data sets. PCA assumes that each data point is like a combination of multiple basic ingredients where the ingredients are not mutually exclusive. We can fiddle with ingredients continuously, but cluster membership only discretely. PCA assumes we use the same basic ingredients, just at differing amounts.
+
+We would expect PCA to be the better dimensionality reduction technique for data on 11 chemical properties of 6500 bottles of wine. This is because red and white wine both contain the 11 characteristics, the wine types just differ in amounts. That is, red and white wine share the same ingredients, just at differing amounts. For example, as stated above, white wine is generally more acidic while red wine tends to have higher pH. But both wines will have both acidic and pH levels. PCA allows us to fiddle with ingredients continuously. The K means clustering algorithm is limited in that clustering algorithm cluster membership only discretely. In the wine type PCA plot below, we see red and white wine are clearly distinguished by component 2. That is, PCA was very clearly able to sort red wines to the left and white wines on the right. So very clearly, PCA was able to successfully pick up wine quality as a component. Furthermore, in the wine quality PCA plot below, we see a general vertical gradient in color (a gradient for Component 2). This indicates PCA was also able to pick up wine quality as a component. Hence, as expected, PCA was better at distinguishing red wine from white wine and identify wine quality using only the unsupervised information contained in the data on chemical properties.
+
+```{r PCA, include=FALSE, warning=FALSE}
+pca = prcomp(X, scale=TRUE, rank=2)
+loadings = pca$rotation
+scores = pca$x
+qplot(scores[,1], scores[,2], color=wine$quality, xlab='Component 1', ylab='Component 2')
+qplot(scores[,1], scores[,2], color=wine$red_wine, xlab='Component 1', ylab='Component 2')
+```
 
 ##  2. Market segmentation
 

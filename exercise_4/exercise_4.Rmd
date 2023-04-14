@@ -24,6 +24,7 @@ library(pdp)
 library(ggcorrplot)
 library(data.table)
 library(gridExtra)
+library(cluster)
 ```
 
 ##  1. Clustering and PCA
@@ -49,6 +50,7 @@ gap_plot <- ggplot(gap_table, aes(k, gap)) + geom_line() + geom_point(size = 3) 
 ```
 
 Before running clustering algorithms, we note a few facts about red and white wine:
+
 * White wine is more acidic and denser than red wine
 * Red wine generally has less sugar and sulfur dioxide than white wine
 * Red wine tends to have higher pH and alcohol content than white wine

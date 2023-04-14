@@ -198,7 +198,7 @@ pc_sm = prcomp(X, rank=10, center = TRUE, scale=TRUE)
 
 # these are the linear combinations of station-level data that define the PCs
 # each column is a different PC, i.e. a different linear summary of the stations
-head(pc_sm$rotation)
+#head(pc_sm$rotation)
 
 # overall variation in 256 original features
 summary(pc_sm)
@@ -212,6 +212,7 @@ plot(pve, xlab = "Principal Component", ylab = "Proportion of Variance Explained
 plot(cumsum(pve), xlab = "Principal Component", ylab = "Cummulative Proportion of Variance Explained", ylim = c(0,1), type = 'b')
 
 ```
+
 ```{r}
 # Checking loadings on PCA
 round(pc_sm$rotation[,1:10],2) 
@@ -290,7 +291,6 @@ PC9 and PC10 also seem similar, indicating those with a more "bohemian" art-orie
 Therefore, NutrientH20 should cater to the following segments: families with kids, college students, working adults, fitness enthusiasts, art-lovers and small-business supporters, and lifestyle influencers.
 
 
-
 ```{r}
 # Run k-means with 6 clusters and 25 starts
 clust1 = kmeans(X, 6, nstart=25)
@@ -302,83 +302,42 @@ Y <- as.data.frame(cbind(X, scores))
 ggplot(Y) + geom_point(aes(x=PC1, y=PC2, fill=factor(clust1$cluster)),
 size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC3, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC3, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC4, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC4, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC5, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC5, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC6, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC6, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC7, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC7, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC8, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC1, y=PC8, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC9, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC2, y=PC3, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-ggplot(Y) + geom_point(aes(x=PC1, y=PC10, fill=factor(clust1$cluster)),
-size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
+#ggplot(Y) + geom_point(aes(x=PC3, y=PC4, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-# What are the clusters?
-clust1$center  # not super helpful
-clust1$center[1,]*sigma + mu
-clust1$center[2,]*sigma + mu
-clust1$center[3,]*sigma + mu
-clust1$center[4,]*sigma + mu
-clust1$center[5,]*sigma + mu
-clust1$center[6,]*sigma + mu
+#ggplot(Y) + geom_point(aes(x=PC5, y=PC6, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-# Which observations are in which clusters?
-which(clust1$cluster == 1)
-which(clust1$cluster == 2)
-which(clust1$cluster == 3)
-which(clust1$cluster == 4)
-which(clust1$cluster == 5)
-which(clust1$cluster == 6)
+#ggplot(Y) + geom_point(aes(x=PC3, y=PC6, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-# qplot is in the ggplot2 library
-qplot(food, family, data=social_marketing, color=factor(clust1$cluster))
-qplot(cooking, personal_fitness, data=social_marketing, color=factor(clust1$cluster))
-qplot(photo_sharing, travel, data=social_marketing, color=factor(clust1$cluster))
+#ggplot(Y) + geom_point(aes(x=PC4, y=PC6, fill=factor(clust1$cluster)),
+#size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 
-# ggplot 2 equivalent
-ggplot(social_marketing) + 
-  geom_point(aes(food, family, color=factor(clust1$cluster)))
-
-# Using kmeans++ initialization
-clust2 = KMeans_rcpp(X, clusters=6, num_init=25)
-
-clust2$centroids[1,]*sigma + mu
-clust2$centroids[2,]*sigma + mu
-clust2$centroids[4,]*sigma + mu
-
-# Which cars are in which clusters?
-names(clust2$cluster) = rownames(X)
-which(clust2$cluster == 1)
-which(clust2$cluster == 2)
-which(clust2$cluster == 3)
-which(clust2$cluster == 4)
-which(clust2$cluster == 5)
-which(clust2$cluster == 6)
-
-# Compare versus within-cluster average distances from the first run
-clust1$withinss
-clust2$withinss
-sum(clust1$withinss)
-sum(clust2$withinss)
-clust1$tot.withinss
-clust2$tot.withinss
-clust1$betweenss
-clust2$betweenss
 
 ```
 
+When we check clusters within the PCAs, we can see the same patterns emerge. As an example, we can see the clusters within PC1 and PC2. We can see that the first cluster is found more within PC2. This is close to the group of families with kids identified earlier. Comparing PC1 and PC3, cluster 5 is clearly in PC3, while Cluster 1 is clearly not, giving us the working adults. Checking PC4 and PC1, we can see Cluster 6 is in PC4, that is fitness enthusiasts. Cluster 4 is more towards PC5 of "influencers", but there is a slight lack of clarity. Cluster 3 is in PC6, college students, but overlaps with some other clusters.  
 
 ##  3. Association rules for grocery purchases

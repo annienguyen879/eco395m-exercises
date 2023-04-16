@@ -25,6 +25,9 @@ library(ggcorrplot)
 library(data.table)
 library(gridExtra)
 library(cluster)
+library(arules)
+library(arulesViz)
+library(igraph)
 ```
 
 ##  1. Clustering and PCA
@@ -343,3 +346,70 @@ size=3, col="#7f7f7f", shape=21) + theme_bw(base_family="Helvetica")
 When we check clusters within the PCAs, we can see the same patterns emerge. As an example, we can see the clusters within PC1 and PC2. We can see that the first cluster is found more within PC2. This is close to the group of families with kids identified earlier. Comparing PC1 and PC3, cluster 5 is clearly in PC3, while Cluster 1 is clearly not, giving us the working adults. Checking PC4 and PC1, we can see Cluster 6 is in PC4, that is fitness enthusiasts. Cluster 4 is more towards PC5 of "influencers", but there is a slight lack of clarity. Cluster 3 is in PC6, college students, but overlaps with some other clusters.  
 
 ##  3. Association rules for grocery purchases
+
+In this section, we use data on grocery purchases to find some interesting association rules for customers' shopping baskets. The data that we have is in a `txt` file. Every row represents one customer's basket in which multiple items per row are separated by commas. First, we transform the `txt` file into a readable dataframe, so we can perform analysis. 
+
+A sample of our data can be seen below:
+
+
+```{r grocery_read, echo=FALSE}
+groceries_read = read.table(file = "groceries.txt", sep = "\t", quote = "", row.names = NULL, header = FALSE, colClasses="character")
+groceries_read <- groceries_read %>% mutate(id = row_number()) %>% separate_rows(V1,sep = ",") %>% rename("items"=V1) %>% select(id, items)
+groceries_read <- data.frame(groceries_read)
+groceries_read$id = as.factor(groceries_read$id)
+head(groceries_read,10)
+```
+
+First, we split data into a list of grocery items for each customer and remove any duplicates. Then, we run the `apriori` algorithm to look at rules, where support is greater than 0.005 and confidence is greater than 0.1.
+
+```{r echo=FALSE}
+groceries = split(x=groceries_read$items, f=groceries_read$id)
+groceries = lapply(groceries, unique)
+groceries_trans = as(groceries, "transactions")
+rules_groceries = apriori(groceries_trans, 
+                     parameter=list(support=.005, confidence=.1, maxlen=4))
+```
+
+Inspecting at the rules, we see that 1,582 rules have been generated. We generate plots to visualize the rules in order to provide us additional insight on confidence, support, and lift.
+
+```{r include=FALSE}
+## we have 1582 rules
+paste("Number of rules:", nrow(arules::inspect(rules_groceries)))
+```
+
+
+```{r rules_plots, echo=FALSE}
+plot(rules_groceries)
+plot(rules_groceries, measure = c("support", "lift"), shading = "confidence")
+plot(rules_groceries, method='two-key plot')
+```
+
+In the second graph, it appears that confidence is greater when lift is greater than 2. In the first graph, it also seems like higher confidence rules were cluster near the bottom, while in the third graph, we see that order 1 is also clustered at the bottom. As a result, it may be better to keep the confidence at about 0.15 to ensure that all orders are represented. Based on the plots above, a good threshold may be when lift is greater than 2 and when confidence is above 0.15. Under these conditions, we would have a subset of 495 rules.
+
+```{r include=FALSE}
+# can now look at subsets driven by the plot
+arules::inspect(subset(rules_groceries, support > 0.03))
+arules::inspect(subset(rules_groceries, confidence > 0.5))
+arules::inspect(subset(rules_groceries, lift > 2.5))
+arules::inspect(subset(rules_groceries, lift > 2 & confidence > 0.15))
+```
+
+Next, we will produce a visualization for our associations through a program called Gephi.
+
+```{r igraph, echo=FALSE}
+## Best combo so far
+groceries_graph = associations2igraph(subset(rules_groceries, lift > 2 & confidence > 0.15), associationsAsNodes = FALSE)
+igraph::write_graph(groceries_graph, file='groceriesliftcombo.graphml', format = "graphml")
+```
+
+![](gephi_graph.png)
+
+The item sets we discovered makes sense. For example, the items associated with "shopping bags" include soda, vegetables, rolls/buns, and sausage, which are all items necessary for a picnic or barbecue. 
+
+
+![](itemset.png)
+
+
+From this section, we analyzed the association between different grocery items based on customers' purchase baskets. We found interesting association rules and produce a visualization of that network of items using Gephi.
+
+

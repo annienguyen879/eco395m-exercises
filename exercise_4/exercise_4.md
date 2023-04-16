@@ -23,7 +23,7 @@ assumes that each data point is a member of one, and only one, cluster.
 That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
 
-![](exercise_4_files/figure-markdown_strict/K Means feature plots-1.png)![](exercise_4_files/figure-markdown_strict/K Means feature plots-2.png)![](exercise_4_files/figure-markdown_strict/K Means feature plots-3.png)
+![](exercise_4_files/figure-markdown_strict/kmeans_features1.png)![](exercise_4_files/figure-markdown_strict/K Means feature plots-2.png)![](exercise_4_files/figure-markdown_strict/K Means feature plots-3.png)
 
 Recall the three facts listed above.
 

@@ -156,7 +156,7 @@ qplot(scores[,1], scores[,2], color=wine$red_wine, xlab='Component 1', ylab='Com
 We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
 
 ```{r}
-social_marketing <- read.csv("~/Documents/Coding/eco395m-exercises/exercise_4/social_marketing.csv")
+social_marketing <- read.csv("social_marketing.csv")
 
 ls(social_marketing)
 

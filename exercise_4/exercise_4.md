@@ -14,7 +14,9 @@ K-means clustering is chosen using the Gap Statistic. The default
 selection method looks for the first local peak up to the standard error
 in estimating En\*\[log(WK)\]. The result for the best K value is also
 presented in the clusGap function output. In both cases, we get that
-K=5. The plot of the Gap Statistic selection method is presented below.
+K=5. The plot of the Gap Statistic selection method is presented below:
+
+![](exercise_4_files/figure-markdown_strict/k_value.png)
 
 Before running clustering algorithms, we note a few facts about red and
 white wine:
@@ -28,6 +30,8 @@ properties of 6500 different bottles of vinho verde wine. Clustering
 assumes that each data point is a member of one, and only one, cluster.
 That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
+
+![](exercise_4_files/figure-markdown_strict/K Means Clusters-1.png)![](exercise_4_files/figure-markdown_strict/K Means Clusters-2.png)![](exercise_4_files/figure-markdown_strict/K Means Clusters-3.png)
 
 Recall the three facts listed above.
 
@@ -56,13 +60,18 @@ be attributed to the fact that generally white wine is more acidic and
 red wine has lower sulfur dioxide (i.e. white wine has higher sulfur
 dioxide). Overall, these results are consistent with the data and graphs
 previously presented. The plots of citric acid and total sulfur dioxide
-content between red and white wine are presented below.
+content between red and white wine are presented below:
+
+![](exercise_4_files/figure-markdown_strict/K Means feature plots-1.png)![](exercise_4_files/figure-markdown_strict/K Means feature plots-2.png)
 
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
 That is, it does not appear that the K means algorithm is capable of
 distinguishing higher quality wine from lower quality wine. The 11
-chemical properties by quality plots are presented below.
+chemical properties by quality plots are presented below:
+
+
+![](exercise_4_files/figure-markdown_strict/K means distinguishing high quality wine plots-1.png)![](exercise_4_files/figure-markdown_strict/K means distinguishing high quality wine plots-2.png)![](exercise_4_files/figure-markdown_strict/K means distinguishing high quality wine plots-3.png)
 
 The goal of PCA is to find low-dimensional summaries of high-dimensional
 data sets. PCA assumes that each data point is like a combination of
@@ -90,6 +99,8 @@ indicates PCA was also able to pick up wine quality as a component.
 Hence, as expected, PCA was better at distinguishing red wine from white
 wine and identify wine quality using only the unsupervised information
 contained in the data on chemical properties.
+
+![](exercise_4_files/figure-markdown_strict/PCA-1.png)![](exercise_4_files/figure-markdown_strict/PCA-2.png)
 
 ## 2. Market segmentation
 

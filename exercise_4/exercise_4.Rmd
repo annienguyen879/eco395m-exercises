@@ -192,6 +192,7 @@ corr_matrix <- cor(X)
 ggcorrplot(corr_matrix)
 
 ```
+
 We can see that there are some variables that are highly correlated with each other. Therefore, we can use PCA to explain the data. 
 
 ### Principal Component Analysis (PCA) 

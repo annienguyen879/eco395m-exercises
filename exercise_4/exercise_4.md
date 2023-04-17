@@ -150,8 +150,9 @@ cluster.
 
 ### Correlation matrix
 
-![](exercise_4_files/figure-markdown_strict/unnamed-chunk-2-1.png) We
-can see that there are some variables that are highly correlated with
+![](exercise_4_files/figure-markdown_strict/unnamed-chunk-2-1.png)
+
+We can see that there are some variables that are highly correlated with
 each other. Therefore, we can use PCA to explain the data.
 
 ### Principal Component Analysis (PCA)

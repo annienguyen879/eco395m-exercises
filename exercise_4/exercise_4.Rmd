@@ -76,6 +76,7 @@ ggplot(wine) +
 ggplot(wine) + 
   geom_point(aes(alcohol, pH, color=factor(kmeans5$cluster)))
 ```
+
 Recall the three facts listed above.
 
 * White wine is more acidic and denser than red wine, so clusters with higher density and citric acid values (i.e. clusters in the upper-right side of the plot) should represent white wine. The plot suggests cluster 1 and 4 appear to be white wine. 
@@ -95,6 +96,7 @@ ggplot(wine) +
 ggplot(wine) + 
   geom_point(aes(red_wine, total.sulfur.dioxide, color=factor(kmeans5$cluster)))
 ```
+
 We examine each of the 11 chemical properties by quality. As we see in the plots below, the clusters are not concentrated by quality ratings. That is, it does not appear that the K means algorithm is capable of distinguishing higher quality wine from lower quality wine. The 11 chemical properties by quality plots are presented below.
 
 ```{r K means distinguishing high quality wine plots, echo=FALSE, warning=FALSE}

@@ -31,7 +31,7 @@ assumes that each data point is a member of one, and only one, cluster.
 That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
 
-![](exercise_4_files/figure-markdown_strict/K Means Clusters-1.png)![](exercise_4_files/figure-markdown_strict/K Means Clusters-2.png)![](exercise_4_files/figure-markdown_strict/K Means Clusters-3.png)
+![](exercise_4_files/figure-markdown_strict/kmeans_clusters1.png)![](exercise_4_files/figure-markdown_strict/kmeans_clusters2.png)![](exercise_4_files/figure-markdown_strict/kmeans_clusters3.png)
 
 Recall the three facts listed above.
 

@@ -1,3 +1,11 @@
+# Homework 4
+## ECO 395M: Data Mining and Statistical Learning 
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-04-17
+
+
 ## 1. Clustering and PCA
 
 We use the K-means algorithm as our selected clustering algorithm.

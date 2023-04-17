@@ -8,6 +8,8 @@ in estimating En\*\[log(WK)\]. The result for the best K value is also
 presented in the clusGap function output. In both cases, we get that
 K=5. The plot of the Gap Statistic selection method is presented below.
 
+![](exercise_4_files/figure-markdown_strict/K%20value-1.png)
+
 Before running clustering algorithms, we note a few facts about red and
 white wine:
 
@@ -102,10 +104,6 @@ Amazon’s Mechanical Turk service parsed through each tweet and allocated
 different categories to it, such as family or sports. Each tweet can
 have more than 1 category. There are a total of 36 pre-specified
 categories.
-
-    social_marketing <- read.csv("social_marketing.csv")
-
-    ls(social_marketing)
 
     ##  [1] "adult"            "art"              "automotive"       "beauty"          
     ##  [5] "business"         "chatter"          "college_uni"      "computers"       

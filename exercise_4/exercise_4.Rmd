@@ -33,7 +33,7 @@ library(igraph)
 ##  1. Clustering and PCA
 We use the K-means algorithm as our selected clustering algorithm. K-means tries to minimize within-cluster SSE. The K value used for the K-means clustering is chosen using the Gap Statistic. The default selection method looks for the first local peak up to the standard error in estimating En*[log(WK)]. The result for the best K value is also presented in the clusGap function output. In both cases, we get that K=5. The plot of the Gap Statistic selection method is presented below.
 
-```{r K value, include=FALSE, warning=FALSE}
+```{r K value, echo=FALSE, warning=FALSE}
 ##  1. Clustering and PCA
 wine = read.csv('https://raw.githubusercontent.com/annienguyen879/eco395m-exercises/main/exercise_4/wine.csv')
 
@@ -157,7 +157,7 @@ qplot(scores[,1], scores[,2], color=wine$red_wine, xlab='Component 1', ylab='Com
 ## ***Introduction***
 We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
 
-```{r}
+```{r echo=FALSE}
 social_marketing <- read.csv("social_marketing.csv")
 
 ls(social_marketing)

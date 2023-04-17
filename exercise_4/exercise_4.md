@@ -16,7 +16,7 @@ in estimating En\*\[log(WK)\]. The result for the best K value is also
 presented in the clusGap function output. In both cases, we get that
 K=5. The plot of the Gap Statistic selection method is presented below:
 
-![](exercise_4_files/figure-markdown_strict/k_value.png)
+![](exercise_4_files/figure-markdown_strict/K%20value-1.png)
 
 Before running clustering algorithms, we note a few facts about red and
 white wine:

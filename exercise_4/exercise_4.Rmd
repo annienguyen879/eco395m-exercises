@@ -218,10 +218,12 @@ pve <- pr_var / sum(pr_var)
 
 ```
 
-```{r include=FALSE}
+```{r echo=FALSE}
 # Checking loadings on PCA
 round(pc_sm$rotation[,1:10],2) 
+```
 
+```{r include=FALSE}
 # create a tidy summary of the loadings
 loadings_summary = pc_sm$rotation %>%
   as.data.frame() %>%

@@ -172,6 +172,40 @@ in variation explained by summaries.
 
 ![](exercise_4_files/figure-markdown_strict/unnamed-chunk-3-1.png)
 
+    ##                   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8   PC9  PC10
+    ## current_events   0.09 -0.05  0.05 -0.02  0.04 -0.13  0.19 -0.11  0.00  0.07
+    ## travel           0.12 -0.05  0.44  0.11  0.05  0.00 -0.31 -0.16  0.12 -0.04
+    ## photo_sharing    0.16 -0.27 -0.03 -0.13  0.20 -0.06  0.31 -0.29  0.04 -0.12
+    ## tv_film          0.09 -0.08  0.10 -0.12 -0.18 -0.50 -0.05  0.30  0.12  0.07
+    ## sports_fandom    0.30  0.30 -0.07 -0.03  0.02  0.06  0.09  0.07  0.05  0.05
+    ## politics         0.13 -0.02  0.50  0.17  0.09  0.10 -0.04  0.01  0.05 -0.03
+    ## food             0.31  0.20 -0.11  0.08 -0.09 -0.02 -0.10 -0.04  0.13 -0.02
+    ## family           0.25  0.19 -0.06 -0.05 -0.01  0.06  0.09 -0.05  0.09 -0.08
+    ## home_and_garden  0.11 -0.05  0.03  0.00 -0.04 -0.11  0.05  0.09 -0.36  0.12
+    ## music            0.12 -0.15  0.00 -0.11 -0.04 -0.15  0.02  0.08  0.28  0.71
+    ## news             0.13  0.02  0.35  0.16  0.04  0.16  0.27  0.39 -0.05 -0.01
+    ## online_gaming    0.07 -0.10  0.07 -0.29 -0.44  0.27  0.01 -0.07 -0.02 -0.15
+    ## shopping         0.11 -0.16  0.02 -0.06  0.11 -0.18  0.43 -0.41  0.02 -0.10
+    ## health_nutrition 0.13 -0.21 -0.19  0.44 -0.23  0.02 -0.02 -0.02  0.03 -0.02
+    ## college_uni      0.09 -0.13  0.10 -0.33 -0.44  0.17  0.01 -0.05  0.05  0.05
+    ## sports_playing   0.13 -0.13  0.06 -0.24 -0.33  0.21 -0.01 -0.06 -0.07 -0.01
+    ## cooking          0.18 -0.37 -0.17 -0.05  0.22  0.17 -0.13  0.17  0.12 -0.09
+    ## eco              0.14 -0.10 -0.02  0.12 -0.06 -0.10  0.15 -0.19  0.00 -0.08
+    ## computers        0.14 -0.05  0.38  0.11  0.09  0.07 -0.27 -0.25  0.11 -0.02
+    ## business         0.13 -0.09  0.11 -0.01  0.05 -0.15  0.00 -0.19 -0.11  0.18
+    ## outdoors         0.14 -0.17 -0.11  0.39 -0.19  0.06  0.03  0.08  0.00  0.09
+    ## crafts           0.19  0.02  0.00 -0.02 -0.04 -0.25 -0.06  0.01 -0.08 -0.34
+    ## automotive       0.13  0.04  0.19  0.04  0.04  0.16  0.51  0.35 -0.07 -0.01
+    ## art              0.10 -0.07  0.06 -0.09 -0.13 -0.46 -0.11  0.29 -0.02 -0.40
+    ## religion         0.32  0.30 -0.11 -0.04  0.02  0.01 -0.10 -0.06  0.09  0.05
+    ## beauty           0.20 -0.25 -0.14 -0.17  0.29  0.14 -0.14  0.19  0.05 -0.03
+    ## parenting        0.31  0.28 -0.11 -0.02  0.03  0.05 -0.04 -0.04  0.05  0.01
+    ## dating           0.10 -0.07  0.03  0.03  0.01  0.01 -0.16 -0.05 -0.76  0.17
+    ## school           0.29  0.19 -0.10 -0.06  0.08 -0.01 -0.05 -0.05 -0.25  0.04
+    ## personal_fitness 0.14 -0.21 -0.18  0.42 -0.22  0.01  0.00 -0.03  0.03 -0.02
+    ## fashion          0.18 -0.32 -0.12 -0.17  0.28  0.14 -0.16  0.15 -0.04 -0.06
+    ## small_business   0.11 -0.09  0.10 -0.09 -0.01 -0.23 -0.01 -0.02 -0.07  0.21
+
 Based on these loadings, we can see that a few clear segments emerge.
 PC1 and PC2 signal families with kids. Variables such as beauty, crafts,
 cooking and fashion suggest that mothers are most likely an active
@@ -206,7 +240,7 @@ Therefore, NutrientH20 should cater to the following segments: families
 with kids, college students, working adults, fitness enthusiasts,
 art-lovers and small-business supporters, and lifestyle influencers.
 
-![](exercise_4_files/figure-markdown_strict/unnamed-chunk-5-1.png)
+![](exercise_4_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
 When we check clusters within the PCAs, we can see the same patterns
 emerge. As an example, we can see the clusters within PC1 and PC2. We

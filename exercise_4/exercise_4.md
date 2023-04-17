@@ -62,17 +62,12 @@ dioxide). Overall, these results are consistent with the data and graphs
 previously presented. The plots of citric acid and total sulfur dioxide
 content between red and white wine are presented below:
 
-![](exercise_4_files/figure-markdown_strict/kmeans_features1.png)![](exercise_4_files/figure-markdown_strict/kmeans_features2.png)
-
 ![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-2.png)
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
 That is, it does not appear that the K means algorithm is capable of
 distinguishing higher quality wine from lower quality wine. The 11
 chemical properties by quality plots are presented below:
-
-
-![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot1.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot2.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot3.png)
 
 ![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-2.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-3.png)
 

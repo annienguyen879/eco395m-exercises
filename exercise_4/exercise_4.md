@@ -54,7 +54,7 @@ dioxide). Overall, these results are consistent with the data and graphs
 previously presented. The plots of citric acid and total sulfur dioxide
 content between red and white wine are presented below:
 
-![](exercise_4_files/kmeans_features1.png)![](exercise_4_files/kmeans_features2.png)
+![](exercise_4_files/figure-markdown_strict/kmeans_features1.png)![](exercise_4_files/figure-markdown_strict/kmeans_features2.png)
 
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
@@ -62,7 +62,7 @@ That is, it does not appear that the K means algorithm is capable of
 distinguishing higher quality wine from lower quality wine. The 11
 chemical properties by quality plots are presented below:
 
-![](exercise_4_files/kmeans_quality_plot1.png)![](exercise_4_files/kmeans_quality_plot2.png)![](exercise_4_files/kmeans_quality_plot3.png)
+![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot1.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot2.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot3.png)
 
 The goal of PCA is to find low-dimensional summaries of high-dimensional
 data sets. PCA assumes that each data point is like a combination of
@@ -91,7 +91,7 @@ Hence, as expected, PCA was better at distinguishing red wine from white
 wine and identify wine quality using only the unsupervised information
 contained in the data on chemical properties.
 
-![](exercise_4_files/pca_quality1.png)![](exercise_4_files/pca_quality2.png)
+![](exercise_4_files/figure-markdown_strict/pca_quality1.png)![](exercise_4_files/figure-markdown_strict/pca_quality2.png)
 
 ## 2. Market segmentation
 

@@ -93,7 +93,7 @@ contained in the data on chemical properties.
 
 ## 2. Market segmentation
 
-## ***Introduction***
+### ***Introduction***
 
 We want to use market-research data based on tweets for NutrientH20 to
 come up with how the brand may position itself to different market
@@ -124,7 +124,7 @@ more sports-oriented, family-focused, or even fashion-obsessed? Getting
 these segments correct will help us tailor the firm’s advertising
 strategies.
 
-## ***Methodology***
+### ***Methodology***
 
 Before we run our magic, we need to make sure our data is centered and
 scaled so that we can get meaningful insights. Since there are still
@@ -152,14 +152,14 @@ groups similar objects together. So for example, if multiple tweets are
 revolving around sports, the algorithm would classify them into one
 cluster.
 
-### Correlation matrix
+### ***Correlation matrix***
 
 ![](exercise_4_files/figure-markdown_strict/unnamed-chunk-2-1.png)
 
 We can see that there are some variables that are highly correlated with
 each other. Therefore, we can use PCA to explain the data.
 
-### Principal Component Analysis (PCA)
+### ***Principal Component Analysis (PCA)***
 
 I generate 10 principal components of the data, since PC10 ends up
 explaining 65% of our data. Beyond this, we had little marginal increase

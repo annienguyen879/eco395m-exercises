@@ -154,7 +154,7 @@ qplot(scores[,1], scores[,2], color=wine$red_wine, xlab='Component 1', ylab='Com
 
 ##  2. Market segmentation
 
-## ***Introduction***
+### ***Introduction***
 We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
 
 ```{r echo=FALSE}
@@ -168,7 +168,7 @@ The original dataset has 7882 observations with 37 variables (you can find a mor
 
 Our big task? Identifying market segments. Are NutrientH20's followers more sports-oriented, family-focused, or even fashion-obsessed? Getting these segments correct will help us tailor the firm's advertising strategies. 
 
-## ***Methodology***
+### ***Methodology***
 
 Before we run our magic, we need to make sure our data is centered and scaled so that we can get meaningful insights. Since there are still spam, adult, uncategorised and chatter categories that may not be useful for our overall analysis, I will drop these from dataset. 
 
@@ -176,7 +176,7 @@ I then center the data by subtracting the mean value of each variable from all o
 
 I will then check for correlation within my data. I will first use principal component analysis (PCA) to identify which variables are most relevant in the dataset. Since this is a large dataset, PCA tries to simplify it by reducing the number of variables or dimensions involved. It is somewhat like taking a 1000-piece puzzle and contracting it into a 500-piece puzzle of the same picture. Based on this, I will check for appropriate clusters in the data. Clustering is what it sounds like. It groups similar objects together. So for example, if multiple tweets are revolving around sports, the algorithm would classify them into one cluster. 
 
-### Correlation matrix 
+### ***Correlation matrix*** 
 ```{r echo=FALSE}
 #Clean data
 X = social_marketing[,-c(1, 2, 6, 36, 37)]
@@ -197,7 +197,7 @@ ggcorrplot(corr_matrix)
 
 We can see that there are some variables that are highly correlated with each other. Therefore, we can use PCA to explain the data. 
 
-### Principal Component Analysis (PCA) 
+### ***Principal Component Analysis (PCA)*** 
 I generate 10 principal components of the data, since PC10 ends up explaining 65% of our data. Beyond this, we had little marginal increase in variation explained by summaries.   
 
 ```{r echo=FALSE}

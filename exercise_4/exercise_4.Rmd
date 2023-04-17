@@ -33,7 +33,7 @@ library(igraph)
 ##  1. Clustering and PCA
 We use the K-means algorithm as our selected clustering algorithm. K-means tries to minimize within-cluster SSE. The K value used for the K-means clustering is chosen using the Gap Statistic. The default selection method looks for the first local peak up to the standard error in estimating En*[log(WK)]. The result for the best K value is also presented in the clusGap function output. In both cases, we get that K=5. The plot of the Gap Statistic selection method is presented below.
 
-```{r K value, include=FALSE, warning=FALSE}
+```{r K value, echo=FALSE, warning=FALSE}
 ##  1. Clustering and PCA
 wine = read.csv('https://raw.githubusercontent.com/annienguyen879/eco395m-exercises/main/exercise_4/wine.csv')
 
@@ -50,6 +50,8 @@ gap_plot <- ggplot(gap_table, aes(k, gap)) + geom_line() + geom_point(size = 3) 
   labs(x = "Number of Clusters", y = "Gap Statistic") +
   theme(plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
         axis.title = element_text(size = 12, face = "bold"))
+
+gap_plot
 ```
 
 Before running clustering algorithms, we note a few facts about red and white wine:
@@ -60,7 +62,7 @@ Before running clustering algorithms, we note a few facts about red and white wi
 
 We run the K means clustering algorithm and PCA on 11 chemical properties of 6500 different bottles of vinho verde wine. Clustering assumes that each data point is a member of one, and only one, cluster. That is, clusters are mutually exclusive. The results of the K mean clustering algorithm are presented below:
 
-```{r K Means Clusters, include=FALSE, warning=FALSE}
+```{r K Means Clusters, echo=FALSE, warning=FALSE}
 # Run k-means with 5 clusters and 25 starts
 kmeans5 = kmeans(X, center=5, nstart=25)
 
@@ -83,7 +85,7 @@ Recall the three facts listed above.
 
 To check the accuracy of the K means clustering algorithm, we examine citric acid and total sulfur dioxide content between red and white wine. We observe that the clustering algorithm was fairly accurate grouping red and white wine. We see that clusters 4 and 5 were grouped red wine. While cluster 1 had a few red wines, generally white wine was clustered in groups 1, 2, and 3. Additionally, while there was overlap in citric acid and total sulfur dioxide measurement content, we see white wine had outlier values that exceeded outlier values for red wine. Note this may be attributed to the fact that generally white wine is more acidic and red wine has lower sulfur dioxide (i.e. white wine has higher sulfur dioxide). Overall, these results are consistent with the data and graphs previously presented. The plots of citric acid and total sulfur dioxide content between red and white wine are presented below.
 
-```{r K Means feature plots, include=FALSE, warning=FALSE}
+```{r K Means feature plots, echo=FALSE, warning=FALSE}
 # Compare features between red and white wine
 wine$red_wine = ifelse(wine$color=='red', 1, 0)
 
@@ -95,7 +97,7 @@ ggplot(wine) +
 ```
 We examine each of the 11 chemical properties by quality. As we see in the plots below, the clusters are not concentrated by quality ratings. That is, it does not appear that the K means algorithm is capable of distinguishing higher quality wine from lower quality wine. The 11 chemical properties by quality plots are presented below.
 
-```{r K means distinguishing high quality wine plots, include=FALSE, warning=FALSE}
+```{r K means distinguishing high quality wine plots, echo=FALSE, warning=FALSE}
 # Distinguishing high quality wine
 fixed_acidity_plot=ggplot(wine) + 
   geom_point(aes(fixed.acidity, quality, color=factor(kmeans5$cluster)))
@@ -142,7 +144,7 @@ The goal of PCA is to find low-dimensional summaries of high-dimensional data se
 
 We would expect PCA to be the better dimensionality reduction technique for data on 11 chemical properties of 6500 bottles of wine. This is because red and white wine both contain the 11 characteristics, the wine types just differ in amounts. That is, red and white wine share the same ingredients, just at differing amounts. For example, as stated above, white wine is generally more acidic while red wine tends to have higher pH. But both wines will have both acidic and pH levels. PCA allows us to fiddle with ingredients continuously. The K means clustering algorithm is limited in that clustering algorithm cluster membership only discretely. In the wine type PCA plot below, we see red and white wine are clearly distinguished by component 2. That is, PCA was very clearly able to sort red wines to the left and white wines on the right. So very clearly, PCA was able to successfully pick up wine quality as a component. Furthermore, in the wine quality PCA plot below, we see a general vertical gradient in color (a gradient for Component 2). This indicates PCA was also able to pick up wine quality as a component. Hence, as expected, PCA was better at distinguishing red wine from white wine and identify wine quality using only the unsupervised information contained in the data on chemical properties.
 
-```{r PCA, include=FALSE, warning=FALSE}
+```{r PCA, echo=FALSE, warning=FALSE}
 pca = prcomp(X, scale=TRUE, rank=2)
 loadings = pca$rotation
 scores = pca$x
@@ -152,10 +154,10 @@ qplot(scores[,1], scores[,2], color=wine$red_wine, xlab='Component 1', ylab='Com
 
 ##  2. Market segmentation
 
-## ***Introduction***
+### ***Introduction***
 We want to use market-research data based on tweets for NutrientH20 to come up with how the brand may position itself to different market segments for maximum appeal. So what are we working with? NutrientH20's advertising firm took a sample of the brand's Twitter followers, and collected each tweet by a follower over a seven-day period in June 2014. Amazon's Mechanical Turk service parsed through each tweet and allocated different categories to it, such as family or sports. Each tweet can have more than 1 category. There are a total of 36 pre-specified categories.
 
-```{r}
+```{r echo=FALSE}
 social_marketing <- read.csv("social_marketing.csv")
 
 ls(social_marketing)
@@ -166,7 +168,7 @@ The original dataset has 7882 observations with 37 variables (you can find a mor
 
 Our big task? Identifying market segments. Are NutrientH20's followers more sports-oriented, family-focused, or even fashion-obsessed? Getting these segments correct will help us tailor the firm's advertising strategies. 
 
-## ***Methodology***
+### ***Methodology***
 
 Before we run our magic, we need to make sure our data is centered and scaled so that we can get meaningful insights. Since there are still spam, adult, uncategorised and chatter categories that may not be useful for our overall analysis, I will drop these from dataset. 
 
@@ -174,7 +176,7 @@ I then center the data by subtracting the mean value of each variable from all o
 
 I will then check for correlation within my data. I will first use principal component analysis (PCA) to identify which variables are most relevant in the dataset. Since this is a large dataset, PCA tries to simplify it by reducing the number of variables or dimensions involved. It is somewhat like taking a 1000-piece puzzle and contracting it into a 500-piece puzzle of the same picture. Based on this, I will check for appropriate clusters in the data. Clustering is what it sounds like. It groups similar objects together. So for example, if multiple tweets are revolving around sports, the algorithm would classify them into one cluster. 
 
-### Correlation matrix 
+### ***Correlation matrix*** 
 ```{r echo=FALSE}
 #Clean data
 X = social_marketing[,-c(1, 2, 6, 36, 37)]
@@ -195,7 +197,7 @@ ggcorrplot(corr_matrix)
 
 We can see that there are some variables that are highly correlated with each other. Therefore, we can use PCA to explain the data. 
 
-### Principal Component Analysis (PCA) 
+### ***Principal Component Analysis (PCA)*** 
 I generate 10 principal components of the data, since PC10 ends up explaining 65% of our data. Beyond this, we had little marginal increase in variation explained by summaries.   
 
 ```{r echo=FALSE}

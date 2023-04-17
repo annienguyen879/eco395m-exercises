@@ -31,7 +31,7 @@ assumes that each data point is a member of one, and only one, cluster.
 That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
 
-![](exercise_4_files/figure-markdown_strict/kmeans_clusters1.png)![](exercise_4_files/figure-markdown_strict/kmeans_clusters2.png)![](exercise_4_files/figure-markdown_strict/kmeans_clusters3.png)
+![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-2.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-3.png)
 
 Recall the three facts listed above.
 
@@ -64,6 +64,7 @@ content between red and white wine are presented below:
 
 ![](exercise_4_files/figure-markdown_strict/kmeans_features1.png)![](exercise_4_files/figure-markdown_strict/kmeans_features2.png)
 
+![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-2.png)
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
 That is, it does not appear that the K means algorithm is capable of
@@ -72,6 +73,8 @@ chemical properties by quality plots are presented below:
 
 
 ![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot1.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot2.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot3.png)
+
+![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-2.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-3.png)
 
 The goal of PCA is to find low-dimensional summaries of high-dimensional
 data sets. PCA assumes that each data point is like a combination of
@@ -104,7 +107,7 @@ contained in the data on chemical properties.
 
 ## 2. Market segmentation
 
-## ***Introduction***
+### ***Introduction***
 
 We want to use market-research data based on tweets for NutrientH20 to
 come up with how the brand may position itself to different market
@@ -115,10 +118,6 @@ Amazon’s Mechanical Turk service parsed through each tweet and allocated
 different categories to it, such as family or sports. Each tweet can
 have more than 1 category. There are a total of 36 pre-specified
 categories.
-
-    social_marketing <- read.csv("social_marketing.csv")
-
-    ls(social_marketing)
 
     ##  [1] "adult"            "art"              "automotive"       "beauty"          
     ##  [5] "business"         "chatter"          "college_uni"      "computers"       
@@ -139,7 +138,7 @@ more sports-oriented, family-focused, or even fashion-obsessed? Getting
 these segments correct will help us tailor the firm’s advertising
 strategies.
 
-## ***Methodology***
+### ***Methodology***
 
 Before we run our magic, we need to make sure our data is centered and
 scaled so that we can get meaningful insights. Since there are still
@@ -167,14 +166,14 @@ groups similar objects together. So for example, if multiple tweets are
 revolving around sports, the algorithm would classify them into one
 cluster.
 
-### Correlation matrix
+### ***Correlation matrix***
 
 ![](exercise_4_files/figure-markdown_strict/unnamed-chunk-2-1.png)
 
 We can see that there are some variables that are highly correlated with
 each other. Therefore, we can use PCA to explain the data.
 
-### Principal Component Analysis (PCA)
+### ***Principal Component Analysis (PCA)***
 
 I generate 10 principal components of the data, since PC10 ends up
 explaining 65% of our data. Beyond this, we had little marginal increase

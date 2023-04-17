@@ -21,6 +21,7 @@ assumes that each data point is a member of one, and only one, cluster.
 That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
 
+![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-2.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-3.png)
 Recall the three facts listed above.
 
 -   White wine is more acidic and denser than red wine, so clusters with
@@ -50,11 +51,14 @@ dioxide). Overall, these results are consistent with the data and graphs
 previously presented. The plots of citric acid and total sulfur dioxide
 content between red and white wine are presented below.
 
+![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-2.png)
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
 That is, it does not appear that the K means algorithm is capable of
 distinguishing higher quality wine from lower quality wine. The 11
 chemical properties by quality plots are presented below.
+
+![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-2.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-3.png)
 
 The goal of PCA is to find low-dimensional summaries of high-dimensional
 data sets. PCA assumes that each data point is like a combination of
@@ -82,6 +86,8 @@ indicates PCA was also able to pick up wine quality as a component.
 Hence, as expected, PCA was better at distinguishing red wine from white
 wine and identify wine quality using only the unsupervised information
 contained in the data on chemical properties.
+
+![](exercise_4_files/figure-markdown_strict/PCA-1.png)![](exercise_4_files/figure-markdown_strict/PCA-2.png)
 
 ## 2. Market segmentation
 

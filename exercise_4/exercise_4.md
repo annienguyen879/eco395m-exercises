@@ -1,3 +1,11 @@
+# Homework 4
+## ECO 395M: Data Mining and Statistical Learning 
+
+## Soo Jee Choi, Annie Nguyen, and Tarini Sudhakar
+
+### 2023-04-17
+
+
 ## 1. Clustering and PCA
 
 We use the K-means algorithm as our selected clustering algorithm.
@@ -6,9 +14,9 @@ K-means clustering is chosen using the Gap Statistic. The default
 selection method looks for the first local peak up to the standard error
 in estimating En\*\[log(WK)\]. The result for the best K value is also
 presented in the clusGap function output. In both cases, we get that
-K=5. The plot of the Gap Statistic selection method is presented below.
+K=5. The plot of the Gap Statistic selection method is presented below:
 
-![](exercise_4_files/figure-markdown_strict/K%20value-1.png)
+![](exercise_4_files/figure-markdown_strict/k_value.png)
 
 Before running clustering algorithms, we note a few facts about red and
 white wine:
@@ -24,6 +32,7 @@ That is, clusters are mutually exclusive. The results of the K mean
 clustering algorithm are presented below:
 
 ![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-2.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20Clusters-3.png)
+
 Recall the three facts listed above.
 
 -   White wine is more acidic and denser than red wine, so clusters with
@@ -51,14 +60,19 @@ be attributed to the fact that generally white wine is more acidic and
 red wine has lower sulfur dioxide (i.e. white wine has higher sulfur
 dioxide). Overall, these results are consistent with the data and graphs
 previously presented. The plots of citric acid and total sulfur dioxide
-content between red and white wine are presented below.
+content between red and white wine are presented below:
+
+![](exercise_4_files/figure-markdown_strict/kmeans_features1.png)![](exercise_4_files/figure-markdown_strict/kmeans_features2.png)
 
 ![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20Means%20feature%20plots-2.png)
 We examine each of the 11 chemical properties by quality. As we see in
 the plots below, the clusters are not concentrated by quality ratings.
 That is, it does not appear that the K means algorithm is capable of
 distinguishing higher quality wine from lower quality wine. The 11
-chemical properties by quality plots are presented below.
+chemical properties by quality plots are presented below:
+
+
+![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot1.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot2.png)![](exercise_4_files/figure-markdown_strict/kmeans_quality_plot3.png)
 
 ![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-1.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-2.png)![](exercise_4_files/figure-markdown_strict/K%20means%20distinguishing%20high%20quality%20wine%20plots-3.png)
 
